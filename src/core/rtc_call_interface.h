@@ -9,6 +9,7 @@
 #define RTC_CALL_INTERFACE_H
 
 #include <memory>
+#include <optional>
 #include <api/peer_connection_interface.h>
 #include <media/base/video_source_base.h>
 #include <api/rtp_parameters.h>
@@ -218,8 +219,11 @@ private:
 
 /*----------------------------------------------------------------------------*/
 
-std::shared_ptr<RTCCallInterface>
-CreateRTCCall(RTCCallObserverInterface *observer);
+std::optional<std::shared_ptr<RTCCallInterface>>
+CreateRTCCallOrNull(std::unique_ptr<RTCCallObserverInterface> observer);
+
+webrtc::RTCErrorOr<std::shared_ptr<RTCCallInterface>>
+CreateRTCCallOrError(std::unique_ptr<RTCCallObserverInterface> observer);
 
 /// get webrtc version
 RTCString getWebRTCVersion(void);

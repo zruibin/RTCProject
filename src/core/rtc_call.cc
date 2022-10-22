@@ -109,8 +109,8 @@ private:
 
 /*----------------------------------------------------------------------------*/
 
-RTCCall::RTCCall(RTCCallObserverInterface *observer):
-        observer_(observer),
+RTCCall::RTCCall(std::unique_ptr<RTCCallObserverInterface> observer):
+        observer_(std::move(observer)),
         peerStates_(new RTCPeerStatusModelMap),
         videoSources_(new RTCVideoSourceMap),
         toBeAddedICEs_(new IceCandidatesMap) {
@@ -130,10 +130,6 @@ RTCCall::~RTCCall() {
 
 
 void RTCCall::Init(void) {
-
-//    /// candidates to be added to peer
-//    IceCandidatesMap* toBeAddedICEs_;
-    
 //    std::unique_ptr<rtc::Thread> network_thread_ = rtc::Thread::CreateWithSocketServer();
 //    network_thread_->SetName("network_thread", nullptr);
 //    RTC_CHECK(network_thread_->Start()) << "Failed to start thread";
@@ -319,7 +315,7 @@ RTCCall::createPeer(const RTCString& peerId) {
     }
     
     std::unique_ptr<RTCObserverInternal> observerInternal = std::make_unique<RTCObserverInternal>();
-    observerInternal->SetObserver(this->observer_);
+    observerInternal->SetObserver(this->observer_.get());
     
     PeerConnectionInterface::RTCConfiguration config;
     config.sdp_semantics = SdpSemantics::kUnifiedPlan;
@@ -339,10 +335,24 @@ RTCCall::createPeer(const RTCString& peerId) {
 
 /*----------------------------------------------------------------------------*/
 
-std::shared_ptr<RTCCallInterface>
-CreateRTCCall(RTCCallObserverInterface *observer) {
-    std::shared_ptr<RTCCallInterface> call = std::make_shared<RTCCall>(observer);
-    return call;
+std::optional<std::shared_ptr<RTCCallInterface>>
+CreateRTCCallOrNull(std::unique_ptr<RTCCallObserverInterface> observer) {
+    std::optional<std::shared_ptr<RTCCallInterface>> ret = std::nullopt;
+    std::shared_ptr<RTCCallInterface> call = std::make_shared<RTCCall>(std::move(observer));
+    if (call != nullptr) {
+        ret = call;
+    }
+    return ret;
+}
+
+webrtc::RTCErrorOr<std::shared_ptr<RTCCallInterface>>
+CreateRTCCallOrError(std::unique_ptr<RTCCallObserverInterface> observer) {
+    auto ret = webrtc::RTCErrorOr<std::shared_ptr<RTCCallInterface>>();
+    std::shared_ptr<RTCCallInterface> call = std::make_shared<RTCCall>(std::move(observer));
+    if (call != nullptr) {
+        ret = call;
+    }
+    return ret;
 }
 
 RTCString getWebRTCVersion(void) {

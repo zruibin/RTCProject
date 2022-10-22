@@ -23,7 +23,7 @@ public:
     using RTCPeerStatusModelMap = std::unordered_map<RTCString, RTCPeerStatusModel>;
     using RTCVideoSourceMap = std::unordered_map<RTCString, RTCVideoSource>;
     using IceCandidatesMap = std::unordered_map<RTCString, std::vector<JsepIceCandidate>>;
-    explicit RTCCall(RTCCallObserverInterface *);
+    explicit RTCCall(std::unique_ptr<RTCCallObserverInterface>);
     virtual ~RTCCall();
     
 public:
@@ -93,7 +93,7 @@ private:
     createPeer(const RTCString& peerId);
     
 private:
-    RTCCallObserverInterface* observer_;
+    std::unique_ptr<RTCCallObserverInterface> observer_;
     scoped_refptr<PeerConnectionFactoryInterface> peerFactory_;
     /// audio source
     scoped_refptr<AudioSourceInterface> audioSource_;

@@ -49,7 +49,14 @@ void App::Init() {
     }
     
     std::unique_ptr<RTCCallObserverInterface> observer = std::make_unique<CallObserver>();
-    std::shared_ptr<RTCCallInterface> call = CreateRTCCall(observer.get());
+    std::shared_ptr<RTCCallInterface> call = nullptr;
+    auto ret = CreateRTCCallOrError(std::move(observer));
+    if (!ret.ok()) {
+        const char* message = ret.error().message();
+        Log(ERROR) << "CreateRTCCall error: " << message;
+        return;
+    }
+    call = ret.value();
     call->Init();
     Log(INFO) << "App Init End.";
 }
