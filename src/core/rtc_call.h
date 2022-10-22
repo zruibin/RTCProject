@@ -12,6 +12,7 @@
 #include <api/peer_connection_interface.h>
 #include <api/jsep.h>
 #include "rtc_object.h"
+#include "model/rtc_peer_status_model.h"
 
 namespace core {
 
@@ -35,7 +36,7 @@ private:
     /// audio source
     scoped_refptr<AudioSourceInterface> audioSource_;
     /// peer state list
-    std::shared_ptr<std::unordered_map<std::string, RTCObject/*PeerStatusModel*/>> peerStates_;
+    std::shared_ptr<std::unordered_map<std::string, RTCPeerStatusModel>> peerStates_;
     /// video source list
     std::shared_ptr<std::unordered_map<std::string, VideoSourceInterface<VideoFrame>>> videoSources_;
     /// candidates to be added to peer

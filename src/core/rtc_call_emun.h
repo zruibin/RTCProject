@@ -61,20 +61,5 @@ enum class RTCCallErrorCode {
 };
 
 }
-/*
 
-
-
-
-
-/// error code of PARTCWebRTCCall
-typedef NS_ENUM(NSInteger, PARTCWebRTCCallErrorCode){
-    /// peer not eixt
-    PARTCWebRTCCallErrorCodePeerNotExist,
-    /// peer created sdp failed
-    PARTCWebRTCCallErrorCodePeerCreateSDPFailed,
-    /// peer set sdp failed
-    PARTCWebRTCCallErrorCodePeerSetSDPFailed,
-};
-*/
 #endif /* !WEBRTC_CALL_EMUN_H */
