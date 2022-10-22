@@ -7,7 +7,7 @@
  */
 
 
-namespace engine {
+namespace core {
 
 class RTCObject final {};
 

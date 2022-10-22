@@ -11,7 +11,7 @@
 #include <memory>
 #include "rtc_call_observer_interface.h"
 
-namespace engine {
+namespace core {
 
 class RTCCallInterface {
 

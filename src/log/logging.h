@@ -12,9 +12,8 @@
 #include <string>
 #include <sstream>
 
-#define Log(severity) engine::log::LogMessage(__FILE__, __LINE__, engine::log::severity)
+#define Log(severity) log::LogMessage(__FILE__, __LINE__, log::severity)
 
-namespace engine {
 namespace log {
 
 enum LoggingSeverity {
@@ -137,7 +136,6 @@ private:
 };
 
 
-}
 }
 
 #endif /* !LOG_MANAGER_H */

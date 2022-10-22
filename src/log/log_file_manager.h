@@ -10,7 +10,6 @@
 
 #include <fstream>
 
-namespace engine {
 namespace log {
 
 class LogFileManager
@@ -29,7 +28,6 @@ private:
     std::ofstream *fileStream_;
 };
 
-}
 }
 
 #endif /* !LOG_FILE_MANAGER_H */

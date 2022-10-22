@@ -25,7 +25,7 @@
 #include <rtc_base/logging.h>
 //#include <rtc_base/strings/json.h>
 
-namespace engine {
+namespace core {
 
 class RTCObserverInternal : public PeerConnectionObserver {
 

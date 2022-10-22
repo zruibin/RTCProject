@@ -8,7 +8,7 @@
 #ifndef RTC_CALL_EMUN_H
 #define RTC_CALL_EMUN_H
 
-namespace engine {
+namespace core {
 
 /// sdp type
 enum class RTCSdpType {

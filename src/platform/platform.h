@@ -80,15 +80,12 @@ typedef signed char INT8; /* Signed 8 bit value */
 #define outpdw(port, val) (*((volatile dword *) (port)) = ((dword) (val)))
 
 
-
-namespace engine {
 namespace platform {
 
 int thread_set_name(const char*);
 unsigned short thread_get_current_id(void);
 
 
-}
 }
 
 #endif /* !PLATFORM_H */

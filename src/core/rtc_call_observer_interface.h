@@ -15,126 +15,134 @@
 #include "rtc_call_emun.h"
 
 
+namespace core {
+
 class RTCCallObserverInterface {
     
+public:
+    using StringHashMap = std::unordered_map<std::string, std::string>;
+    virtual ~RTCCallObserverInterface() {};
+
 public:
     /// create a sdp
     /// @param sdpDict sdp of offer or answer
     /// @param peerId peer identification
-    void OnCreateSdp(const std::unordered_map<std::string, std::string>& sdpDict,
-                     const std::string& peerId) {}
-    
+    virtual void OnCreateSdp(const StringHashMap &sdpDict,
+                             const std::string &peerId) = 0;
+
     /// generate a local candidate
     /// @param candidate candidate
     /// @param peerId peer identification
-    void OnGenerateIceCandidate(const std::unordered_map<std::string, std::string>& sdpDict,
-                                const std::string& peerId) {}
-    
+    virtual void OnGenerateIceCandidate(const StringHashMap &sdpDict,
+                                        const std::string &peerId) = 0;
+
     /// remove a group of local candidates
     /// @param candidates a group of candidates
     /// @param peerId peer identification
-    void OnRemoveIceCandidates(const std::vector<std::unordered_map<std::string, std::string>>& candidates,
-                               const std::string& peerId) {}
-    
+    virtual void OnRemoveIceCandidates(const std::vector<StringHashMap> &candidates,
+                                       const std::string &peerId) {}
+
     /// add a received video track
     /// @param videoTrack video track
     /// @param peerId peer identification
-    void OnAddReceivedVideoTrack(rtc::scoped_refptr<webrtc::VideoTrackInterface> track,
-                                 const std::string& peerId) {}
-    
+    virtual void OnAddReceivedVideoTrack(std::shared_ptr<webrtc::VideoTrackInterface> track,
+                                         const std::string &peerId) {}
+
     /// add a received audio track
     /// @param audioTrack audio track
     /// @param peerId peer identification
-    void OnAddReceivedAudioTrack(rtc::scoped_refptr<webrtc::AudioTrackInterface> track,
-                                 const std::string& peerId) {}
-    
+    virtual void OnAddReceivedAudioTrack(std::shared_ptr<webrtc::AudioTrackInterface> track,
+                                         const std::string &peerId) {}
+
     /// peer state
     /// @param peerState peer current state
     /// @param peerId peer identification
-    void OnPeerStateChangge(engine::RTCPeerState peerState,
-                            const std::string& peerId) {}
-    
+    virtual void OnPeerStateChangge(core::RTCPeerState peerState,
+                                    const std::string &peerId) = 0;
+
     /// csrc changed in video track
     /// @param csrc new csrc
     /// @param peerId peer identity
     /// @param trackId video track identification
-    void OnChangedCsrcForVideo(uint32_t csrc,
-                               const std::string& peerId,
-                               const std::string& trackId) {}
-    
+    virtual void OnChangedCsrcForVideo(uint32_t csrc,
+                                       const std::string &peerId,
+                                       const std::string &trackId) {}
+
     /// csrc changed in audio track
     /// @param csrc new csrc
     /// @param peerId peer identification
     /// @param trackId audio track identification
-    void OnChangedCsrcForAudio(uint32_t csrc,
-                               const std::string& peerId,
-                               const std::string& trackId) {}
-    
+    virtual void OnChangedCsrcForAudio(uint32_t csrc,
+                                       const std::string &peerId,
+                                       const std::string &trackId) {}
+
     /// receive SEI from peer
     /// @param bytes SEI bytes
     /// @param peerId peer identification
     /// @param trackId audio track identification
-    void OnReceiveSEI(const void *bytes,
-                      const std::string& peerId,
-                      const std::string& trackId) {}
-    
+    virtual void OnReceiveSEI(const void *bytes,
+                              const std::string &peerId,
+                              const std::string &trackId) {}
+
     /// record audio data at a frequency of 10ms/p
     /// @param data audio data in PCM format
     /// @param length data length
     /// @param channel channel
     /// @param rate sample rate
-    void OnRecordAudioData(unsigned char* data,
-                           int length,
-                           int channel,
-                           int rate) {}
-    
+    virtual void OnRecordAudioData(unsigned char *data,
+                                   int length,
+                                   int channel,
+                                   int rate) {}
+
     /// play audio data at the frequency of 10ms/p
     /// @param data audio data in PCM format
     /// @param length data length
     /// @param channel channel
     /// @param rate sample rate
-    void OnPlayAudioData(unsigned char* data,
-                         int length,
-                         int channel,
-                         int rate) {}
-    
+    virtual void OnPlayAudioData(unsigned char *data,
+                                 int length,
+                                 int channel,
+                                 int rate) {}
+
     /// recording audio by first frame callback
-    void OnRecordedAudioFirstFrame() {}
-    
+    virtual void OnRecordedAudioFirstFrame() {}
+
     /// playing audio by first frame callback
-    void OnPlayedAudioFirstFrame() {}
-    
+    virtual void OnPlayedAudioFirstFrame() {}
+
     /// audio unit state change
     /// @param stateCode state code of audio unit
-    void OnAudioUnitStateChange(uint32_t stateCode) {}
-    
+    virtual void OnAudioUnitStateChange(uint32_t stateCode) {}
+
     /// an error occurred
     /// @param error error info
     /// @param peerId peer identification
-    void OnOccurredError(const webrtc::RTCError& error,
-                         const std::string& trackId) {}
-    
+    virtual void OnOccurredError(const webrtc::RTCError &error,
+                                 const std::string &trackId) {}
+
     /// csrc array changed
     /// @param csrcAry new csrcAry
     /// @param peerId peer identification
-    void OnReceivedRtpCsrcArray(const std::vector<uint32_t>& csrcAry,
-                                const std::string& peerId) {}
-    
+    virtual void OnReceivedRtpCsrcArray(const std::vector<uint32_t> &csrcAry,
+                                        const std::string &peerId) {}
+
     /// receive audio howling state change
     /// @param hasHowling hasHowling
-    void OnReceiveAudioHowlingStateChange(bool hasHowling) {}
-    
+    virtual void OnReceiveAudioHowlingStateChange(bool hasHowling) {}
+
     /// receive audio echo state
     /// @param hasEcho has echo
-    void OnReceiveAudioEchoStateChange(bool hasEcho) {}
-    
+    virtual void OnReceiveAudioEchoStateChange(bool hasEcho) {}
+
     /// capture exception by audio
     /// @param hasAudioCaptureException has audio capture exception
-    void OnReceiveAudioCaptureExceptionStateChange(bool hasAudioCaptureException) {}
-    
+    virtual void OnReceiveAudioCaptureExceptionStateChange(bool hasAudioCaptureException) {}
+
     /// low level for audio
     /// @param hasAudioLowLevel has audio low level
-    void OnReceiveAudioLowLevel(bool hasAudioLowLevel) {}
+    virtual void OnReceiveAudioLowLevel(bool hasAudioLowLevel) {}
 };
+
+}
 
 #endif /* !RTC_CALL_OBSERVER_INTERFACE_H */

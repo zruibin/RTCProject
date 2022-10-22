@@ -16,7 +16,7 @@
 #include "util/util.h"
 #include "log_file_manager.h"
 
-namespace engine {
+
 namespace log {
 
 static const char* loggingSeverityCover(LoggingSeverity severity) {
@@ -56,5 +56,4 @@ LogMessage::~LogMessage() {
 }
 
 
-}
 }

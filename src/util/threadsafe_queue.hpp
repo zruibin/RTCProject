@@ -13,7 +13,7 @@
 #include <condition_variable>
 #include <initializer_list>
 
-namespace engine {
+
 namespace util {
 
 /*
@@ -106,7 +106,6 @@ private:
     mutable std::condition_variable data_cond;
 }; /* ThreadsafeQueue */
 
-}
 }
 
 

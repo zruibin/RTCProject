@@ -11,7 +11,6 @@
 #include <sstream>
 #include <thread>
 
-namespace engine {
 namespace platform {
 
 int thread_set_name(const char* name) {
@@ -29,5 +28,4 @@ unsigned short thread_get_current_id(void) {
     return tid;
 }
 
-}
 }

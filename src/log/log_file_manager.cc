@@ -11,7 +11,7 @@
 #include <mutex>
 #include <thread>
 
-namespace engine {
+
 namespace log {
 
 LogFileManager& LogFileManager::GetInstance() {
@@ -45,6 +45,5 @@ void LogFileManager::Flush(void) {
     
 }
 
-}
 }
 

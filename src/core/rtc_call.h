@@ -13,7 +13,7 @@
 #include <api/jsep.h>
 #include "rtc_object.h"
 
-namespace engine {
+namespace core {
 
 using namespace::webrtc;
 using namespace::rtc;

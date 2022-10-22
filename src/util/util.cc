@@ -12,7 +12,7 @@
 #include <sstream>
 #include <ctime>
 
-namespace engine {
+
 namespace util {
 
 std::string get_current_time_string(void) {
@@ -43,4 +43,4 @@ long get_current_time_milliseconds(void) {
 }
 
 }
-}
+
