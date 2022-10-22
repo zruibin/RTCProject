@@ -8,8 +8,10 @@
 
 #include "app.h"
 #include <iostream>
+#include <httplib/httplib.h>
 #include "core/rtc_call_interface.h"
 #include "log/logging.h"
+
 
 namespace app {
 
@@ -37,6 +39,15 @@ public:
 
 void App::Init() {
     Log(INFO) << "App Init Start.";
+    httplib::Client cli("https://www.baidu.com");
+    if (auto res = cli.Get("/")) {
+        Log(INFO) << res->status;
+        Log(INFO)  << res->get_header_value("Content-Type");
+        Log(INFO)  << res->body;
+    } else {
+        Log(INFO) << "error code: " << httplib::to_string(res.error()); 
+    }
+    
     std::unique_ptr<RTCCallObserverInterface> observer = std::make_unique<CallObserver>();
     std::shared_ptr<RTCCallInterface> call = CreateRTCCall(observer.get());
     call->Init();

@@ -112,6 +112,7 @@ include("${libs_dir}/websocketpp/CMakeLists.txt")
 include("${libs_dir}/kcp/CMakeLists.txt")
 include("${libs_dir}/lua/CMakeLists.txt")
 include("${libs_dir}/sigslot/CMakeLists.txt")
+include("${libs_dir}/httplib/CMakeLists.txt")
 
 
 if(USE_DEPENDS_MODEL)
@@ -134,6 +135,7 @@ set(DEPENDS_LIBS
     ${websocketpp_all_file}
     ${nlohmann_json_all_file}
     ${sigslot_all_file}
+    ${httplib_all_file}
 )
 
 else()
@@ -155,6 +157,7 @@ set(DEPENDS_LIBS
     ${websocketpp_all_file}
     ${nlohmann_json_all_file}
     ${sigslot_all_file}
+    ${httplib_all_file}
 )
 
 endif()
