@@ -70,11 +70,11 @@ public:
         
     }
     
-    void OnIceCandidateError(const std::string& address,
+    void OnIceCandidateError(const RTCString& address,
                              int port,
-                             const std::string& url,
+                             const RTCString& url,
                              int error_code,
-                             const std::string& error_text) override {
+                             const RTCString& error_text) override {
         
     }
     
@@ -109,16 +109,31 @@ private:
 
 /*----------------------------------------------------------------------------*/
 
-RTCCall::RTCCall(RTCCallObserverInterface *observer) {
-    this->observer_ = observer;
+RTCCall::RTCCall(RTCCallObserverInterface *observer):
+        observer_(observer),
+        peerStates_(new RTCPeerStatusModelMap),
+        videoSources_(new RTCVideoSourceMap),
+        toBeAddedICEs_(new IceCandidatesMap) {
 }
 
 RTCCall::~RTCCall() {
-   
+    if (this->peerStates_) {
+        delete this->peerStates_;
+    }
+    if (this->videoSources_) {
+        delete this->videoSources_;
+    }
+    if (this->toBeAddedICEs_) {
+        delete this->toBeAddedICEs_;
+    }
 }
 
 
 void RTCCall::Init(void) {
+
+//    /// candidates to be added to peer
+//    IceCandidatesMap* toBeAddedICEs_;
+    
 //    std::unique_ptr<rtc::Thread> network_thread_ = rtc::Thread::CreateWithSocketServer();
 //    network_thread_->SetName("network_thread", nullptr);
 //    RTC_CHECK(network_thread_->Start()) << "Failed to start thread";
@@ -146,10 +161,159 @@ void RTCCall::Init(void) {
     auto peerConnection = this->createPeer("");
 }
 
+void RTCCall::TransferNetTypeToWebrtc(RTCNetType netType,
+                                      bool isInitial) {
+    
+}
+
+std::shared_ptr<RTCVideoSource> RTCCall::GetVideoSource(const RTCString& peerId) {
+    RTCVideoSource videoSource;
+    RTCVideoSourceMap::iterator it = videoSources_->find(peerId);
+    if (it != videoSources_->end()) {
+        videoSource = it->second;
+    } else {
+
+    }
+    
+    return std::make_shared<RTCVideoSource>(videoSource);;
+}
+
+void RTCCall::CreateOffer(RTCSdpType sdpType,
+                          int layers,
+                          const RTCString& peerId) {
+    
+}
+
+void RTCCall::CreateAnswer(RTCSdpType sdpType,
+                           const StringHashMap& offerMap,
+                           const RTCString& peerId) {
+    
+}
+
+void RTCCall::AddAnswer(const StringHashMap& answerMap,
+                        const RTCString& peerId) {
+    
+}
+ 
+void RTCCall::AddIceCandidate(const StringHashMap& candidateMap,
+                              const RTCString& peerId) {
+    
+}
+
+void RTCCall::SetConfigForVideoEncoder(const RTCObject/*PARTCVideoConfig*/& config,
+                                       const RTCString& peerId) {
+    
+}
+
+void RTCCall::EnableVideoEncoderLyaer(bool enable,
+                                      const RTCObject/*PARTCStreamVideoLayer*/& layer,
+                                      const RTCString& peerId) {
+    
+}
+
+void RTCCall::SetVideoEncodeDegradationPreference(const webrtc::DegradationPreference preference,
+                                                  const RTCString& peerId) {
+    
+}
+
+void RTCCall::EnableAudioSender(bool isEnabled,
+                                const RTCString& peerId) {
+    
+}
+
+void RTCCall::EnableVideoSender(bool isEnabled,
+                                const RTCString& peerId) {
+    
+}
+
+void RTCCall::EnableSendAudioTrack(bool isEnabled,
+                                   const RTCString& peerId) {
+    
+}
+
+void RTCCall::EnableSendVideoTrack(bool isEnabled,
+                                   const RTCString& peerId) {
+    
+}
+
+void RTCCall::EnableReceiveAudioTrack(bool isEnabled,
+                                      const RTCString& trackId,
+                                      const RTCString& peerId) {
+    
+}
+
+void RTCCall::EnableReceiveVideoTrack(bool isEnabled,
+                                      const RTCString& trackId,
+                                      const RTCString& peerId) {
+    
+}
+
+void RTCCall::ResetCsrcByAudioTrackId(const RTCString& trackId,
+                                      const RTCString& peerId) {
+    
+}
+
+void RTCCall::ResetCsrcByVideoTrackId(const RTCString& trackId,
+                                      const RTCString& peerId) {
+    
+}
+
+void RTCCall::SetReceiveCsrc(uint32_t csrc,
+                             const RTCString& trackId,
+                             const RTCString& peerId) {
+    
+}
+
+void RTCCall::ResetSimulcastIdByVideoTrackId(const RTCString& trackId,
+                                             const RTCString& peerId) {
+    
+}
+
+void RTCCall::SendSEI(unsigned char *seiData,
+                      const RTCString& peerId) {
+    
+}
+
+void RTCCall::GetStats(std::function<void(const RTCObject/*NSDictionary */& stats,
+                                          const webrtc::RTCError &error)>
+                       predicate) {
+    
+}
+
+std::vector<RTCObject/*PFMCPeerStatsModel */>*
+RTCCall::GetAudioLevelStats() {
+    return nullptr;
+}
+
+void RTCCall::GetStatsFormEngine(std::function<
+                                 void(std::vector<RTCObject/*PFMCPeerStatsModel */> statsAry)>
+                                 predicate) {
+    
+}
+
+std::vector<RTCObject/*PFMCPeerStatsModel */>*
+RTCCall::GetPeerStats() {
+    return nullptr;
+}
+
+bool RTCCall::InsertDTMF(const RTCString& tones,
+                         double duration,
+                         double interToneGap,
+                         const RTCString& peerId) {
+    return false;
+}
+ 
+void RTCCall::ReleasePeer(const RTCString& peerId) {
+    
+}
+
+void RTCCall::ReleaseRTCCall() {
+    
+}
 /*----------------------------------------------------------------------------*/
 
 RTCErrorOr<rtc::scoped_refptr<PeerConnectionInterface>>
-RTCCall::createPeer(const std::string_view& peerId) {
+RTCCall::createPeer(const RTCString& peerId) {
     if (observer_ == nullptr) {
         return RTCError(RTCErrorType::NONE, "observer was null.");
     }
@@ -179,6 +343,10 @@ std::shared_ptr<RTCCallInterface>
 CreateRTCCall(RTCCallObserverInterface *observer) {
     std::shared_ptr<RTCCallInterface> call = std::make_shared<RTCCall>(observer);
     return call;
+}
+
+RTCString getWebRTCVersion(void) {
+    return "M106";
 }
 
 }

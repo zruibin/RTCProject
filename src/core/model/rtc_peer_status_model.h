@@ -37,11 +37,11 @@ public:
     /// 对等连接对象Id
     std::string peerId;
     /// 对等连接对象
-    std::shared_ptr<webrtc::PeerConnectionInterface> peer;
+    rtc::scoped_refptr<webrtc::PeerConnectionInterface> peer;
     /// rtp发送器
-    std::vector<webrtc::RtpSenderInterface> senders;
+    std::vector<rtc::scoped_refptr<webrtc::RtpSenderInterface>> senders;
     /// rtp接收器
-    std::vector<webrtc::RtpReceiverInterface> receivers;
+    std::vector<rtc::scoped_refptr<webrtc::RtpReceiverInterface>> receivers;
     /// 创建的时间戳
     double createdTimestamp;
     /// 最新ice状态的更新时间戳
