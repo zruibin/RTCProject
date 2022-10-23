@@ -41,10 +41,10 @@ public:
                    const RTCString& peerId) override;
     void AddIceCandidate(const StringHashMap& candidateMap,
                          const RTCString& peerId) override;
-    void SetConfigForVideoEncoder(const RTCObject/*PARTCVideoConfig*/& config,
+    void SetConfigForVideoEncoder(const RTCVideoConfig& config,
                                   const RTCString& peerId) override;
     void EnableVideoEncoderLyaer(bool enable,
-                                 const RTCObject/*PARTCStreamVideoLayer*/& layer,
+                                 RTCStreamVideoLayer layer,
                                  const RTCString& peerId) override;
     void SetVideoEncodeDegradationPreference(const webrtc::DegradationPreference preference,
                                              const RTCString& peerId) override;
@@ -73,14 +73,14 @@ public:
                                         const RTCString& peerId) override;
     void SendSEI(unsigned char *seiData,
                  const RTCString& peerId) override;
-    void GetStats(std::function<void(const RTCObject/*NSDictionary */& stats,
+    void GetStats(std::function<void(const std::unordered_map<RTCString, RTCPeerStatsModel>& stats,
                                      const webrtc::RTCError &error)>
                   predicate) override;
-    std::vector<RTCObject/*PFMCPeerStatsModel */>* GetAudioLevelStats() override;
+    std::vector<RTCPeerStatsModel>* GetAudioLevelStats() override;
     void GetStatsFormEngine(std::function<
-                            void(std::vector<RTCObject/*PFMCPeerStatsModel */> statsAry)>
+                            void(std::vector<RTCPeerStatsModel> statsAry)>
                             predicate) override;
-    std::vector<RTCObject/*PFMCPeerStatsModel */>* GetPeerStats() override;
+    std::vector<RTCPeerStatsModel>* GetPeerStats() override;
     bool InsertDTMF(const RTCString& tones,
                     double duration,
                     double interToneGap,

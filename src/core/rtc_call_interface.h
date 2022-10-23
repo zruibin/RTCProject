@@ -15,6 +15,9 @@
 #include <api/rtp_parameters.h>
 #include "rtc_call_observer_interface.h"
 #include "rtc_object.h"
+#include "model/rtc_peer_stats_model.h"
+#include "model/rtc_peer_stats_model.h"
+#include "rtc_config.h"
 
 namespace core {
 
@@ -71,7 +74,7 @@ public:
     /// set config for video encoder
     /// @param config config for video encoder
     /// @param peerId peer id
-    virtual void SetConfigForVideoEncoder(const RTCObject/*PARTCVideoConfig*/& config,
+    virtual void SetConfigForVideoEncoder(const RTCVideoConfig& config,
                                           const RTCString& peerId) = 0;
 
     /// enable or disable specify video encoder layer
@@ -79,7 +82,7 @@ public:
     /// @param layer video encoder layer
     /// @param peerId peer id
     virtual void EnableVideoEncoderLyaer(bool enable,
-                                         const RTCObject/*PARTCStreamVideoLayer*/& layer,
+                                         RTCStreamVideoLayer layer,
                                          const RTCString& peerId) = 0;
 
     /// set degradation preference for encoding video
@@ -169,20 +172,20 @@ public:
                          const RTCString& peerId) = 0;
 
     /// get webrtc stats of all peers
-    virtual void GetStats(std::function<void(const RTCObject/*NSDictionary */& stats,
+    virtual void GetStats(std::function<void(const std::unordered_map<RTCString, RTCPeerStatsModel>& stats,
                                              const webrtc::RTCError &error)>
                           predicate) = 0;
 
     /// get peer statics of audio level
-    virtual std::vector<RTCObject/*PFMCPeerStatsModel */>* GetAudioLevelStats() = 0;
+    virtual std::vector<RTCPeerStatsModel>* GetAudioLevelStats() = 0;
 
     /// getting the engine stats data
     virtual void GetStatsFormEngine(std::function<
-                                        void(std::vector<RTCObject/*PFMCPeerStatsModel */> statsAry)>
+                                        void(std::vector<RTCPeerStatsModel> statsAry)>
                                     predicate) = 0;
 
     /// getting the peer stats data
-    virtual std::vector<RTCObject/*PFMCPeerStatsModel */>* GetPeerStats() = 0;
+    virtual std::vector<RTCPeerStatsModel>* GetPeerStats() = 0;
 
     /// insert dtmf data
     /// @param tones   content, can only contain 0-9,a-z,A-Z,#,*,','

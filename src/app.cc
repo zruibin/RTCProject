@@ -20,18 +20,18 @@ using namespace::core;
 class CallObserver : public RTCCallObserverInterface {
     
 public:
-    void OnCreateSdp(const StringHashMap &sdpDict,
-                     const std::string &peerId) override {
+    void OnCreateSdp(const StringHashMap& sdpDict,
+                     const std::string& peerId) override {
         
     }
     
-    void OnGenerateIceCandidate(const StringHashMap &sdpDict,
-                                const std::string &peerId) override {
+    void OnGenerateIceCandidate(const StringHashMap& sdpDict,
+                                const RTCString& peerId) override {
         
     }
     
     void OnPeerStateChangge(core::RTCPeerState peerState,
-                            const std::string &peerId) override {
+                            const RTCString& peerId) override {
         
     }
 };

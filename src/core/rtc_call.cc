@@ -196,13 +196,13 @@ void RTCCall::AddIceCandidate(const StringHashMap& candidateMap,
     
 }
 
-void RTCCall::SetConfigForVideoEncoder(const RTCObject/*PARTCVideoConfig*/& config,
+void RTCCall::SetConfigForVideoEncoder(const RTCVideoConfig& config,
                                        const RTCString& peerId) {
     
 }
 
 void RTCCall::EnableVideoEncoderLyaer(bool enable,
-                                      const RTCObject/*PARTCStreamVideoLayer*/& layer,
+                                      RTCStreamVideoLayer layer,
                                       const RTCString& peerId) {
     
 }
@@ -270,24 +270,24 @@ void RTCCall::SendSEI(unsigned char *seiData,
     
 }
 
-void RTCCall::GetStats(std::function<void(const RTCObject/*NSDictionary */& stats,
+void RTCCall::GetStats(std::function<void(const std::unordered_map<RTCString, RTCPeerStatsModel>& stats,
                                           const webrtc::RTCError &error)>
                        predicate) {
     
 }
 
-std::vector<RTCObject/*PFMCPeerStatsModel */>*
+std::vector<RTCPeerStatsModel>*
 RTCCall::GetAudioLevelStats() {
     return nullptr;
 }
 
 void RTCCall::GetStatsFormEngine(std::function<
-                                 void(std::vector<RTCObject/*PFMCPeerStatsModel */> statsAry)>
+                                 void(std::vector<RTCPeerStatsModel> statsAry)>
                                  predicate) {
     
 }
 
-std::vector<RTCObject/*PFMCPeerStatsModel */>*
+std::vector<RTCPeerStatsModel>*
 RTCCall::GetPeerStats() {
     return nullptr;
 }

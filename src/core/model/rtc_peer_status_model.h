@@ -13,14 +13,14 @@
 #include <api/peer_connection_interface.h>
 #include <api/rtp_sender_interface.h>
 #include <api/rtp_receiver_interface.h>
-
+#include "../rtc_macro.h"
 
 namespace core {
 
 struct RTCPeerStatusModel final {
     
 public:
-    std::string description(void) {
+    RTCString description(void) {
         char buffer[100];;
         snprintf(buffer, sizeof(buffer),
                  "{peerId:%s, peer:%p, lastIceState:%d, \
@@ -29,13 +29,13 @@ public:
                  peerId.c_str(), peer.get(), lastIceState,
                  createdTimestamp, lastUpdateTimestamp,
                  &senders, &receivers);
-        std::string des(buffer);
+        RTCString des(buffer);
         return des;
     }
     
 public:
     /// 对等连接对象Id
-    std::string peerId;
+    RTCString peerId;
     /// 对等连接对象
     rtc::scoped_refptr<webrtc::PeerConnectionInterface> peer;
     /// rtp发送器
@@ -49,10 +49,6 @@ public:
     /// 最新的ice状态
     webrtc::PeerConnectionInterface::IceConnectionState lastIceState;
 };
-
-
-///**  */
-//@property (nonatomic, assign) PAWebRTCIceConnectionState lastIceState;
 
 }
 

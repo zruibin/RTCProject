@@ -60,6 +60,33 @@ enum class RTCCallErrorCode {
     PeerSetSDPFailed,
 };
 
+/*------------------------------------------------------------------------------*/
+
+/// 流的不同清晰度的视频层，越大越清晰
+enum class RTCStreamVideoLayer {
+    /// 视频层0
+    Layer0,
+    /// 视频层1
+    Layer1
+};
+
+/// 视频配置枚举
+enum class RTCVideoConfigPreset {
+    /// 分辨率: 320x180, 帧率: 15 fps, 码率: 300 kbps
+    _180P,
+    /// 分辨率: 480x270, 帧率: 15 fps, 码率: 400 kbps
+    _270P,
+    /// 分辨率: 640x360, 帧率: 15 fps, 码率: 600 kbps
+    _360P,
+    /// 分辨率: 960x540, 帧率: 15 fps, 码率: 1200 kbps
+    _540P,
+    /// 分辨率: 1280x720, 帧率: 15 fps, 码率: 1500 kbps
+    _720P,
+    /// 分辨率: 1920x1080, 帧率: 15 fps, 码率: 3000 kbps
+    _1080P
+};
+
+
 }
 
 #endif /* !WEBRTC_CALL_EMUN_H */

@@ -8,17 +8,14 @@
 #ifndef RTC_CALL_OBSERVER_INTERFACE_H
 #define RTC_CALL_OBSERVER_INTERFACE_H
 
-#include <unordered_map>
 #include <vector>
 #include <api/media_stream_interface.h>
 #include <api/rtc_error.h>
+#include "rtc_macro.h"
 #include "rtc_call_emun.h"
 
 
 namespace core {
-
-using RTCString = std::string;
-using StringHashMap = std::unordered_map<RTCString, RTCString>;
 
 class RTCCallObserverInterface {
     
@@ -29,19 +26,19 @@ public:
     /// create a sdp
     /// @param sdpDict sdp of offer or answer
     /// @param peerId peer identification
-    virtual void OnCreateSdp(const StringHashMap &sdpDict,
+    virtual void OnCreateSdp(const StringHashMap& sdpDict,
                              const RTCString& peerId) = 0;
 
     /// generate a local candidate
     /// @param candidate candidate
     /// @param peerId peer identification
-    virtual void OnGenerateIceCandidate(const StringHashMap &sdpDict,
+    virtual void OnGenerateIceCandidate(const StringHashMap& sdpDict,
                                         const RTCString& peerId) = 0;
 
     /// remove a group of local candidates
     /// @param candidates a group of candidates
     /// @param peerId peer identification
-    virtual void OnRemoveIceCandidates(const std::vector<StringHashMap> &candidates,
+    virtual void OnRemoveIceCandidates(const std::vector<StringHashMap>& candidates,
                                        const RTCString& peerId) {}
 
     /// add a received video track
@@ -82,7 +79,7 @@ public:
     /// @param bytes SEI bytes
     /// @param peerId peer identification
     /// @param trackId audio track identification
-    virtual void OnReceiveSEI(const void *bytes,
+    virtual void OnReceiveSEI(const void* bytes,
                               const RTCString& peerId,
                               const RTCString& trackId) {}
 
@@ -91,7 +88,7 @@ public:
     /// @param length data length
     /// @param channel channel
     /// @param rate sample rate
-    virtual void OnRecordAudioData(unsigned char *data,
+    virtual void OnRecordAudioData(unsigned char* data,
                                    int length,
                                    int channel,
                                    int rate) {}
@@ -101,7 +98,7 @@ public:
     /// @param length data length
     /// @param channel channel
     /// @param rate sample rate
-    virtual void OnPlayAudioData(unsigned char *data,
+    virtual void OnPlayAudioData(unsigned char* data,
                                  int length,
                                  int channel,
                                  int rate) {}
@@ -119,13 +116,13 @@ public:
     /// an error occurred
     /// @param error error info
     /// @param peerId peer identification
-    virtual void OnOccurredError(const webrtc::RTCError &error,
+    virtual void OnOccurredError(const webrtc::RTCError& error,
                                  const RTCString& trackId) {}
 
     /// csrc array changed
     /// @param csrcAry new csrcAry
     /// @param peerId peer identification
-    virtual void OnReceivedRtpCsrcArray(const std::vector<uint32_t> &csrcAry,
+    virtual void OnReceivedRtpCsrcArray(const std::vector<uint32_t>& csrcAry,
                                         const RTCString& peerId) {}
 
     /// receive audio howling state change
