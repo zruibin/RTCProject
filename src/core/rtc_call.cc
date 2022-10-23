@@ -7,8 +7,6 @@
  */
 
 #include "rtc_call.h"
-#include <iostream>
-#include <string>
 #include <api/create_peerconnection_factory.h>
 #include <api/media_stream_interface.h>
 #include <api/peer_connection_interface.h>
@@ -24,6 +22,7 @@
 #include <rtc_base/checks.h>
 #include <rtc_base/logging.h>
 //#include <rtc_base/strings/json.h>
+#include "../log/logging.h"
 
 namespace core {
 
@@ -306,12 +305,15 @@ void RTCCall::ReleasePeer(const RTCString& peerId) {
 void RTCCall::ReleaseRTCCall() {
     
 }
+
+#pragma mark - Private
 /*----------------------------------------------------------------------------*/
 
-RTCErrorOr<rtc::scoped_refptr<PeerConnectionInterface>>
+scoped_refptr<PeerConnectionInterface>
 RTCCall::createPeer(const RTCString& peerId) {
     if (observer_ == nullptr) {
-        return RTCError(RTCErrorType::NONE, "observer was null.");
+        Log(ERROR) << "observer was null.";
+        return nullptr;
     }
     
     std::unique_ptr<RTCObserverInternal> observerInternal = std::make_unique<RTCObserverInternal>();
@@ -325,14 +327,17 @@ RTCCall::createPeer(const RTCString& peerId) {
 //        config.servers.push_back(server);
 
     PeerConnectionDependencies dependencies(observerInternal.get());
-    auto peerConnection = this->peerFactory_->CreatePeerConnectionOrError(config, std::move(dependencies));
-    if (!peerConnection.ok()) {
-        const char* message = peerConnection.error().message();
-        std::cout << "peerConnection error: " << message << std::endl;
+    auto ret = this->peerFactory_->CreatePeerConnectionOrError(config, std::move(dependencies));
+    if (!ret.ok()) {
+        const char* message = ret.error().message();
+        Log(ERROR) << "peerConnection error: " << message;
+        return nullptr;
     }
+    scoped_refptr<PeerConnectionInterface> peerConnection = ret.value();
     return peerConnection;
 }
 
+#pragma mark -
 /*----------------------------------------------------------------------------*/
 
 std::optional<std::shared_ptr<RTCCallInterface>>

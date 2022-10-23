@@ -20,7 +20,7 @@ using namespace::rtc;
 class RTCCall : public RTCCallInterface {
 
 public:
-    using RTCPeerStatusModelMap = std::unordered_map<RTCString, RTCPeerStatusModel>;
+    using RTCPeerStatusModelMap = std::unordered_map<RTCString, std::shared_ptr<RTCPeerStatusModel>>;
     using RTCVideoSourceMap = std::unordered_map<RTCString, RTCVideoSource>;
     using IceCandidatesMap = std::unordered_map<RTCString, std::vector<JsepIceCandidate>>;
     explicit RTCCall(std::unique_ptr<RTCCallObserverInterface>);
@@ -89,7 +89,7 @@ public:
     void ReleaseRTCCall() override;
     
 private:
-    RTCErrorOr<scoped_refptr<PeerConnectionInterface>>
+    scoped_refptr<PeerConnectionInterface>
     createPeer(const RTCString& peerId);
     
 private:
