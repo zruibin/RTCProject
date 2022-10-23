@@ -47,6 +47,10 @@ public:
     /// @param event 事件内容
     void SetEventCallback(const TimerEvent& event);
     
+    /// 设置事件执行数据
+    /// @param event 事件内容
+    void SetEventData(void* pUser);
+    
     /// 开始
     /// @param ms 毫秒
     void Start(int64_t ms, bool repeat = false);

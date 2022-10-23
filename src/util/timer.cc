@@ -9,6 +9,10 @@
 #include "timer.h"
 #include <iostream>
 
+/*
+ 参考：https://blog.csdn.net/hiwubihe/article/details/84206235
+ */
+
 namespace util {
 
 Timer::Timer(const TimerEvent& event, uint32_t ms, bool repeat, void* pUser)
@@ -30,6 +34,10 @@ bool Timer::IsRepeat() const {
 
 void Timer::SetEventCallback(const TimerEvent& event) {
     eventCallback_ = event;
+}
+
+void Timer::SetEventData(void* pUser) {
+    pUser_ = pUser;
 }
 
 void Timer::Start(int64_t ms, bool repeat) {
@@ -150,6 +158,7 @@ void AsynTimer::Start(const TimerEvent& event,
                       bool repeat,
                       void* pUser) {
     timer_.SetEventCallback(event);
+    timer_.SetEventData(pUser);
     std::thread t(&Timer::Start, timer_, ms, repeat);
     t.detach();
 }
