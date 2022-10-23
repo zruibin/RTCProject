@@ -22,7 +22,7 @@ std::string get_current_time_string(void) {
     std::stringstream ss;
     ss << std::put_time(std::localtime(&time), "%Y-%m-%d %H:%M:%S");
     ss << '.' << std::setw(3) << std::setfill('0') << ms.count();
-    return std::move(ss.str());
+    return ss.str();
 }
 
 long get_current_time_seconds(void) {
