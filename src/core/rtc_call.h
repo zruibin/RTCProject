@@ -11,6 +11,7 @@
 #include <api/jsep_ice_candidate.h>
 #include "rtc_call_interface.h"
 #include "model/rtc_peer_status_model.h"
+#include "internal/rtc_internal_observer.h"
 
 namespace core {
 
@@ -20,9 +21,12 @@ using namespace::rtc;
 class RTCCall : public RTCCallInterface {
 
 public:
+    using RTCOberverInternalMap = std::unordered_map<RTCString, std::shared_ptr<RTCObserverInternal>>;
+    using RTCCreateSDPObserverMap = std::unordered_map<RTCString, scoped_refptr<CreateSDPObserverAdapter>>;
+    using RTCSetSDPObserverMap = std::unordered_map<RTCString, scoped_refptr<SetSDPObserverAdapter>>;
     using RTCPeerStatusModelMap = std::unordered_map<RTCString, std::shared_ptr<RTCPeerStatusModel>>;
-    using RTCVideoSourceMap = std::unordered_map<RTCString, RTCVideoSource>;
-    using IceCandidatesMap = std::unordered_map<RTCString, std::vector<JsepIceCandidate>>;
+    using RTCVideoTrackSourceMap = std::unordered_map<RTCString, RTCVideoTrackSourceRef>;
+    using IceCandidatesMap = std::unordered_map<RTCString, std::vector<std::shared_ptr<IceCandidateInterface>>>;
     explicit RTCCall(std::unique_ptr<RTCCallObserverInterface>);
     virtual ~RTCCall();
     
@@ -30,16 +34,16 @@ public:
     void Init(void) override;
     void TransferNetTypeToWebrtc(RTCNetType netType,
                                  bool isInitial) override;
-    std::shared_ptr<RTCVideoSource> GetVideoSource(const RTCString& peerId) override;
+    RTCVideoTrackSourceRef GetVideoTrackSource(const RTCString& peerId) override;
     void CreateOffer(RTCSdpType sdpType,
                      int layers,
                      const RTCString& peerId) override;
     void CreateAnswer(RTCSdpType sdpType,
-                      const StringHashMap& offerMap,
+                      StringHashMap& offerMap,
                       const RTCString& peerId) override;
-    void AddAnswer(const StringHashMap& answerMap,
+    void AddAnswer(StringHashMap& answerMap,
                    const RTCString& peerId) override;
-    void AddIceCandidate(const StringHashMap& candidateMap,
+    void AddIceCandidate(StringHashMap& candidateMap,
                          const RTCString& peerId) override;
     void SetConfigForVideoEncoder(const RTCVideoConfig& config,
                                   const RTCString& peerId) override;
@@ -88,21 +92,45 @@ public:
     void ReleasePeer(const RTCString& peerId) override;
     void ReleaseRTCCall() override;
     
+public:
+    void DidCreateSDP(const RTCString& peerId,
+                      SessionDescriptionInterface* desc,
+                      RTCError error);
+    void DidSetSDP(const RTCString& peerId,
+                   RTCError error);
+    void CommitStashedCandidateToPeer(const RTCString& peerId);
+    scoped_refptr<PeerConnectionInterface> CreatePeer(const RTCString& peerId);
+    scoped_refptr<PeerConnectionInterface> CreatePeer(const RTCString& peerId,
+                                                      bool needSender);
+    RTCString AssembleMediaStreamId(bool isAssistant);
+    RTCVideoTrackSourceRef CreateVideoTrackSource();
+    scoped_refptr<VideoTrackInterface> CreateVideoTrack(const RTCString& peerId);
+    scoped_refptr<AudioTrackInterface> CreateAudioTrack();
+    void UpdateIceState(const RTCString& peerId,
+                        PeerConnectionInterface::IceConnectionState state);
+
 private:
-    scoped_refptr<PeerConnectionInterface>
-    createPeer(const RTCString& peerId);
-    
+    scoped_refptr<PeerConnectionInterface> FindPeerById(const RTCString& peerId);
+                    
+public:
+    RTCOberverInternalMap* observerInternals_;
+    RTCCreateSDPObserverMap* createSDPObserverMap_;
+    RTCSetSDPObserverMap* setSDPObserverMap_;
+    /// peer state list
+    RTCPeerStatusModelMap* peerStates_;
+    /// candidates to be added to peer
+    IceCandidatesMap* toBeAddedICEs_;
 private:
     std::unique_ptr<RTCCallObserverInterface> observer_;
     scoped_refptr<PeerConnectionFactoryInterface> peerFactory_;
     /// audio source
     scoped_refptr<AudioSourceInterface> audioSource_;
-    /// peer state list
-    RTCPeerStatusModelMap* peerStates_;
     /// video source list
-    RTCVideoSourceMap* videoSources_;
-    /// candidates to be added to peer
-    IceCandidatesMap* toBeAddedICEs_;
+    RTCVideoTrackSourceMap* videoTrackSources_;
+    
+    std::unique_ptr<rtc::Thread> network_thread_;
+    std::unique_ptr<rtc::Thread> worker_thread_;
+    std::unique_ptr<rtc::Thread> signaling_thread_;
     
 private:
     /// ice connect overtime, unit: second.

@@ -21,8 +21,7 @@
 
 namespace core {
 
-using RTCVideoSourceInterface = rtc::VideoSourceInterface<webrtc::VideoFrame>;
-using RTCVideoSource = rtc::VideoSourceBase;
+using RTCVideoTrackSourceRef = rtc::scoped_refptr<webrtc::VideoTrackSourceInterface>;
 
 class RTCCallInterface {
 
@@ -39,9 +38,9 @@ public:
     virtual void TransferNetTypeToWebrtc(RTCNetType netType,
                                          bool isInitial) = 0;
     
-    /// attain video source
+    /// attain video track source
     /// @param peerId peer id
-    virtual std::shared_ptr<RTCVideoSource> GetVideoSource(const RTCString& peerId) = 0;
+    virtual RTCVideoTrackSourceRef GetVideoTrackSource(const RTCString& peerId) = 0;
     
     /// create offer. if success, offer will be shipped by delegate
     /// @param sdpType sdp type
@@ -56,19 +55,19 @@ public:
     /// @param offer sdp of offer
     /// @param peerId peer id
     virtual void CreateAnswer(RTCSdpType sdpType,
-                              const StringHashMap& offerMap,
+                              StringHashMap& offerMap,
                               const RTCString& peerId) = 0;
     
     /// add sdp of answer to peer
     /// @param peerId peer id
     /// @param answer sdp of answer
-    virtual void AddAnswer(const StringHashMap& answerMap,
+    virtual void AddAnswer(StringHashMap& answerMap,
                            const RTCString& peerId) = 0;
     
     /// add candidate to peer
     /// @param iceCandidate ice candidate dictionary
     /// @param peerId peer id
-    virtual void AddIceCandidate(const StringHashMap& candidateMap,
+    virtual void AddIceCandidate(StringHashMap& candidateMap,
                                  const RTCString& peerId) = 0;
 
     /// set config for video encoder

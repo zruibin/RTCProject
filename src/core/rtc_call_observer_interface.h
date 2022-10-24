@@ -12,7 +12,7 @@
 #include <api/media_stream_interface.h>
 #include <api/rtc_error.h>
 #include "rtc_macro.h"
-#include "rtc_call_emun.h"
+#include "rtc_emun.h"
 
 
 namespace core {
@@ -26,13 +26,13 @@ public:
     /// create a sdp
     /// @param sdpDict sdp of offer or answer
     /// @param peerId peer identification
-    virtual void OnCreateSdp(const StringHashMap& sdpDict,
+    virtual void OnCreateSdp(StringHashMap& sdpDict,
                              const RTCString& peerId) = 0;
 
     /// generate a local candidate
     /// @param candidate candidate
     /// @param peerId peer identification
-    virtual void OnGenerateIceCandidate(const StringHashMap& sdpDict,
+    virtual void OnGenerateIceCandidate(StringHashMap& sdpDict,
                                         const RTCString& peerId) = 0;
 
     /// remove a group of local candidates

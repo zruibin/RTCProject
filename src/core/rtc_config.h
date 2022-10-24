@@ -9,7 +9,7 @@
 #define RTC_CONFIG_H
 
 #include "rtc_macro.h"
-#include "rtc_call_emun.h"
+#include "rtc_emun.h"
 
 namespace core {
 
