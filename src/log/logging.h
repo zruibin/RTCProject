@@ -16,6 +16,9 @@
 
 namespace log {
 
+extern std::string GetDefaultLoggerDir();
+extern std::string GetDefaultLoggerFile();
+
 enum LoggingSeverity {
     NONE,
     VERBOSE,

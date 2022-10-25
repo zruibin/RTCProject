@@ -38,6 +38,7 @@ RTCCall::RTCCall(std::unique_ptr<RTCCallObserverInterface> observer):
     videoTrackSources_ = new RTCVideoTrackSourceMap;
     createSDPObserverMap_ = new RTCCreateSDPObserverMap;
     setSDPObserverMap_ = new RTCSetSDPObserverMap;
+    fileLogger_ = std::make_unique<RTCFileLogger>(log::GetDefaultLoggerDir(), 20);
 }
 
 RTCCall::~RTCCall() {
@@ -53,6 +54,9 @@ RTCCall::~RTCCall() {
 
 
 void RTCCall::Init(void) {
+    fileLogger_->SetSeverity(RTCFileLoggerSeverity::Verbose);
+    fileLogger_->Start();
+    
     network_thread_ = rtc::Thread::CreateWithSocketServer();
     network_thread_->SetName("network_thread", nullptr);
     RTC_CHECK(network_thread_->Start()) << "Failed to start thread";

@@ -10,16 +10,35 @@
 #include <memory>
 #include <mutex>
 #include <thread>
-
+#include <filesystem>
 
 namespace log {
+
+std::string GetDefaultLoggerDir() {
+    namespace fs = std::filesystem;
+    fs::path dst = fs::current_path() / std::string("log");
+    if (!fs::exists(dst)) {
+        fs::create_directory(dst);
+    }
+    return dst.string();
+}
+
+std::string GetDefaultLoggerFile() {
+    namespace fs = std::filesystem;
+    fs::path dst = fs::current_path() / std::string("Log");
+    if (!fs::exists(dst)) {
+        fs::create_directory(dst);
+    }
+    dst.append("log.log");
+    return dst.string();
+}
 
 LogFileManager& LogFileManager::GetInstance() {
     static LogFileManager *instance = nullptr;
     static std::once_flag flag;
     std::call_once(flag, []() {
         if (instance == nullptr) {
-            instance = new LogFileManager("log.log");
+            instance = new LogFileManager(GetDefaultLoggerFile().c_str());
         }
     });
     return *instance;

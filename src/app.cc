@@ -83,7 +83,7 @@ void App::Init() {
     Log(INFO) << "App Init Start.";
 //    testHttplib();
 //    testTimer();
-//    testRTC();
+    testRTC();
     Log(INFO) << "App Init End.";
 }
 

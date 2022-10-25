@@ -12,6 +12,7 @@
 #include "rtc_call_interface.h"
 #include "model/rtc_peer_status_model.h"
 #include "internal/rtc_internal_observer.h"
+#include "internal/rtc_file_logger.h"
 
 namespace core {
 
@@ -128,6 +129,7 @@ private:
     /// video source list
     RTCVideoTrackSourceMap* videoTrackSources_;
     
+    std::unique_ptr<RTCFileLogger> fileLogger_;
     std::unique_ptr<rtc::Thread> network_thread_;
     std::unique_ptr<rtc::Thread> worker_thread_;
     std::unique_ptr<rtc::Thread> signaling_thread_;
