@@ -11,23 +11,13 @@
 #include <httplib/httplib.h>
 #include "core/rtc_call_interface.h"
 #include "log/logging.h"
+#include "util/timer.h"
 
 
 namespace app {
 
 using namespace::core;
 
-void testHttplib() {
-    Log(INFO) << "App Init Start.";
-    httplib::Client cli("http://www.baidu.com");
-    if (auto res = cli.Get("/")) {
-        Log(INFO) << res->status;
-        Log(INFO)  << res->get_header_value("Content-Type");
-        Log(INFO)  << res->body;
-    } else {
-        Log(INFO) << "error code: " << httplib::to_string(res.error());
-    }
-}
 
 class CallObserver : public RTCCallObserverInterface {
     
@@ -48,10 +38,8 @@ public:
     }
 };
 
-
-void App::Init() {
-    testHttplib();
-    
+void testRTC() {
+    Log(INFO) << "App RTC Start.";
     std::unique_ptr<RTCCallObserverInterface> observer = std::make_unique<CallObserver>();
     std::shared_ptr<RTCCallInterface> call = nullptr;
     auto ret = CreateRTCCallOrError(std::move(observer));
@@ -62,6 +50,40 @@ void App::Init() {
     }
     call = ret.value();
     call->Init();
+    Log(INFO) << "App RTC End.";
+}
+
+void testHttplib() {
+    httplib::Client cli("http://www.baidu.com");
+    if (auto res = cli.Get("/")) {
+        Log(INFO) << res->status;
+        Log(INFO)  << res->get_header_value("Content-Type");
+        Log(INFO)  << res->body;
+    } else {
+        Log(INFO) << "error code: " << httplib::to_string(res.error());
+    }
+}
+
+void testTimer() {
+    Log(DEBUG) << "App timer Start.";
+    util::AsynTimer::Detach([](void* pUser) {
+        Log(DEBUG) << "Detach timer no repeate.";
+    }, 1000, false, nullptr);
+    util::AsynTimer::Detach([](void* pUser) {
+        Log(DEBUG) << "Detach timer was repeate.";
+    }, 1000, true, nullptr);
+    
+    util::Timer::Sleep(10000); // must
+    Log(DEBUG) << "App timer End.";
+}
+
+
+
+void App::Init() {
+    Log(INFO) << "App Init Start.";
+//    testHttplib();
+//    testTimer();
+//    testRTC();
     Log(INFO) << "App Init End.";
 }
 

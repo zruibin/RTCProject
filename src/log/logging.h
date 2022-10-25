@@ -17,13 +17,15 @@
 namespace log {
 
 enum LoggingSeverity {
+    NONE,
     VERBOSE,
-    INFO,
     DEBUG,
+    INFO,
     WARNING,
     ERROR,
-    NONE,
 };
+
+void SetMinWriteLogLevel(LoggingSeverity level);
 
 class LogMessage
 {
@@ -133,6 +135,7 @@ public:
 
 private:
     std::string* stringBuffer_;
+    LoggingSeverity severity_;
 };
 
 

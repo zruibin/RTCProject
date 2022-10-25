@@ -12,7 +12,7 @@
 #include <unordered_map>
 #include <functional>
 #include <mutex>
-
+#include <thread>
 
 namespace util {
     
@@ -23,7 +23,7 @@ class Timer {
 
 public:
     Timer() = default;
-    virtual  ~Timer() = default;
+    virtual ~Timer() = default;
     
     /// 定时器
     /// @param event 定时器执行内容
@@ -34,7 +34,7 @@ public:
     
     /// 睡眠
     /// @param ms 毫秒
-    void Sleep(unsigned ms);
+    static void Sleep(unsigned ms);
  
     /// 是否重复
     bool IsRepeat() const;
@@ -105,6 +105,7 @@ class AsynTimer final {
 
 public:
     AsynTimer() = default;
+    ~AsynTimer();
     
     /// 自动异步执行定时器
     /// @param event 定时器执行内容
@@ -125,6 +126,7 @@ public:
 
 private:
     Timer timer_;
+    std::thread* t_ = nullptr;
 };
 
 }

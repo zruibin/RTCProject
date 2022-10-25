@@ -8,16 +8,19 @@
 
 #include "logging.h"
 #include <iostream>
-#include <chrono>
-#include <iomanip>
 #include <sstream>
-#include <ctime>
 #include "platform/platform.h"
 #include "util/util.h"
 #include "log_file_manager.h"
 
 
 namespace log {
+
+static LoggingSeverity minWriteLevel = INFO;
+
+void SetMinWriteLogLevel(LoggingSeverity level) {
+    minWriteLevel = level;
+}
 
 static const char* loggingSeverityCover(LoggingSeverity severity) {
     static const char* severityList[] = {
@@ -34,6 +37,7 @@ static const char* loggingSeverityCover(LoggingSeverity severity) {
 
 LogMessage::LogMessage(const char* file, int line, LoggingSeverity severity)
         : stringBuffer_(new std::string) {
+    severity_ = severity;
     std::string fileStr(file);
     stringBuffer_->append(util::get_current_time_string());
     stringBuffer_->append(" [");
@@ -51,7 +55,9 @@ LogMessage::LogMessage(const char* file, int line, LoggingSeverity severity)
 LogMessage::~LogMessage() {
     stringBuffer_->append("\n");
     std::cout << stringBuffer_->c_str();
-    LogFileManager::GetInstance().Write(stringBuffer_->c_str());
+    if (severity_ >= minWriteLevel) {
+        LogFileManager::GetInstance().Write(stringBuffer_->c_str());
+    }
     delete stringBuffer_;
 }
 

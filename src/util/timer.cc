@@ -11,7 +11,6 @@
 #include <cstdint>
 #include <chrono>
 #include <memory>
-#include <thread>
 
 /*
  参考：https://blog.csdn.net/hiwubihe/article/details/84206235
@@ -149,13 +148,17 @@ void TimerQueue::HandleTimerEvent() {
 
 /*------------------------------------------------------------------------------*/
 
+AsynTimer::~AsynTimer() {
+    if (t_) delete t_;
+}
+
 AsynTimer AsynTimer::Detach(const TimerEvent& event,
                             uint32_t ms,
                             bool repeat,
                             void* pUser) {
-    AsynTimer timer;
-    timer.Start(event, ms, repeat, pUser);
-    return timer;
+    AsynTimer asynTimer;
+    asynTimer.Start(event, ms, repeat, pUser);
+    return asynTimer;
 }
 
 void AsynTimer::Start(const TimerEvent& event,
@@ -164,8 +167,8 @@ void AsynTimer::Start(const TimerEvent& event,
                       void* pUser) {
     timer_.SetEventCallback(event);
     timer_.SetEventData(pUser);
-    std::thread t(&Timer::Start, timer_, ms, repeat);
-    t.detach();
+    t_ = new std::thread(&Timer::Start, timer_, ms, repeat);
+    t_->detach();
 }
 
 void AsynTimer::Stop() {
