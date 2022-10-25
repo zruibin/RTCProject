@@ -158,6 +158,14 @@ public:
                                 const RTCString& trackId,
                                 const RTCString& peerId) = 0;
 
+    /// set contentType of the video track of the peer
+    /// @param contentType   0：realtime video, 1：screen sharing, 2：other
+    /// @param trackId   video track identity
+    /// @param peerId    peer identification
+    virtual void SetVideoContentType(uint32_t contentType,
+                                     const RTCString& trackId,
+                                     const RTCString& peerId) = 0;
+    
     /// reset simulcastId of the video track of the peer
     /// @param trackId video track id
     /// @param peerId peer id

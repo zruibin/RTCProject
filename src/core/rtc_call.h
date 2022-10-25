@@ -19,15 +19,21 @@ namespace core {
 using namespace::webrtc;
 using namespace::rtc;
 
+using RTCOberverInternalRef = std::shared_ptr<RTCObserverInternal>;
+using RTCOberverInternalMap = std::unordered_map<RTCString, RTCOberverInternalRef>;
+using RTCCreateSDPObserverRef = scoped_refptr<CreateSDPObserverAdapter>;
+using RTCCreateSDPObserverMap = std::unordered_map<RTCString, RTCCreateSDPObserverRef>;
+using RTCSetSDPObserverRef = scoped_refptr<SetSDPObserverAdapter>;
+using RTCSetSDPObserverMap = std::unordered_map<RTCString, RTCSetSDPObserverRef>;
+using RTCPeerStatusModelRef = std::shared_ptr<RTCPeerStatusModel>;
+using RTCPeerStatusModelMap = std::unordered_map<RTCString, RTCPeerStatusModelRef>;
+using RTCVideoTrackSourceMap = std::unordered_map<RTCString, RTCVideoTrackSourceRef>;
+using IceCandidatesRef = std::shared_ptr<IceCandidateInterface>;
+using IceCandidatesMap = std::unordered_map<RTCString, std::vector<IceCandidatesRef>>;
+
 class RTCCall : public RTCCallInterface {
 
 public:
-    using RTCOberverInternalMap = std::unordered_map<RTCString, std::shared_ptr<RTCObserverInternal>>;
-    using RTCCreateSDPObserverMap = std::unordered_map<RTCString, scoped_refptr<CreateSDPObserverAdapter>>;
-    using RTCSetSDPObserverMap = std::unordered_map<RTCString, scoped_refptr<SetSDPObserverAdapter>>;
-    using RTCPeerStatusModelMap = std::unordered_map<RTCString, std::shared_ptr<RTCPeerStatusModel>>;
-    using RTCVideoTrackSourceMap = std::unordered_map<RTCString, RTCVideoTrackSourceRef>;
-    using IceCandidatesMap = std::unordered_map<RTCString, std::vector<std::shared_ptr<IceCandidateInterface>>>;
     explicit RTCCall(std::unique_ptr<RTCCallObserverInterface>);
     virtual ~RTCCall();
     
@@ -74,6 +80,9 @@ public:
     void SetReceiveCsrc(uint32_t csrc,
                         const RTCString& trackId,
                         const RTCString& peerId) override;
+    void SetVideoContentType(uint32_t contentType,
+                             const RTCString& trackId,
+                             const RTCString& peerId) override;
     void ResetSimulcastIdByVideoTrackId(const RTCString& trackId,
                                         const RTCString& peerId) override;
     void SendSEI(unsigned char *seiData,
@@ -109,9 +118,14 @@ public:
     scoped_refptr<AudioTrackInterface> CreateAudioTrack();
     void UpdateIceState(const RTCString& peerId,
                         PeerConnectionInterface::IceConnectionState state);
+    RTCRtpSenderRef VideoSenderFromPeer(const RTCString& peerId);
+    RTCRtpSenderRef AudioSenderFromPeer(const RTCString& peerId);
+    RTCRtpReceiverRef VideoReceiverFromPeer(const RTCString& peerId);
+    RTCRtpReceiverRef AudioReceiverFromPeer(const RTCString& peerId);
 
 private:
     scoped_refptr<PeerConnectionInterface> FindPeerById(const RTCString& peerId);
+    RTCPeerStatusModelRef FindPeerStatusModelById(const RTCString& peerId);
                     
 public:
     RTCOberverInternalMap* observerInternals_;

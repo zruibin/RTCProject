@@ -116,6 +116,24 @@ void RTCCall::CreateOffer(RTCSdpType sdpType,
         transceiverInit.direction = RtpTransceiverDirection::kSendRecv;
         needSender = true;
     }
+    if (layers > 1 && layers <= 3) {
+        std::string str[] = {"low", /*"medium",*/ "high"};
+        std::string msid[] = {"l", /*"m",*/ "h"};
+        // double pri = 0.8;
+        // initialization parameter sets the number of layers in the time domain
+        // How many webrtc::RtpEncodingParameters is how many layers of simulcast.
+        for (int i = 0; i < layers; ++i) {
+            webrtc::RtpEncodingParameters videoEncoding;
+            videoEncoding.rid = str[i-1];
+            // videoEncoding.max_bitrate_bps = layers * i * 100 * 1000;
+            // videoEncoding.bitrate_priority = pri;
+            videoEncoding.num_temporal_layers = layers;
+            transceiverInit.send_encodings.push_back(videoEncoding);
+            // pri -= 0.2;
+            // This is the name of the msid parameter in SDP
+            transceiverInit.stream_ids.push_back(msid[i-1]);
+        }
+    }
     
     CreateSDPObserverAdapter::SDPHandler handler = [this](const RTCString& peerId,
                                                       SessionDescriptionInterface* desc,
@@ -129,6 +147,7 @@ void RTCCall::CreateOffer(RTCSdpType sdpType,
     peer->AddTransceiver(cricket::MEDIA_TYPE_AUDIO, transceiverInit);
     peer->AddTransceiver(cricket::MEDIA_TYPE_VIDEO, transceiverInit);
     PeerConnectionInterface::RTCOfferAnswerOptions options;
+//    if (layers > 1) options.num_simulcast_layers = layers;
     peer->CreateOffer(observer, options);
 }
 
@@ -212,7 +231,7 @@ void RTCCall::AddIceCandidate(RTCStringMap& candidateMap,
         if (it != toBeAddedICEs_->end()) {
             it->second.push_back(candidateRef);
         } else {
-            std::vector<std::shared_ptr<IceCandidateInterface>> candidates{candidateRef};
+            std::vector<IceCandidatesRef> candidates{candidateRef};
             toBeAddedICEs_->emplace(peerId, candidates);
         }
     }
@@ -220,82 +239,222 @@ void RTCCall::AddIceCandidate(RTCStringMap& candidateMap,
 
 void RTCCall::SetConfigForVideoEncoder(const RTCVideoConfig& config,
                                        const RTCString& peerId) {
+    scoped_refptr<PeerConnectionInterface> peer = FindPeerById(peerId);
+    if (peer == nullptr) {
+        Log(ERROR) << "peer[" << peerId
+                    << "] doesn't exist, failed to set video encoder with config.";
+        return;
+    }
     
+    RTCRtpSenderRef videoSender = VideoSenderFromPeer(peerId);
+    if (videoSender == nullptr) {
+        Log(ERROR) << "peer[" << peerId
+                    << "] doesn't have video sender, failed to set video encoder with config.";
+        return;
+    }
+    
+    RtpParameters modifiedParams = videoSender->GetParameters();
+    int encodingsCount = modifiedParams.encodings.size();
+    std::vector<RtpEncodingParameters> encodings;
+    for (int i = 0; i < encodingsCount; ++i) {
+        RtpEncodingParameters encoding = modifiedParams.encodings[i];
+        if (encodingsCount == 1) {
+            // only one encoding means no simulcast, just set bitrate
+            encoding.max_bitrate_bps = config.bitrate * 1000;
+            if (encoding.min_bitrate_bps > 0) {
+                encoding.min_bitrate_bps = config.minBitrate * 1000;
+            }
+        } else {
+            // more than one encodings means simulcast is active
+            if (i == 0) {
+                // low definition simulcast layer, set bitrate and resolution
+                encoding.max_bitrate_bps = config.bitrateLD * 1000;
+                if (encoding.min_bitrate_bps > 0) {
+                    encoding.min_bitrate_bps = config.minBitrateLD * 1000;
+                }
+            } else {
+                // high definition simulcast layer, set bitrate and resolution
+                encoding.max_bitrate_bps = config.bitrate * 1000;
+                if (encoding.min_bitrate_bps > 0) {
+                    encoding.min_bitrate_bps = config.minBitrate * 1000;
+                }
+            }
+        }
+        encoding.max_framerate = config.fps;
+        encodings.push_back(encoding);
+    }
+    modifiedParams.encodings = encodings;
+    videoSender->SetParameters(modifiedParams);
 }
 
 void RTCCall::EnableVideoEncoderLyaer(bool enable,
                                       RTCStreamVideoLayer layer,
                                       const RTCString& peerId) {
+    scoped_refptr<PeerConnectionInterface> peer = FindPeerById(peerId);
+    if (peer == nullptr) {
+        Log(ERROR) << "peer[" << peerId << "] doesn't exist, failed to "
+                    << (enable?"enable":"disable") << " video encoder layer.";
+        return;
+    }
     
+    RTCRtpSenderRef videoSender = VideoSenderFromPeer(peerId);
+    if (videoSender == nullptr) {
+        Log(ERROR) << "peer[" << peerId << "] doesn't have video sender, failed to "
+                    << (enable?"enable":"disable") <<" video encoder layer.";
+        return;
+    }
+    
+    RtpParameters modifiedParams = videoSender->GetParameters();
+    int encodingsCount = modifiedParams.encodings.size();
+    std::vector<RtpEncodingParameters> encodings;
+    for (int i = 0; i < encodingsCount; ++i) {
+        RtpEncodingParameters encoding = modifiedParams.encodings[i];
+        if (enable) {
+            // enable all the encoding layers whose index(i) smaller than or equal to layer parameter
+            if (i <= layer) {
+                encoding.active = true;
+            }
+        } else {
+            // disable all the encoding layers whose index(i) larger than or equal to layer parameter
+            if (i >= layer) {
+                encoding.active = false;
+            }
+        }
+        encodings.push_back(encoding);
+    }
+    modifiedParams.encodings = encodings;
+    videoSender->SetParameters(modifiedParams);
 }
 
 void RTCCall::SetVideoEncodeDegradationPreference(const webrtc::DegradationPreference preference,
                                                   const RTCString& peerId) {
-    
+    // None
 }
 
 void RTCCall::EnableAudioSender(bool isEnabled,
                                 const RTCString& peerId) {
-    
+    // None
 }
 
 void RTCCall::EnableVideoSender(bool isEnabled,
                                 const RTCString& peerId) {
-    
+    // None
 }
 
 void RTCCall::EnableSendAudioTrack(bool isEnabled,
                                    const RTCString& peerId) {
+    scoped_refptr<PeerConnectionInterface> peer = FindPeerById(peerId);
+    if (peer == nullptr) {
+        Log(ERROR) << "peer[" << peerId << "] " << (isEnabled?"enable":"disable")
+                    << "audioTrack in sending direction.";
+        return;
+    }
     
+    RTCRtpSenderRef audioSender = AudioSenderFromPeer(peerId);
+    if (audioSender == nullptr) {
+        Log(ERROR) << "peer[" << peerId << "] doesn't exist, failed to "
+                    << (isEnabled?"enable":"disable") <<" audioTrack in sending direction.";
+        return;
+    }
+    // enable or disable the audioTrack
+    audioSender->track()->set_enabled(isEnabled);
 }
 
 void RTCCall::EnableSendVideoTrack(bool isEnabled,
                                    const RTCString& peerId) {
+    scoped_refptr<PeerConnectionInterface> peer = FindPeerById(peerId);
+    if (peer == nullptr) {
+        Log(ERROR) << "peer[" << peerId << "] " << (isEnabled?"enable":"disable")
+                    << "videoTrack in sending direction.";
+        return;
+    }
     
+    RTCRtpSenderRef videoSender = VideoSenderFromPeer(peerId);
+    if (videoSender == nullptr) {
+        Log(ERROR) << "peer[" << peerId << "] doesn't exist, failed to "
+                    << (isEnabled?"enable":"disable") <<" videoTrack in sending direction.";
+        return;
+    }
+    // enable or disable the videoTrack
+    videoSender->track()->set_enabled(isEnabled);
 }
 
 void RTCCall::EnableReceiveAudioTrack(bool isEnabled,
                                       const RTCString& trackId,
                                       const RTCString& peerId) {
+    scoped_refptr<PeerConnectionInterface> peer = FindPeerById(peerId);
+    if (peer == nullptr) {
+        Log(ERROR) << "peer[" << peerId << "] " << (isEnabled?"enable":"disable")
+                    << "audioTrack in receiving direction.";
+        return;
+    }
     
+    RTCRtpReceiverRef audioReceiver = AudioReceiverFromPeer(peerId);
+    if (audioReceiver == nullptr) {
+        Log(ERROR) << "peer[" << peerId << "] doesn't exist, failed to "
+                    << (isEnabled?"enable":"disable") <<" audioTrack in receiving direction.";
+        return;
+    }
+    // enable or disable the audioTrack
+    audioReceiver->track()->set_enabled(isEnabled);
 }
 
 void RTCCall::EnableReceiveVideoTrack(bool isEnabled,
                                       const RTCString& trackId,
                                       const RTCString& peerId) {
+    scoped_refptr<PeerConnectionInterface> peer = FindPeerById(peerId);
+    if (peer == nullptr) {
+        Log(ERROR) << "peer[" << peerId << "] " << (isEnabled?"enable":"disable")
+                    << "videoTrack in receiving direction.";
+        return;
+    }
     
+    RTCRtpReceiverRef videoReceiver = VideoReceiverFromPeer(peerId);
+    if (videoReceiver == nullptr) {
+        Log(ERROR) << "peer[" << peerId << "] doesn't exist, failed to "
+                    << (isEnabled?"enable":"disable") <<" receiving in sending direction.";
+        return;
+    }
+    // enable or disable the videoTrack
+    videoReceiver->track()->set_enabled(isEnabled);
 }
 
 void RTCCall::ResetCsrcByAudioTrackId(const RTCString& trackId,
                                       const RTCString& peerId) {
-    
+    // None
 }
 
 void RTCCall::ResetCsrcByVideoTrackId(const RTCString& trackId,
                                       const RTCString& peerId) {
-    
+    // None
 }
 
 void RTCCall::SetReceiveCsrc(uint32_t csrc,
                              const RTCString& trackId,
                              const RTCString& peerId) {
-    
+    // None
+}
+
+void RTCCall::SetVideoContentType(uint32_t contentType,
+                                  const RTCString& trackId,
+                                  const RTCString& peerId) {
+    // None
 }
 
 void RTCCall::ResetSimulcastIdByVideoTrackId(const RTCString& trackId,
                                              const RTCString& peerId) {
-    
+    // None
 }
 
 void RTCCall::SendSEI(unsigned char *seiData,
                       const RTCString& peerId) {
-    
+    // None
 }
 
 void RTCCall::GetStats(std::function<void(const std::unordered_map<RTCString, RTCPeerStatsModel>& stats,
                                           const webrtc::RTCError &error)>
                        predicate) {
-    
+    // TODO
 }
 
 std::vector<RTCPeerStatsModel>*
@@ -306,7 +465,7 @@ RTCCall::GetAudioLevelStats() {
 void RTCCall::GetStatsFormEngine(std::function<
                                  void(std::vector<RTCPeerStatsModel> statsAry)>
                                  predicate) {
-    
+    // TODO
 }
 
 std::vector<RTCPeerStatsModel>*
@@ -318,15 +477,54 @@ bool RTCCall::InsertDTMF(const RTCString& tones,
                          double duration,
                          double interToneGap,
                          const RTCString& peerId) {
-    return false;
+    scoped_refptr<PeerConnectionInterface> peer = FindPeerById(peerId);
+    if (peer == nullptr) {
+        Log(ERROR) << "peer[" << peerId << "] " << "doesn't exist, failed to insert dtmf.";
+        return false;
+    }
+    
+    RTCRtpSenderRef audioSender = AudioSenderFromPeer(peerId);
+    if (audioSender == nullptr) {
+        Log(ERROR) << "peer[" << peerId << "] doesn't exist audio sender.";
+        return false;
+    }
+    
+    if (!audioSender->GetDtmfSender()->CanInsertDtmf()) {
+        Log(ERROR) << "peer[" << peerId << "] cann't insert dtmf.";
+        return false;
+    }
+    
+    return audioSender->GetDtmfSender()->InsertDtmf(tones, duration, interToneGap);
 }
  
 void RTCCall::ReleasePeer(const RTCString& peerId) {
-    
+    scoped_refptr<PeerConnectionInterface> peer = FindPeerById(peerId);
+    if (peer != nullptr) {
+        Log(INFO) << "release peer[" << peerId << "].";
+        peer->Close();
+        peer = nullptr;
+        peerStates_->erase(peerId);
+        toBeAddedICEs_->erase(peerId);
+    }
 }
 
 void RTCCall::ReleaseRTCCall() {
+    Log(INFO) << "try to release RTCCall(" << this << ").";
+    // stop timer of peer state checking
+    // TODO
+    // stop traceroute
+    // TODO
     
+    if (peerStates_->size() > 0) {
+        for (auto it = peerStates_->begin(); it != peerStates_->end(); ++it) {
+            auto peer = it->second->peer;
+            peer->Close();
+        }
+    }
+    
+    peerStates_->clear();
+    toBeAddedICEs_->clear();
+    videoTrackSources_->clear();
 }
 
 #pragma mark - Public
@@ -413,7 +611,7 @@ RTCCall::CreatePeer(const RTCString& peerId) {
 //        server.uri = GetPeerConnectionString();
 //        config.servers.push_back(server);
     
-    std::shared_ptr<RTCObserverInternal> observerInternal = std::make_shared<RTCObserverInternal>();
+    RTCOberverInternalRef observerInternal = std::make_shared<RTCObserverInternal>();
     observerInternal->SetCall(this);
     observerInternal->SetPeerId(peerId);
     observerInternal->SetObserver(observer_.get());
@@ -494,25 +692,80 @@ RTCCall::CreateAudioTrack() {
 
 void RTCCall::UpdateIceState(const RTCString& peerId,
                              PeerConnectionInterface::IceConnectionState state) {
-    RTCPeerStatusModelMap::iterator it = peerStates_->find(peerId);
-    if (it == peerStates_->end()) {
+    RTCPeerStatusModelRef statusModel = FindPeerStatusModelById(peerId);
+    if (statusModel == nullptr) {
         Log(ERROR) << "peer[" << peerId << "] doesn't exist, failed to update ice state";
         return ;
     }
-    auto statusModel = it->second;
     statusModel->lastIceState = state;
     statusModel->lastUpdateTimestamp = RTCTimeIntervalSince1970();
+}
+
+RTCRtpSenderRef RTCCall::VideoSenderFromPeer(const RTCString& peerId) {
+    RTCPeerStatusModelRef statusModel = FindPeerStatusModelById(peerId);
+    if (statusModel != nullptr) {
+        for (auto sender : statusModel->senders) {
+            if (sender->track()->kind() == MediaStreamTrackInterface::kVideoKind) {
+                return sender;
+            }
+        }
+    }
+    return nullptr;
+}
+
+RTCRtpSenderRef RTCCall::AudioSenderFromPeer(const RTCString& peerId) {
+    RTCPeerStatusModelRef statusModel = FindPeerStatusModelById(peerId);
+    if (statusModel != nullptr) {
+        for (auto sender : statusModel->senders) {
+            if (sender->track()->kind() == MediaStreamTrackInterface::kAudioKind) {
+                return sender;
+            }
+        }
+    }
+    return nullptr;
+}
+
+RTCRtpReceiverRef RTCCall::VideoReceiverFromPeer(const RTCString& peerId) {
+    RTCPeerStatusModelRef statusModel = FindPeerStatusModelById(peerId);
+    if (statusModel != nullptr) {
+        for (auto reciver : statusModel->receivers) {
+            if (reciver->track()->kind() == MediaStreamTrackInterface::kVideoKind) {
+                return reciver;
+            }
+        }
+    }
+    return nullptr;
+}
+
+RTCRtpReceiverRef RTCCall::AudioReceiverFromPeer(const RTCString& peerId) {
+    RTCPeerStatusModelRef statusModel = FindPeerStatusModelById(peerId);
+    if (statusModel != nullptr) {
+        for (auto reciver : statusModel->receivers) {
+            if (reciver->track()->kind() == MediaStreamTrackInterface::kAudioKind) {
+                return reciver;
+            }
+        }
+    }
+    return nullptr;;
 }
 
 #pragma mark - Private
 
 scoped_refptr<PeerConnectionInterface>
 RTCCall::FindPeerById(const RTCString& peerId) {
+    RTCPeerStatusModelRef statusModel = FindPeerStatusModelById(peerId);
+    if (statusModel == nullptr) {
+        return nullptr;
+    }
+    return statusModel->peer;
+}
+
+RTCPeerStatusModelRef RTCCall::FindPeerStatusModelById(const RTCString& peerId) {
     RTCPeerStatusModelMap::iterator it = peerStates_->find(peerId);
     if (it == peerStates_->end()) {
         return nullptr;
     }
-    return it->second->peer;
+    return it->second;
 }
 
 #pragma mark -

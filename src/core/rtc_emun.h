@@ -63,11 +63,11 @@ enum class RTCCallErrorCode {
 /*------------------------------------------------------------------------------*/
 
 /// 流的不同清晰度的视频层，越大越清晰
-enum class RTCStreamVideoLayer {
+enum RTCStreamVideoLayer {
     /// 视频层0
-    Layer0,
+    RTCStreamVideoLayer0,
     /// 视频层1
-    Layer1
+    RTCStreamVideoLayer1
 };
 
 /// 视频配置枚举
