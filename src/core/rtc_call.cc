@@ -47,6 +47,8 @@ RTCCall::~RTCCall() {
     if (observerInternals_) delete observerInternals_;
     if (createSDPObserverMap_) delete createSDPObserverMap_;
     if (setSDPObserverMap_) delete setSDPObserverMap_;
+    if (audioSource_) audioSource_ = nullptr;
+    if (peerFactory_) peerFactory_ = nullptr;
 }
 
 
@@ -74,9 +76,6 @@ void RTCCall::Init(void) {
             CreateBuiltinVideoDecoderFactory(),
             nullptr /* audio_mixer */,
             nullptr /* audio_processing */);
-    
-    cricket::AudioOptions audioOption; // TODO
-    audioSource_ = this->peerFactory_->CreateAudioSource(audioOption);
 }
 
 void RTCCall::TransferNetTypeToWebrtc(RTCNetType netType,
@@ -130,7 +129,7 @@ void RTCCall::CreateOffer(RTCSdpType sdpType,
 }
 
 void RTCCall::CreateAnswer(RTCSdpType sdpType,
-                           StringHashMap& offerMap,
+                           RTCStringMap& offerMap,
                            const RTCString& peerId) {
     scoped_refptr<PeerConnectionInterface> peer;
     RtpTransceiverInit transceiverInit;
@@ -144,8 +143,8 @@ void RTCCall::CreateAnswer(RTCSdpType sdpType,
     }
     peer = CreatePeer(peerId, needSender);
     
-    SdpType type = webrtc::SdpTypeFromString(offerMap["type"]).value();
-    RTCString sdp = offerMap["sdp"];
+    SdpType type = webrtc::SdpTypeFromString(offerMap[kRTCSessionDescriptionTypeName]).value();
+    RTCString sdp = offerMap[kRTCSessionDescriptionSdpName];
     SdpParseError error;
     
     bool hasRemoteDes = peer->remote_description() != nullptr ? true : false;
@@ -163,7 +162,7 @@ void RTCCall::CreateAnswer(RTCSdpType sdpType,
     peer->SetRemoteDescription(observer, CreateSessionDescription(type, sdp, &error).get());
 }
 
-void RTCCall::AddAnswer(StringHashMap& answerMap,
+void RTCCall::AddAnswer(RTCStringMap& answerMap,
                         const RTCString& peerId) {
     scoped_refptr<PeerConnectionInterface> peer = FindPeerById(peerId);
     if (peer == nullptr) {
@@ -172,8 +171,8 @@ void RTCCall::AddAnswer(StringHashMap& answerMap,
         return;
     }
     
-    SdpType type = webrtc::SdpTypeFromString(answerMap["type"]).value();
-    RTCString sdp = answerMap["sdp"];
+    SdpType type = webrtc::SdpTypeFromString(answerMap[kRTCSessionDescriptionTypeName]).value();
+    RTCString sdp = answerMap[kRTCSessionDescriptionSdpName];
     SdpParseError error;
     SetSDPObserverAdapter::SDPHandler handler = [=](const RTCString& peerId,
                                                     RTCError error) {
@@ -185,12 +184,12 @@ void RTCCall::AddAnswer(StringHashMap& answerMap,
     peer->SetRemoteDescription(observer, CreateSessionDescription(type, sdp, &error).get());
 }
  
-void RTCCall::AddIceCandidate(StringHashMap& candidateMap,
+void RTCCall::AddIceCandidate(RTCStringMap& candidateMap,
                               const RTCString& peerId) {
     // assemble the candidate from iceDic
-    RTCString sdpMid = candidateMap["sdpMid"];
-    RTCString sdp = candidateMap["candidate"];
-    RTCString mlineIndex = candidateMap["sdpMLineIndex"];
+    RTCString sdpMid = candidateMap[kRTCCandidateSdpMidName];
+    RTCString sdp = candidateMap[kRTCCandidateSdpName];
+    RTCString mlineIndex = candidateMap[kRTCCandidateSdpMlineIndexName];
     int sdpMLineIndex = atoi(mlineIndex.c_str());
     SdpParseError error;
     IceCandidateInterface* candidate = CreateIceCandidate(sdpMid, sdpMLineIndex, sdp, &error);
@@ -484,6 +483,8 @@ RTCCall::CreateVideoTrack(const RTCString& peerId) {
 scoped_refptr<AudioTrackInterface>
 RTCCall::CreateAudioTrack() {
     RTCString audioTrackId = "RTC-Core-MS-A0";
+    cricket::AudioOptions audioOption; // TODO
+    audioSource_ = peerFactory_->CreateAudioSource(audioOption);
     return peerFactory_->CreateAudioTrack(audioTrackId, audioSource_.get());
 }
 

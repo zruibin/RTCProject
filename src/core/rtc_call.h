@@ -39,11 +39,11 @@ public:
                      int layers,
                      const RTCString& peerId) override;
     void CreateAnswer(RTCSdpType sdpType,
-                      StringHashMap& offerMap,
+                      RTCStringMap& offerMap,
                       const RTCString& peerId) override;
-    void AddAnswer(StringHashMap& answerMap,
+    void AddAnswer(RTCStringMap& answerMap,
                    const RTCString& peerId) override;
-    void AddIceCandidate(StringHashMap& candidateMap,
+    void AddIceCandidate(RTCStringMap& candidateMap,
                          const RTCString& peerId) override;
     void SetConfigForVideoEncoder(const RTCVideoConfig& config,
                                   const RTCString& peerId) override;

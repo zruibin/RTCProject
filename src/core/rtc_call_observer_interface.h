@@ -26,19 +26,19 @@ public:
     /// create a sdp
     /// @param sdpDict sdp of offer or answer
     /// @param peerId peer identification
-    virtual void OnCreateSdp(StringHashMap& sdpDict,
+    virtual void OnCreateSdp(RTCStringMap& sdpDict,
                              const RTCString& peerId) = 0;
 
     /// generate a local candidate
     /// @param candidate candidate
     /// @param peerId peer identification
-    virtual void OnGenerateIceCandidate(StringHashMap& sdpDict,
+    virtual void OnGenerateIceCandidate(RTCStringMap& sdpDict,
                                         const RTCString& peerId) = 0;
 
     /// remove a group of local candidates
     /// @param candidates a group of candidates
     /// @param peerId peer identification
-    virtual void OnRemoveIceCandidates(const std::vector<StringHashMap>& candidates,
+    virtual void OnRemoveIceCandidates(const std::vector<RTCStringMap>& candidates,
                                        const RTCString& peerId) {}
 
     /// add a received video track

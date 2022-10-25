@@ -16,7 +16,18 @@
 namespace core {
 
 using RTCString = std::string;
-using StringHashMap = std::unordered_map<RTCString, RTCString>;
+using RTCStringMap = std::unordered_map<RTCString, RTCString>;
+
+
+// Names used for a IceCandidate JSON object.
+const char kRTCCandidateSdpMidName[] = "sdpMid";
+const char kRTCCandidateSdpMlineIndexName[] = "sdpMLineIndex";
+const char kRTCCandidateSdpName[] = "candidate";
+
+// Names used for a SessionDescription JSON object.
+const char kRTCSessionDescriptionTypeName[] = "type";
+const char kRTCSessionDescriptionSdpName[] = "sdp";
+
 
 /* Points. */
 struct RTCPoint {
