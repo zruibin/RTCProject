@@ -19,6 +19,7 @@ namespace core {
 
 using RTCRtpSenderRef = rtc::scoped_refptr<webrtc::RtpSenderInterface>;
 using RTCRtpReceiverRef = rtc::scoped_refptr<webrtc::RtpReceiverInterface>;
+using RTCIceConnectionState = webrtc::PeerConnectionInterface::IceConnectionState;
 
 struct RTCPeerStatusModel {
     
@@ -46,11 +47,11 @@ public:
     /// rtp接收器
     std::vector<RTCRtpReceiverRef> receivers;
     /// 创建的时间戳
-    double createdTimestamp;
+    int64_t createdTimestamp;
     /// 最新ice状态的更新时间戳
-    double lastUpdateTimestamp;
+    int64_t lastUpdateTimestamp;
     /// 最新的ice状态
-    webrtc::PeerConnectionInterface::IceConnectionState lastIceState;
+    RTCIceConnectionState lastIceState;
 };
 
 }

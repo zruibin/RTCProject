@@ -16,8 +16,9 @@ namespace core {
 
 using namespace::webrtc;
 using namespace::rtc;
+using RTCIceConnectionState = PeerConnectionInterface::IceConnectionState;
 
-RTC_INLINE double RTCTimeIntervalSince1970() {
+RTC_INLINE int64_t RTCTimeIntervalSince1970() {
     std::chrono::milliseconds ms = std::chrono::duration_cast< std::chrono::milliseconds>(
             std::chrono::system_clock::now().time_since_epoch()
         );
@@ -25,7 +26,7 @@ RTC_INLINE double RTCTimeIntervalSince1970() {
 }
 
 RTCString
-RTCStringByIceConnectionState(PeerConnectionInterface::IceConnectionState new_state);
+RTCStringByIceConnectionState(RTCIceConnectionState new_state);
 
 }
 

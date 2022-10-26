@@ -18,17 +18,17 @@
 
 namespace util {
 
-Timer::Timer(const TimerEvent& event, uint32_t ms, bool repeat, void* pUser)
+Timer::Timer(const TimerEvent& event, int64_t ns, bool repeat, void* pUser)
         : eventCallback_(event)
         , isRepeat_(repeat)
-        , interval_(ms)
+        , interval_(ns)
         , pUser_(pUser) {
     if (interval_ == 0)
         interval_ = 1;
 }
 
-void Timer::Sleep(unsigned ms) {
-    std::this_thread::sleep_for(std::chrono::milliseconds(ms));
+void Timer::Sleep(int64_t ns) {
+    std::this_thread::sleep_for(std::chrono::nanoseconds(ns));
 }
 
 bool Timer::IsRepeat() const {
@@ -43,17 +43,17 @@ void Timer::SetEventData(void* pUser) {
     pUser_ = pUser;
 }
 
-void Timer::Start(int64_t ms, bool repeat) {
+void Timer::Start(int64_t ns, bool repeat) {
     using namespace std::chrono;
     isRepeat_ = repeat;
     auto timeBegin = high_resolution_clock::now();
     int64_t elapsed = 0;
     
     do {
-        std::this_thread::sleep_for(milliseconds(ms - elapsed));
+        std::this_thread::sleep_for(nanoseconds(ns - elapsed));
         timeBegin = high_resolution_clock::now();
         eventCallback_(pUser_);
-        elapsed = duration_cast<milliseconds>(high_resolution_clock::now() - timeBegin).count();
+        elapsed = duration_cast<nanoseconds>(high_resolution_clock::now() - timeBegin).count();
         if (elapsed < 0)
             elapsed = 0;
     } while (isRepeat_);
@@ -73,12 +73,12 @@ int64_t Timer::GetNextTimeout() const {
 
 /*------------------------------------------------------------------------------*/
 
-TimerId TimerQueue::AddTimer(const TimerEvent& event, uint32_t ms, bool repeat, void* pUser) {
+TimerId TimerQueue::AddTimer(const TimerEvent& event, int64_t ns, bool repeat, void* pUser) {
     std::lock_guard<std::mutex> locker(mutex_);
     
     int64_t timeoutPoint = GetTimeNow();
-    TimerId timerId = {timeoutPoint+ms, ++lastTimerId_};
-    auto timer = std::make_shared<Timer>(event, ms, repeat, pUser);
+    TimerId timerId = {timeoutPoint+ns, ++lastTimerId_};
+    auto timer = std::make_shared<Timer>(event, ns, repeat, pUser);
     
     timer->SetNextTimeout(timeoutPoint);
     
@@ -108,7 +108,7 @@ void TimerQueue::RemoveTimer(TimerId timerId) {
 
 int64_t TimerQueue::GetTimeNow() {
     auto timePoint = std::chrono::steady_clock::now();
-    return std::chrono::duration_cast<std::chrono::milliseconds>(timePoint.time_since_epoch()).count();
+    return std::chrono::duration_cast<std::chrono::nanoseconds>(timePoint.time_since_epoch()).count();
 }
 
 int64_t TimerQueue::GetTimeRemaining() {
@@ -118,11 +118,11 @@ int64_t TimerQueue::GetTimeRemaining() {
         return -1;
     
     //因为MAP会自动排序 所以每次所有定时任务 都是按照时间先后排列好的
-    int64_t ms = timers_.begin()->first.first - GetTimeNow();
-    if(ms <= 0)
+    int64_t ns = timers_.begin()->first.first - GetTimeNow();
+    if(ns <= 0)
         return 0;
     
-    return ms;
+    return ns;
 }
 
 void TimerQueue::HandleTimerEvent() {
@@ -153,26 +153,32 @@ AsynTimer::~AsynTimer() {
 }
 
 AsynTimer AsynTimer::Detach(const TimerEvent& event,
-                            uint32_t ms,
+                            int64_t ns,
                             bool repeat,
                             void* pUser) {
     AsynTimer asynTimer;
-    asynTimer.Start(event, ms, repeat, pUser);
+    asynTimer.Start(event, ns, repeat, pUser);
     return asynTimer;
 }
 
 void AsynTimer::Start(const TimerEvent& event,
-                      uint32_t ms,
+                      int64_t ns,
                       bool repeat,
                       void* pUser) {
     timer_.SetEventCallback(event);
     timer_.SetEventData(pUser);
-    t_ = new std::thread(&Timer::Start, timer_, ms, repeat);
+    t_ = new std::thread(&Timer::Start, timer_, ns, repeat);
     t_->detach();
+    isRuning_ = true;
 }
 
 void AsynTimer::Stop() {
     timer_.Stop();
+    isRuning_ = false;
+}
+
+bool AsynTimer::IsRunable() const {
+    return isRuning_;
 }
 
 }

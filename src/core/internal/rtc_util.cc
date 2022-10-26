@@ -11,24 +11,24 @@
 namespace core {
 
 RTCString
-RTCStringByIceConnectionState(PeerConnectionInterface::IceConnectionState new_state)
+RTCStringByIceConnectionState(RTCIceConnectionState new_state)
 {
     switch (new_state) {
-        case PeerConnectionInterface::IceConnectionState::kIceConnectionNew:
+        case RTCIceConnectionState::kIceConnectionNew:
             return "New";
-        case PeerConnectionInterface::IceConnectionState::kIceConnectionChecking:
+        case RTCIceConnectionState::kIceConnectionChecking:
             return "Checking";
-        case PeerConnectionInterface::IceConnectionState::kIceConnectionConnected:
+        case RTCIceConnectionState::kIceConnectionConnected:
             return "Connected";
-        case PeerConnectionInterface::IceConnectionState::kIceConnectionCompleted:
+        case RTCIceConnectionState::kIceConnectionCompleted:
             return "Completed";
-        case PeerConnectionInterface::IceConnectionState::kIceConnectionFailed:
+        case RTCIceConnectionState::kIceConnectionFailed:
             return "Failed";
-        case PeerConnectionInterface::IceConnectionState::kIceConnectionDisconnected:
+        case RTCIceConnectionState::kIceConnectionDisconnected:
             return "Disconnected";
-        case PeerConnectionInterface::IceConnectionState::kIceConnectionClosed:
+        case RTCIceConnectionState::kIceConnectionClosed:
             return "Closed";
-        case PeerConnectionInterface::IceConnectionState::kIceConnectionMax:
+        case RTCIceConnectionState::kIceConnectionMax:
             return "Count";
         default:
             return "Unknown";

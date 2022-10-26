@@ -68,12 +68,16 @@ void testTimer() {
     Log(DEBUG) << "App timer Start.";
     util::AsynTimer::Detach([](void* pUser) {
         Log(DEBUG) << "Detach timer no repeate.";
-    }, 1000, false, nullptr);
-    util::AsynTimer::Detach([](void* pUser) {
-        Log(DEBUG) << "Detach timer was repeate.";
-    }, 1000, true, nullptr);
+    }, 1*TIME_NSEC_PER_SEC, false, nullptr);
     
-    util::Timer::Sleep(10000); // must
+    int runningTime = 0;
+    util::AsynTimer::Detach([&runningTime](void* pUser) {
+        runningTime += 4;
+        Log(DEBUG) << "Detach timer has been running for "
+                    << runningTime << " second(s).";
+    }, 4*TIME_NSEC_PER_SEC, true, nullptr);
+    
+    util::Timer::Sleep(30*TIME_NSEC_PER_SEC); // must
     Log(DEBUG) << "App timer End.";
 }
 

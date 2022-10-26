@@ -32,6 +32,10 @@ namespace core {
 
 RTCCall::RTCCall(std::unique_ptr<RTCCallObserverInterface> observer):
         observer_(std::move(observer)) {
+    /// ice connect overtime, unit: second.
+    iceConnectionTimeout_ = 10;
+    /// ice state check rate: every 4 seconds
+    iceStateCheckRate_ = 4;
     observerInternals_ = new RTCOberverInternalMap;
     peerStates_ = new RTCPeerStatusModelMap;
     toBeAddedICEs_ = new IceCandidatesMap;
@@ -80,6 +84,9 @@ void RTCCall::Init(void) {
             CreateBuiltinVideoDecoderFactory(),
             nullptr /* audio_mixer */,
             nullptr /* audio_processing */);
+    
+    int64_t currentTime = RTCTimeIntervalSince1970();
+    Log(INFO) << "currentTime: " << currentTime;
 }
 
 void RTCCall::TransferNetTypeToWebrtc(RTCNetType netType,
@@ -511,9 +518,7 @@ void RTCCall::ReleasePeer(const RTCString& peerId) {
 void RTCCall::ReleaseRTCCall() {
     Log(INFO) << "try to release RTCCall(" << this << ").";
     // stop timer of peer state checking
-    // TODO
-    // stop traceroute
-    // TODO
+    StopPeerStateCheckTimer();
     
     if (peerStates_->size() > 0) {
         for (auto it = peerStates_->begin(); it != peerStates_->end(); ++it) {
@@ -550,6 +555,15 @@ void RTCCall::DidCreateSDP(const RTCString& peerId,
     auto observer = new RefCountedObject<SetSDPObserverAdapter>(peerId, handler);
     setSDPObserverMap_->emplace(peerId, observer);
     peer->SetLocalDescription(observer, desc->Clone().get());
+    
+    // trigger OnCreateSdp callback
+    std::string sdp;
+    desc->ToString(&sdp);
+    RTCStringMap sdpDict {
+        {kRTCSessionDescriptionSdpName, sdp},
+        {kRTCSessionDescriptionTypeName, desc->type()}
+    };
+    this->observer_->OnCreateSdp(sdpDict, peerId);
 }
 
 void RTCCall::DidSetSDP(const RTCString& peerId,
@@ -638,6 +652,9 @@ RTCCall::CreatePeer(const RTCString& peerId, bool needSender) {
         auto peerStatus = std::make_shared<RTCPeerStatusModel>();
         peerStatus->peerId = peerId;
         peerStatus->peer = peer;
+        peerStatus->createdTimestamp = RTCTimeIntervalSince1970();
+        peerStatus->lastIceState = PeerConnectionInterface::IceConnectionState::kIceConnectionNew;
+        peerStatus->lastUpdateTimestamp = peerStatus->createdTimestamp;
         
         // create senders if need
         if (needSender) {
@@ -656,6 +673,9 @@ RTCCall::CreatePeer(const RTCString& peerId, bool needSender) {
         }
         peerStates_->emplace(peerId, peerStatus);
     }
+    
+    // start timer for checking peer state
+    StartPeerStateCheckTimer();
 
     return peer;
 }
@@ -747,6 +767,57 @@ RTCRtpReceiverRef RTCCall::AudioReceiverFromPeer(const RTCString& peerId) {
         }
     }
     return nullptr;;
+}
+
+void RTCCall::StartPeerStateCheckTimer() {
+    if (peerStateCheckTimer_ != nullptr) {
+        Log(WARNING) << "PeerStateCheckTimer is already running.";
+        return;
+    }
+    int runningTime = 0;
+    peerStateCheckTimer_ = std::make_shared<util::AsynTimer>();
+    peerStateCheckTimer_->Start([this, &runningTime](void* pUser) {
+        runningTime = runningTime + iceStateCheckRate_;
+        Log(INFO) << "PeerStateCheckTimer has been running for "
+                    << runningTime << " second(s).";
+        CheckPeersState();
+    }, iceStateCheckRate_*TIME_NSEC_PER_SEC, true, NULL);
+}
+
+void RTCCall::StopPeerStateCheckTimer() {
+    if (peerStateCheckTimer_ != nullptr && !peerStateCheckTimer_->IsRunable()) {
+        Log(WARNING) << "PeerStateCheckTimer is stopped.";
+        peerStateCheckTimer_->Stop();
+        peerStateCheckTimer_ = nullptr;
+    }
+}
+
+/// check every peer's ice state, check if there is any connection timeout peers.
+void RTCCall::CheckPeersState() {
+    // get current timeStamp
+    int64_t currentTime = RTCTimeIntervalSince1970();
+    // hasUnconnectedPeer: if there any unconnected peer, default is NO
+    bool hasUnconnectedPeer = false;
+    for (auto it = peerStates_->begin(); it != peerStates_->end(); ++it) {
+        RTCPeerStatusModelRef obj = it->second;
+        if (obj->lastIceState < RTCIceConnectionState::kIceConnectionCompleted) {
+            // has unconnected peer
+            hasUnconnectedPeer = true;
+            // calculate the connecting time so far
+            int64_t connectingTime = currentTime - obj->lastUpdateTimestamp;
+            // check if connectingTime is above kIceConnectingTime
+            if (connectingTime > iceConnectionTimeout_) {
+                Log(ERROR) << "peer[" << obj->peerId
+                            << "] timed out, it has been connecting over "
+                            << iceConnectionTimeout_ << " seconds.";
+                observer_->OnPeerStateChangge(RTCPeerState::Failed, obj->peerId);
+            }
+        }
+    }
+    // if there is no unconnected peer then stop the timer.'
+    if (!hasUnconnectedPeer) {
+        StopPeerStateCheckTimer();
+    }
 }
 
 #pragma mark - Private

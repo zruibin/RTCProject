@@ -23,27 +23,26 @@ void RTCObserverInternal::OnDataChannel(rtc::scoped_refptr<DataChannelInterface>
     
 }
 
-void RTCObserverInternal::OnIceConnectionChange(PeerConnectionInterface::IceConnectionState new_state) {
+void RTCObserverInternal::OnIceConnectionChange(RTCIceConnectionState new_state) {
     Log(INFO) << "peer[" << peerId_ << "] OnIceConnectionChange: "
                 << RTCStringByIceConnectionState(new_state);
     call_->UpdateIceState(peerId_, new_state);
-    
     switch (new_state) {
-        case PeerConnectionInterface::IceConnectionState::kIceConnectionConnected: {
+        case RTCIceConnectionState::kIceConnectionConnected: {
             observer_->OnPeerStateChangge(RTCPeerState::Connected, peerId_);
             // TODO
             break;
         }
-        case PeerConnectionInterface::IceConnectionState::kIceConnectionDisconnected: {
+        case RTCIceConnectionState::kIceConnectionDisconnected: {
             observer_->OnPeerStateChangge(RTCPeerState::Disconnected, peerId_);
             break;
         }
-        case PeerConnectionInterface::IceConnectionState::kIceConnectionFailed: {
+        case RTCIceConnectionState::kIceConnectionFailed: {
             // TODO
             observer_->OnPeerStateChangge(RTCPeerState::Failed, peerId_);
             break;
         }
-        case PeerConnectionInterface::IceConnectionState::kIceConnectionClosed: {
+        case RTCIceConnectionState::kIceConnectionClosed: {
             observer_->OnPeerStateChangge(RTCPeerState::Closed, peerId_);
             call_->toBeAddedICEs_->erase(peerId_);
             break;
@@ -54,12 +53,12 @@ void RTCObserverInternal::OnIceConnectionChange(PeerConnectionInterface::IceConn
 }
 
 // Called any time the standards-compliant IceConnectionState changes.
-void RTCObserverInternal::OnStandardizedIceConnectionChange(PeerConnectionInterface::IceConnectionState new_state)  {
+void RTCObserverInternal::OnStandardizedIceConnectionChange(RTCIceConnectionState new_state)  {
     
 }
 
 // Called any time the PeerConnectionState changes.
-void RTCObserverInternal::OnConnectionChange(PeerConnectionInterface::PeerConnectionState new_state)  {
+void RTCObserverInternal::OnConnectionChange(RTCPeerConnectionState new_state)  {
     
 }
 

@@ -15,6 +15,8 @@ namespace core {
 
 using namespace::webrtc;
 using namespace::rtc;
+using RTCIceConnectionState = PeerConnectionInterface::IceConnectionState;
+using RTCPeerConnectionState = PeerConnectionInterface::PeerConnectionState;
 
 class RTCCall;
 
@@ -36,9 +38,9 @@ public:
 public:
     void OnSignalingChange(PeerConnectionInterface::SignalingState new_state) override;
     void OnDataChannel(rtc::scoped_refptr<DataChannelInterface> data_channel) override;
-    void OnIceConnectionChange(PeerConnectionInterface::IceConnectionState new_state) override;
-    void OnStandardizedIceConnectionChange(PeerConnectionInterface::IceConnectionState new_state) override;
-    void OnConnectionChange(PeerConnectionInterface::PeerConnectionState new_state) override;
+    void OnIceConnectionChange(RTCIceConnectionState new_state) override;
+    void OnStandardizedIceConnectionChange(RTCIceConnectionState new_state) override;
+    void OnConnectionChange(RTCPeerConnectionState new_state) override;
     void OnIceGatheringChange(PeerConnectionInterface::IceGatheringState new_state) override;
     void OnIceCandidate(const IceCandidateInterface* candidate) override;
     void OnIceCandidateError(const RTCString& address,

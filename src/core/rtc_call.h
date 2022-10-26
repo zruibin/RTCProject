@@ -13,6 +13,7 @@
 #include "model/rtc_peer_status_model.h"
 #include "internal/rtc_internal_observer.h"
 #include "internal/rtc_file_logger.h"
+#include "../util/timer.h"
 
 namespace core {
 
@@ -122,6 +123,9 @@ public:
     RTCRtpSenderRef AudioSenderFromPeer(const RTCString& peerId);
     RTCRtpReceiverRef VideoReceiverFromPeer(const RTCString& peerId);
     RTCRtpReceiverRef AudioReceiverFromPeer(const RTCString& peerId);
+    void StartPeerStateCheckTimer();
+    void StopPeerStateCheckTimer();
+    void CheckPeersState();
 
 private:
     scoped_refptr<PeerConnectionInterface> FindPeerById(const RTCString& peerId);
@@ -153,8 +157,8 @@ private:
     int iceConnectionTimeout_;
     /// ice state check rate: every 4 seconds
     int iceStateCheckRate_;
-    /// RTCCall error domain
-    RTCString errorDomain;
+    /// timer for checking ice state
+    std::shared_ptr<util::AsynTimer> peerStateCheckTimer_;
 };
 
 }
