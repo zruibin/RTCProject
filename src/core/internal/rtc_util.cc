@@ -10,28 +10,20 @@
 
 namespace core {
 
-RTCString
-RTCStringByIceConnectionState(RTCIceConnectionState new_state)
-{
-    switch (new_state) {
-        case RTCIceConnectionState::kIceConnectionNew:
-            return "New";
-        case RTCIceConnectionState::kIceConnectionChecking:
-            return "Checking";
-        case RTCIceConnectionState::kIceConnectionConnected:
-            return "Connected";
-        case RTCIceConnectionState::kIceConnectionCompleted:
-            return "Completed";
-        case RTCIceConnectionState::kIceConnectionFailed:
-            return "Failed";
-        case RTCIceConnectionState::kIceConnectionDisconnected:
-            return "Disconnected";
-        case RTCIceConnectionState::kIceConnectionClosed:
-            return "Closed";
-        case RTCIceConnectionState::kIceConnectionMax:
-            return "Count";
+RTCString RTCStringBySdpType(RTCSdpType sdpType) {
+    switch (sdpType) {
+        case RTCSdpType::SendOnly:
+            return "SendOnly";
+            break;
+        case RTCSdpType::ReceiveOnly:
+            return "ReceiveOnly";
+            break;
+        case RTCSdpType::SendReceive:
+            return "SendReceive";
+            break;
         default:
-            return "Unknown";
+            return "";
+            break;
     }
 }
 

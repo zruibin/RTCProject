@@ -44,13 +44,13 @@ public:
     /// add a received video track
     /// @param videoTrack video track
     /// @param peerId peer identification
-    virtual void OnAddReceivedVideoTrack(std::shared_ptr<webrtc::VideoTrackInterface> track,
+    virtual void OnAddReceivedVideoTrack(rtc::scoped_refptr<webrtc::VideoTrackInterface> track,
                                          const RTCString& peerId) {}
 
     /// add a received audio track
     /// @param audioTrack audio track
     /// @param peerId peer identification
-    virtual void OnAddReceivedAudioTrack(std::shared_ptr<webrtc::AudioTrackInterface> track,
+    virtual void OnAddReceivedAudioTrack(rtc::scoped_refptr<webrtc::AudioTrackInterface> track,
                                          const RTCString& peerId) {}
 
     /// peer state
@@ -117,7 +117,7 @@ public:
     /// @param error error info
     /// @param peerId peer identification
     virtual void OnOccurredError(const webrtc::RTCError& error,
-                                 const RTCString& trackId) {}
+                                 const RTCString& peerId) {}
 
     /// csrc array changed
     /// @param csrcAry new csrcAry

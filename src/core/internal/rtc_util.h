@@ -11,6 +11,7 @@
 #include <chrono>
 #include <api/peer_connection_interface.h>
 #include "../rtc_macro.h"
+#include "../rtc_emun.h"
 
 namespace core {
 
@@ -19,16 +20,13 @@ using namespace::rtc;
 using RTCIceConnectionState = PeerConnectionInterface::IceConnectionState;
 
 RTC_INLINE int64_t RTCTimeIntervalSince1970() {
-    std::chrono::milliseconds ms = std::chrono::duration_cast< std::chrono::milliseconds>(
-            std::chrono::system_clock::now().time_since_epoch()
-        );
+    using namespace std::chrono;
+    milliseconds ms = duration_cast<milliseconds>(system_clock::now().time_since_epoch());
     return ms.count();
 }
 
-RTCString
-RTCStringByIceConnectionState(RTCIceConnectionState new_state);
+RTCString RTCStringBySdpType(RTCSdpType sdpType);
 
 }
-
 
 #endif /* !RTC_UTIL_H */

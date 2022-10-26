@@ -212,17 +212,15 @@ public:
     /// release all webrtc resource
     virtual void ReleaseRTCCall() = 0;
 
-private:
-    /// manual audio enabled flag
-    bool useManualAudio_;
-    /// audio enable flag
-    bool audioEnabled_;
-    /// built in speaker enabled flag
-    bool builtInSpeakerOn_;
-    /// all audio sender mute flag
-    bool allAudioSenderMute_;
-    /// all audio receiver mute flag
-    bool allAudioReceiverMute_;
+public:
+    /// set all audio sender mute flag
+    virtual void SetIsAllAudioSenderMute(bool isMute) = 0;
+    /// get all audio sender mute flag
+    virtual bool GetIsAllAudioSenderMute() const = 0;
+    /// set all audio receiver mute flag
+    virtual void SetIsAllAudioReceiverMute(bool isMute) = 0;
+    /// get all audio receiver mute flag
+    virtual bool GetIsAllAudioReceiverMute() const = 0;
 };
 
 
@@ -230,10 +228,12 @@ private:
 /*----------------------------------------------------------------------------*/
 
 std::optional<std::shared_ptr<RTCCallInterface>>
-CreateRTCCallOrNull(std::unique_ptr<RTCCallObserverInterface> observer);
+CreateRTCCallOrNull(std::unique_ptr<RTCCallObserverInterface> observer,
+                    RTCBaseConfig& config);
 
 webrtc::RTCErrorOr<std::shared_ptr<RTCCallInterface>>
-CreateRTCCallOrError(std::unique_ptr<RTCCallObserverInterface> observer);
+CreateRTCCallOrError(std::unique_ptr<RTCCallObserverInterface> observer,
+                     RTCBaseConfig& config);
 
 /// get webrtc version
 RTCString getWebRTCVersion(void);

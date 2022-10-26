@@ -49,8 +49,6 @@ public:
                              int error_code,
                              const RTCString& error_text) override;
     void OnIceCandidatesRemoved(const std::vector<cricket::Candidate>& candidates) override;
-    void OnIceConnectionReceivingChange(bool receiving) override;
-    void OnIceSelectedCandidatePairChanged(const cricket::CandidatePairChangeEvent& event) override;
     void OnAddTrack(rtc::scoped_refptr<RtpReceiverInterface> receiver,
                     const std::vector<rtc::scoped_refptr<MediaStreamInterface>>& streams) override;
     void OnTrack(rtc::scoped_refptr<RtpTransceiverInterface> transceiver) override;

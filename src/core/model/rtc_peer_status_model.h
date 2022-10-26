@@ -28,7 +28,7 @@ public:
         char buffer[100];;
         snprintf(buffer, sizeof(buffer),
                  "{peerId:%s, peer:%p, lastIceState:%d, \
-                 createdTimestamp:%f, lastUpdateTimestamp:%f, \
+                 createdTimestamp:%lld, lastUpdateTimestamp:%lld, \
                  senders:%p, receivers:%p}",
                  peerId.c_str(), peer.get(), lastIceState,
                  createdTimestamp, lastUpdateTimestamp,

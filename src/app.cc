@@ -40,9 +40,10 @@ public:
 
 void testRTC() {
     Log(INFO) << "App RTC Start.";
+    RTCBaseConfig config;
     std::unique_ptr<RTCCallObserverInterface> observer = std::make_unique<CallObserver>();
     std::shared_ptr<RTCCallInterface> call = nullptr;
-    auto ret = CreateRTCCallOrError(std::move(observer));
+    auto ret = CreateRTCCallOrError(std::move(observer), config);
     if (!ret.ok()) {
         const char* message = ret.error().message();
         Log(ERROR) << "CreateRTCCall error: " << message;

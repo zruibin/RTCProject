@@ -35,7 +35,8 @@ using IceCandidatesMap = std::unordered_map<RTCString, std::vector<IceCandidates
 class RTCCall : public RTCCallInterface {
 
 public:
-    explicit RTCCall(std::unique_ptr<RTCCallObserverInterface>);
+    explicit RTCCall(std::unique_ptr<RTCCallObserverInterface>,
+                     RTCBaseConfig&);
     virtual ~RTCCall();
     
 public:
@@ -104,6 +105,12 @@ public:
     void ReleaseRTCCall() override;
     
 public:
+    void SetIsAllAudioSenderMute(bool isMute) override;
+    bool GetIsAllAudioSenderMute() const override;
+    void SetIsAllAudioReceiverMute(bool isMute) override;
+    bool GetIsAllAudioReceiverMute() const override;
+    
+public:
     void DidCreateSDP(const RTCString& peerId,
                       SessionDescriptionInterface* desc,
                       RTCError error);
@@ -127,7 +134,7 @@ public:
     void StopPeerStateCheckTimer();
     void CheckPeersState();
 
-private:
+public:
     scoped_refptr<PeerConnectionInterface> FindPeerById(const RTCString& peerId);
     RTCPeerStatusModelRef FindPeerStatusModelById(const RTCString& peerId);
                     
@@ -141,6 +148,7 @@ public:
     IceCandidatesMap* toBeAddedICEs_;
 private:
     std::unique_ptr<RTCCallObserverInterface> observer_;
+    RTCBaseConfig baseConfig_;
     scoped_refptr<PeerConnectionFactoryInterface> peerFactory_;
     /// audio source
     scoped_refptr<AudioSourceInterface> audioSource_;
@@ -159,6 +167,10 @@ private:
     int iceStateCheckRate_;
     /// timer for checking ice state
     std::shared_ptr<util::AsynTimer> peerStateCheckTimer_;
+    /// all audio sender mute flag
+    bool isAllAudioSenderMute_;
+    /// all audio receiver mute flag
+    bool isAllAudioReceiverMute_;
 };
 
 }

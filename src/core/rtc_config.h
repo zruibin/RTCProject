@@ -8,10 +8,20 @@
 #ifndef RTC_CONFIG_H
 #define RTC_CONFIG_H
 
+#include <vector>
 #include "rtc_macro.h"
 #include "rtc_emun.h"
 
 namespace core {
+
+struct RTCBaseConfig {
+    /// 公网的turn服务器地址
+    std::vector<RTCString> interTurns;
+    /// turn服务器的用户名
+    RTCString turnUserName;
+    /// turn服务器的凭证
+    RTCString turnCredential;
+};
 
 struct RTCVideoConfig {
     
