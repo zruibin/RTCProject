@@ -14,8 +14,8 @@
 namespace util {
 
 std::string get_current_time_string(void);
-long get_current_time_seconds(void);
-long get_current_time_milliseconds(void);
+int64_t get_current_time_seconds(void);
+int64_t get_current_time_milliseconds(void);
 
 }
 

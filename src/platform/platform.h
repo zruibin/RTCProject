@@ -83,6 +83,8 @@ typedef signed char INT8; /* Signed 8 bit value */
 namespace platform {
 
 int thread_set_name(const char*);
+const char* thread_get_current_name();
+
 unsigned short thread_get_current_id(void);
 
 

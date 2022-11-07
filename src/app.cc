@@ -12,7 +12,7 @@
 #include "core/rtc_call_interface.h"
 #include "log/logging.h"
 #include "util/timer.h"
-
+#include "platform/platform.h"
 
 namespace app {
 
@@ -85,7 +85,9 @@ void testTimer() {
 
 
 void App::Init() {
+    platform::thread_set_name("RTCProject.main-thread");
     Log(INFO) << "App Init Start.";
+    Log(VERBOSE) << "Current Thread Name: " << platform::thread_get_current_name();
 //    testHttplib();
 //    testTimer();
     testRTC();

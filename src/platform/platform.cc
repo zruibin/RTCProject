@@ -21,6 +21,13 @@ int thread_set_name(const char* name) {
 #endif
 }
 
+const char* thread_get_current_name() {
+    constexpr size_t length = 256;
+    char threadName[length];
+    pthread_getname_np(pthread_self(), threadName, length);
+    return threadName;
+}
+
 unsigned short thread_get_current_id(void) {
     std::ostringstream oss;
     oss << std::hash<std::thread::id>()(std::this_thread::get_id());
