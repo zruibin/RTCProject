@@ -11,7 +11,7 @@
 #include <sstream>
 #include "platform/platform.h"
 #include "util/util.h"
-#include "log_file_manager.h"
+#include "log/log_file_manager.h"
 
 
 namespace log {

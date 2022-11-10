@@ -10,9 +10,9 @@
 
 #include <chrono>
 #include <api/peer_connection_interface.h>
-#include "../rtc_macro.h"
-#include "../rtc_emun.h"
-#include "../../util/util.h"
+#include "core/rtc_macro.h"
+#include "core/rtc_emun.h"
+#include "util/util.h"
 
 namespace core {
 

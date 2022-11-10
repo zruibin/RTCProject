@@ -9,7 +9,7 @@
 #define RTC_INTERNAL_OBSERVER_H
 
 #include <api/peer_connection_interface.h>
-#include "../rtc_call_observer_interface.h"
+#include "core/rtc_call_observer_interface.h"
 
 namespace core {
 

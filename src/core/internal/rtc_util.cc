@@ -6,7 +6,7 @@
  * Copyright (c) 2022年 Ruibin.Chow All rights reserved.
  */
 
-#include "rtc_util.h"
+#include "core/internal/rtc_util.h"
 
 namespace core {
 

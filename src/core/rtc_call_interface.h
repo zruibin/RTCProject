@@ -13,11 +13,11 @@
 #include <api/peer_connection_interface.h>
 #include <media/base/video_source_base.h>
 #include <api/rtp_parameters.h>
-#include "rtc_call_observer_interface.h"
-#include "rtc_object.h"
-#include "model/rtc_peer_stats_model.h"
-#include "model/rtc_peer_stats_model.h"
-#include "rtc_config.h"
+#include "core/rtc_call_observer_interface.h"
+#include "core/rtc_object.h"
+#include "core/model/rtc_peer_stats_model.h"
+#include "core/model/rtc_peer_stats_model.h"
+#include "core/rtc_config.h"
 
 namespace core {
 

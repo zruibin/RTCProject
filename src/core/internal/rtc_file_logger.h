@@ -11,7 +11,7 @@
 #include <memory>
 #include <rtc_base/log_sinks.h>
 #include <rtc_base/logging.h>
-#include "../rtc_macro.h"
+#include "core/rtc_macro.h"
 
 namespace core {
 

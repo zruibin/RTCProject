@@ -23,8 +23,8 @@
 #include <rtc_base/checks.h>
 #include <rtc_base/logging.h>
 //#include <rtc_base/strings/json.h>
-#include "internal/rtc_util.h"
-#include "../log/logging.h"
+#include "core/internal/rtc_util.h"
+#include "log/logging.h"
 
 namespace core {
 

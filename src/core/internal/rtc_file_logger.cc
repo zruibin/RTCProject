@@ -6,7 +6,7 @@
  * Copyright (c) 2022年 Ruibin.Chow All rights reserved.
  */
 
-#include "rtc_file_logger.h"
+#include "core/internal/rtc_file_logger.h"
 #include <filesystem>
 
 namespace core {

@@ -9,11 +9,11 @@
 #define RTC_CALL_H
 
 #include <api/jsep_ice_candidate.h>
-#include "rtc_call_interface.h"
-#include "model/rtc_peer_status_model.h"
-#include "internal/rtc_internal_observer.h"
-#include "internal/rtc_file_logger.h"
-#include "../util/timer.h"
+#include "core/rtc_call_interface.h"
+#include "core/model/rtc_peer_status_model.h"
+#include "core/internal/rtc_internal_observer.h"
+#include "core/internal/rtc_file_logger.h"
+#include "util/timer.h"
 
 namespace core {
 

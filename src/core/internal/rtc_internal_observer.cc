@@ -6,11 +6,11 @@
  * Copyright (c) 2022年 Ruibin.Chow All rights reserved.
  */
 
-#include "rtc_internal_observer.h"
+#include "core/internal/rtc_internal_observer.h"
 #include <api/jsep_ice_candidate.h>
-#include "../rtc_call.h"
-#include "../../log/logging.h"
-#include "rtc_util.h"
+#include "core/rtc_call.h"
+#include "log/logging.h"
+#include "core/internal/rtc_util.h"
 
 namespace core {
 

@@ -13,7 +13,7 @@
 #include <api/peer_connection_interface.h>
 #include <api/rtp_sender_interface.h>
 #include <api/rtp_receiver_interface.h>
-#include "../rtc_macro.h"
+#include "core/rtc_macro.h"
 
 namespace core {
 

@@ -9,8 +9,8 @@
 #define RTC_CONFIG_H
 
 #include <vector>
-#include "rtc_macro.h"
-#include "rtc_emun.h"
+#include "core/rtc_macro.h"
+#include "core/rtc_emun.h"
 
 namespace core {
 

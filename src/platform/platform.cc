@@ -6,7 +6,7 @@
  * Copyright (c) 2022年 Ruibin.Chow All rights reserved.
  */
 
-#include "platform.h"
+#include "platform/platform.h"
 #include <pthread.h>
 #include <sstream>
 #include <thread>

@@ -8,7 +8,7 @@
 #ifndef RTC_PEER_STATS_MODEL_H
 #define RTC_PEER_STATS_MODEL_H
 
-#include "../rtc_macro.h"
+#include "core/rtc_macro.h"
 
 namespace core {
 

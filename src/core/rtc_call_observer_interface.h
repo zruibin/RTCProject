@@ -11,8 +11,8 @@
 #include <vector>
 #include <api/media_stream_interface.h>
 #include <api/rtc_error.h>
-#include "rtc_macro.h"
-#include "rtc_emun.h"
+#include "core/rtc_macro.h"
+#include "core/rtc_emun.h"
 
 
 namespace core {
