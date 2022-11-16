@@ -41,14 +41,14 @@ LogMessage::LogMessage(const char* file, int line, LoggingSeverity severity)
     std::string fileStr(file);
     stringBuffer_->append(util::get_current_time_string());
     stringBuffer_->append(" [");
+    stringBuffer_->append(std::to_string(platform::thread_get_current_id()));
+    stringBuffer_->append("]");
+    stringBuffer_->append("[");
     stringBuffer_->append(fileStr.substr(fileStr.find_last_of("/")+1));
     stringBuffer_->append(":");
     stringBuffer_->append(std::to_string(line));
     stringBuffer_->append("]");
     stringBuffer_->append(loggingSeverityCover(severity));
-    stringBuffer_->append("[");
-    stringBuffer_->append(std::to_string(platform::thread_get_current_id()));
-    stringBuffer_->append("]");
     stringBuffer_->append(" ");
 }
 

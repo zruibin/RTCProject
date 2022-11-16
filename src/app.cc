@@ -13,6 +13,7 @@
 #include "log/logging.h"
 #include "util/timer.h"
 #include "platform/platform.h"
+#include "network/socket_factory.h"
 
 namespace app {
 
@@ -82,7 +83,36 @@ void testTimer() {
     Log(DEBUG) << "App timer End.";
 }
 
-
+void testSocket() {
+    Log(DEBUG) << "App Socket Start.";
+    using namespace network;
+    std::string url = "ws://localhost:8001/?roomId=123221&peerId=ffdsds";
+    std::shared_ptr<SocketInterface> socket = CreateSocket(url,
+                                                           SocketInterface::Protocol::kWS);
+    socket->SetGetOpenParamHandler([](SocketInterface::Protocol protocol,
+                                      const std::string& remoteIp) -> std::string {
+        Log(DEBUG) << "SetGetOpenParamHandler->" << remoteIp;
+    });
+    socket->SetConnectStateChangedHandler([](bool connected,
+                                             SocketInterface::Protocol protocol,
+                                             const std::string& networkName,
+                                             int networkType) {
+        Log(DEBUG) << "SetConnectStateChangedHandler->" << connected;
+    });
+    socket->SetFailedHandler([](SocketInterface::Error code) {
+        Log(DEBUG) << "SetFailedHandler->" << SocketInterface::ErrorToString(code);
+    });
+    socket->SetReceivedFrameHandler([](const uint8_t* buf,
+                                       int len,
+                                       SocketInterface::FrameType frameType) {
+        Log(DEBUG) << "SetReceivedFrameHandler->" << len;
+    });
+    socket->SetSubProtocol("protoo");
+    socket->Open();
+    util::Timer::Sleep(30*TIME_NSEC_PER_SEC);
+    socket->Close();
+    Log(DEBUG) << "App Socket End.";
+}
 
 void App::Init() {
     platform::thread_set_name("RTCProject.main-thread");
@@ -90,7 +120,8 @@ void App::Init() {
     Log(VERBOSE) << "Current Thread Name: " << platform::thread_get_current_name();
 //    testHttplib();
 //    testTimer();
-    testRTC();
+    testSocket();
+//    testRTC();
     Log(INFO) << "App Init End.";
 }
 

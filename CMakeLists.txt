@@ -105,6 +105,7 @@ include("${src_dir}/core/CMakeLists.txt")
 include("${src_dir}/log/CMakeLists.txt")
 include("${src_dir}/platform/CMakeLists.txt")
 include("${src_dir}/util/CMakeLists.txt")
+include("${src_dir}/network/CMakeLists.txt")
 # libs
 include("${libs_dir}/nlohmann/CMakeLists.txt")
 include("${libs_dir}/asio/CMakeLists.txt")
@@ -128,6 +129,7 @@ set(DEPENDS_LIBS
     ${log_all_file}
     ${platform_all_file}
     ${util_all_file}
+    ${network_all_file}
 
     ${asio_all_file}
     ${kcp_all_file}
@@ -151,6 +153,7 @@ set(modules_list
     log
     platform
     util
+    network
 )
 
 set(DEPENDS_LIBS 
