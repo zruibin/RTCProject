@@ -9,7 +9,7 @@
 #define WEB_SOCKET_H
 
 #include "socket.h"
-#include <websocketpp/config/asio_no_tls_client.hpp>
+#include <websocketpp/config/asio_client.hpp>
 #include <websocketpp/client.hpp>
 
 namespace network {

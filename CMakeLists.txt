@@ -194,6 +194,7 @@ source_group(TREE "${CMAKE_SOURCE_DIR}" FILES ${HEADERS} ${SOURCES})
 include_directories(
     "${CMAKE_SOURCE_DIR}/webrtc/abseil"
     "${CMAKE_SOURCE_DIR}/webrtc/include"
+    "${CMAKE_SOURCE_DIR}/webrtc/include_third_party"
 )
 
 set(WebRTCLib "${CMAKE_SOURCE_DIR}/webrtc/lib/libwebrtc.a")

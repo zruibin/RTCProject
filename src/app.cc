@@ -123,7 +123,7 @@ void App::Init() {
     Log(VERBOSE) << "Current Thread Name: " << platform::thread_get_current_name();
 //    testHttplib();
 //    testTimer();
-//    testSocket();
+    testSocket();
 //    testRTC();
     Log(INFO) << "App Init End.";
 }

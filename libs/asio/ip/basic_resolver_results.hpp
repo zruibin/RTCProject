@@ -2,7 +2,7 @@
 // ip/basic_resolver_results.hpp
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2020 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2022 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -142,18 +142,9 @@ public:
       {
         using namespace std; // For memcpy.
         typename InternetProtocol::endpoint endpoint;
-        // Fixed for wrong ai_addrlen 
-        auto addrlen = address_info->ai_addrlen;
-        if (address_info->ai_addrlen == 128) {
-          if (address_info->ai_family == ASIO_OS_DEF(AF_INET)) {
-            addrlen = sizeof(asio::detail::sockaddr_in4_type);
-          } else {
-            addrlen = sizeof(asio::detail::sockaddr_in6_type);
-          }
-        }
-        endpoint.resize(static_cast<std::size_t>(addrlen));
+        endpoint.resize(static_cast<std::size_t>(address_info->ai_addrlen));
         memcpy(endpoint.data(), address_info->ai_addr,
-            addrlen);
+            address_info->ai_addrlen);
         results.values_->push_back(
             basic_resolver_entry<InternetProtocol>(endpoint,
               actual_host_name, service_name));

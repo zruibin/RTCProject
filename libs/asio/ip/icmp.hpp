@@ -2,7 +2,7 @@
 // ip/icmp.hpp
 // ~~~~~~~~~~~
 //
-// Copyright (c) 2003-2020 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2022 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -62,11 +62,7 @@ public:
   /// Obtain an identifier for the type of the protocol.
   int type() const ASIO_NOEXCEPT
   {
-#if defined(ASIO_WINDOWS)
     return ASIO_OS_DEF(SOCK_RAW);
-#else
-    return ASIO_OS_DEF(SOCK_DGRAM); // SOCK_RAW need root
-#endif
   }
 
   /// Obtain an identifier for the protocol.

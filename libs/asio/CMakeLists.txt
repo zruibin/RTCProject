@@ -1,5 +1,5 @@
 
-message("asio version was 1.18.1")
+message("asio version was 1.24.0")
 
 set(asio_name asio)
 
