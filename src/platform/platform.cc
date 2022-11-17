@@ -28,7 +28,7 @@ const char* thread_get_current_name() {
     return threadName;
 }
 
-unsigned short thread_get_current_id(void) {
+UINT16 thread_get_current_id(void) {
     std::ostringstream oss;
     oss << std::hash<std::thread::id>()(std::this_thread::get_id());
     unsigned short tid = std::stoull(oss.str());

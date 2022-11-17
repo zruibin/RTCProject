@@ -86,31 +86,34 @@ void testTimer() {
 void testSocket() {
     Log(DEBUG) << "App Socket Start.";
     using namespace network;
-    std::string url = "ws://localhost:8001/?roomId=123221&peerId=ffdsds";
+    std::string url = "ws://localhost:8001/?roomId=123221&peerId=ffdsds";//"ws://localhost:9806";
     std::shared_ptr<SocketInterface> socket = CreateSocket(url,
                                                            SocketInterface::Protocol::kWS);
-    socket->SetGetOpenParamHandler([](SocketInterface::Protocol protocol,
-                                      const std::string& remoteIp) -> std::string {
-        Log(DEBUG) << "SetGetOpenParamHandler->" << remoteIp;
-    });
     socket->SetConnectStateChangedHandler([](bool connected,
                                              SocketInterface::Protocol protocol,
                                              const std::string& networkName,
                                              int networkType) {
-        Log(DEBUG) << "SetConnectStateChangedHandler->" << connected;
+        Log(DEBUG) << "SetConnectStateChangedHandler: " << connected;
     });
-    socket->SetFailedHandler([](SocketInterface::Error code) {
-        Log(DEBUG) << "SetFailedHandler->" << SocketInterface::ErrorToString(code);
+    socket->SetFailedHandler([](SocketInterface::Error code,
+                                const std::string& reason) {
+        Log(DEBUG) << "SetFailedHandler: " << SocketInterface::ErrorToString(code)
+                    << ", reason: " << reason;
     });
-    socket->SetReceivedFrameHandler([](const uint8_t* buf,
+    socket->SetReceivedFrameHandler([](const char* buf,
                                        int len,
                                        SocketInterface::FrameType frameType) {
-        Log(DEBUG) << "SetReceivedFrameHandler->" << len;
+        std::string str(buf, len);
+        Log(DEBUG) << "ReceivedFrameHandler: " << str;
     });
     socket->SetSubProtocol("protoo");
     socket->Open();
-    util::Timer::Sleep(30*TIME_NSEC_PER_SEC);
+    util::Timer::Sleep(3*TIME_NSEC_PER_SEC);
+//    std::string data = "一二三四五...";
+//    socket->Send(data.c_str(), data.length(), SocketInterface::FrameType::kText);
+    util::Timer::Sleep(10*TIME_NSEC_PER_SEC);
     socket->Close();
+    util::Timer::Sleep(3*TIME_NSEC_PER_SEC);
     Log(DEBUG) << "App Socket End.";
 }
 
@@ -120,7 +123,7 @@ void App::Init() {
     Log(VERBOSE) << "Current Thread Name: " << platform::thread_get_current_name();
 //    testHttplib();
 //    testTimer();
-    testSocket();
+//    testSocket();
 //    testRTC();
     Log(INFO) << "App Init End.";
 }

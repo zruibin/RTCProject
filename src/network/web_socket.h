@@ -25,6 +25,7 @@ using CloseValue = websocketpp::close::status::value;
 class WebSocket : public Socket, public std::enable_shared_from_this<WebSocket> {
 
 public:
+    WebSocket() = delete;
     WebSocket(const std::string& url);
     virtual ~WebSocket();
     
@@ -33,7 +34,7 @@ public:
     void SetConnectTimeout(int timeout) override;
     void Open() override;
     void Close() override;
-    void Send(const uint8_t* buf, int len, FrameType frameType) override;
+    void Send(const char/*uint8_t*/* buf, int len, FrameType frameType) override;
     void TriggerError(Error error, const std::string& reason) override;
     
 private:
@@ -53,7 +54,6 @@ private:
     std::shared_ptr<WebsocketClient> clientRef_;
     ConnectHandler hdl_;
     ConnectionPtr con_;
-    std::shared_ptr<asio::io_context> ioContext_;
     std::string url_;
     
     int64_t startConnectTime_ = 0;

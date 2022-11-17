@@ -19,9 +19,7 @@ class SocketInterface {
 public:
     enum class Protocol {
         kWS = 0,
-        kWSS,
         kKWS,
-        kKWSS,
     };
     
     enum class State {
@@ -51,31 +49,28 @@ public:
     static const char* StateToString(State state);
     static const char* ErrorToString(Error error);
     
-    using GetOpenParamHandler = std::function<std::string(Protocol protocol,
-                                                          const std::string& remoteIp)> ;
     using ConnectStateChangedHandler = std::function<void(bool connected,
                                                           Protocol protocol,
                                                           const std::string& networkName,
                                                           int networkType)> ;
-    using FailedHandler = std::function<void(Error error)>;
-    using ReceivedFrameHandler = std::function<void(const uint8_t* buf,
+    using FailedHandler = std::function<void(Error error,
+                                             const std::string& reason)>;
+    using ReceivedFrameHandler = std::function<void(const char* buf,
                                                     int len,
                                                     FrameType frameType)>;
     
 public:
     virtual ~SocketInterface() = default;
     
-    virtual void SetGetOpenParamHandler(GetOpenParamHandler getOpenParamHandler) {}
     virtual void SetConnectStateChangedHandler(ConnectStateChangedHandler connectStateChangedHandler) {}
     virtual void SetFailedHandler(FailedHandler failedHandler) {}
     virtual void SetReceivedFrameHandler(ReceivedFrameHandler receivedFrameHandler) {}
     
-    virtual Error Init() = 0;
-    virtual Error DeInit() = 0;
     virtual void SetConnectTimeout(int timeout) = 0;
+    virtual void UseTLS(bool useTLS) = 0;
     virtual void Open() = 0;
     virtual void Close() = 0;
-    virtual void Send(const uint8_t* buf, int len, FrameType frameType) = 0;
+    virtual void Send(const char* buf, int len, FrameType frameType) = 0;
     virtual State GetState() = 0;
     virtual Error GetError() = 0;
     virtual bool IsConnected() = 0;

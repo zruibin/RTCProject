@@ -85,7 +85,7 @@ namespace platform {
 int thread_set_name(const char*);
 const char* thread_get_current_name();
 
-unsigned short thread_get_current_id(void);
+UINT16 thread_get_current_id(void);
 
 
 }

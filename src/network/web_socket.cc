@@ -15,26 +15,25 @@ namespace network {
 WebSocket::WebSocket(const std::string& url) : url_(url) {
     Log(INFO) << "WebSocket::WebSocket";
     clientRef_ = std::make_shared<WebsocketClient>();
-    ioContext_ = std::make_shared<asio::io_context>();
     
     // 初始化 ASIO
     ErrorCode ec;
     clientRef_->init_asio(ec);
     if (ec) {
-        Log(ERROR) << " init_asio failed: " << ec.message();
+        Log(ERROR) << "init_asio failed: " << ec.message();
         return;
     }
     clientRef_->start_perpetual();
     
     std::shared_ptr<WebsocketClient> client = clientRef_;
     auto runLoop = [client] {
-        Log(INFO) << "runLoop begin";
-        websocketpp::lib::error_code ec;
+        Log(INFO) << "WebSocket RunLoop begin.";
+        ErrorCode ec;
         client->get_io_service().run(ec);
         if (ec) {
-            Log(ERROR) << "runLoop failed: " << ec.message();
+            Log(ERROR) << "WebSocket RunLoop failed: " << ec.message();
         }
-        Log(INFO) << "runLoop end";
+        Log(INFO) << "WebSocket RunLoop end.";
     };
     std::thread wsThread(runLoop);
     wsThread.detach();
@@ -42,6 +41,8 @@ WebSocket::WebSocket(const std::string& url) : url_(url) {
 
 WebSocket::~WebSocket() {
     Log(INFO) << "WebSocket::~WebSocket";
+    clientRef_->stop_perpetual();
+    clientRef_->get_io_service().stop();
 }
 
 SocketInterface::Error WebSocket::Init() {
@@ -52,28 +53,11 @@ SocketInterface::Error WebSocket::Init() {
     clientRef_->clear_access_channels(websocketpp::log::alevel::frame_header);
     
 //    clientRef_->set_connect_timeout(connectTimeout_);
-    clientRef_->set_open_handshake_timeout(connectTimeout_);
-    clientRef_->set_pong_timeout(pongTimeout_);
+//    clientRef_->set_open_handshake_timeout(connectTimeout_);
+//    clientRef_->set_pong_timeout(pongTimeout_);
     
     std::weak_ptr<WebSocket> weakSelf(WebSocket::shared_from_this());
-    clientRef_->set_socket_init_handler([this, weakSelf] (ConnectHandler hdl, SocketType& socket) {
-        if (auto self = weakSelf.lock()) {
-            OnSocketInit(hdl, socket);
-        }
-    });
-    
-    clientRef_->set_tcp_pre_init_handler([this, weakSelf] (ConnectHandler hdl) {
-        if (auto self = weakSelf.lock()) {
-            OnTCPPreInit(hdl);
-        }
-    });
-    
-    clientRef_->set_tcp_post_init_handler([this, weakSelf] (ConnectHandler hdl) {
-        if (auto self = weakSelf.lock()) {
-            OnTCPPostInit(hdl);
-        }
-    });
-    
+
     clientRef_->set_open_handler([this, weakSelf] (ConnectHandler hdl) {
         if (auto self = weakSelf.lock()) {
             asio::post(*ioContext_, [this, weakSelf, hdl] {
@@ -104,26 +88,6 @@ SocketInterface::Error WebSocket::Init() {
         }
     });
     
-    clientRef_->set_pong_handler([this, weakSelf] (ConnectHandler hdl, std::string str) {
-        if (auto self = weakSelf.lock()) {
-            asio::post(*ioContext_, [this, weakSelf, hdl, str] {
-                if (auto self2 = weakSelf.lock()) {
-                    OnPong(hdl, str);
-                }
-            });
-        }
-    });
-    
-    clientRef_->set_pong_timeout_handler([this, weakSelf] (ConnectHandler hdl, std::string str) {
-        if (auto self = weakSelf.lock()) {
-            asio::post(*ioContext_, [this, weakSelf, hdl, str] {
-                if (auto self2 = weakSelf.lock()) {
-                    OnPongTimeout(hdl, str);
-                }
-            });
-        }
-    });
-    
     clientRef_->set_message_handler([this, weakSelf] (ConnectHandler hdl, MessagePtr msg) {
         if (auto self = weakSelf.lock()) {
             asio::post(*ioContext_, [this, weakSelf, hdl, msg] {
@@ -133,6 +97,38 @@ SocketInterface::Error WebSocket::Init() {
             });
         }
     });
+    
+    //*
+    clientRef_->set_socket_init_handler([this, weakSelf] (ConnectHandler hdl, SocketType& socket) {
+        if (auto self = weakSelf.lock()) {
+            OnSocketInit(hdl, socket);
+        }
+    });
+
+    clientRef_->set_tcp_pre_init_handler([this, weakSelf] (ConnectHandler hdl) {
+        if (auto self = weakSelf.lock()) {
+            OnTCPPreInit(hdl);
+        }
+    });
+    
+    clientRef_->set_tcp_post_init_handler([this, weakSelf] (ConnectHandler hdl) {
+        if (auto self = weakSelf.lock()) {
+            OnTCPPostInit(hdl);
+        }
+    });
+    
+    clientRef_->set_pong_handler([this, weakSelf] (ConnectHandler hdl, std::string str) {
+        if (auto self = weakSelf.lock()) {
+            OnPong(hdl, str);
+        }
+    });
+    
+    clientRef_->set_pong_timeout_handler([this, weakSelf] (ConnectHandler hdl, std::string str) {
+        if (auto self = weakSelf.lock()) {
+            OnPongTimeout(hdl, str);
+        }
+    });
+    //*/
     
     SetState(State::kPrepared);
     error_ = Error::kNone;
@@ -155,6 +151,12 @@ void WebSocket::SetConnectTimeout(int timeout) {
 }
 
 void WebSocket::Open() {
+    if (!IsCurrentContext()) {
+        asio::post(*ioContext_, [this] {
+            Open();
+        });
+        return;
+    }
     Log(INFO) << "WebSocket::Open";
     Log(INFO) << "timeout: " << connectTimeout_;
     
@@ -189,6 +191,12 @@ void WebSocket::Open() {
 }
 
 void WebSocket::Close() {
+    if (!IsCurrentContext()) {
+        asio::post(*ioContext_, [this] {
+            Close();
+        });
+        return;
+    }
     Log(INFO) << "WebSocket::Close";
     if (state_ == State::kIdle || state_ >=State::kClosing) {
         return;
@@ -196,13 +204,20 @@ void WebSocket::Close() {
     Close(websocketpp::close::status::normal, "normal");
 }
 
-void WebSocket::Send(const uint8_t* buf, int len, FrameType frameType) {
-    if (!IsConnected()) {
-        Log(WARNING) << "disconnect ...";
+void WebSocket::Send(const char* buf, int len, FrameType frameType) {
+    if (!IsCurrentContext()) {
+        asio::post(*ioContext_, [this, buf, len, frameType] {
+            Send(buf, len, frameType);
+        });
         return;
     }
     
-    websocketpp::lib::error_code ec;
+    if (!IsConnected()) {
+        Log(WARNING) << "It must connected before Send.";
+        return;
+    }
+    
+    ErrorCode ec;
     clientRef_->send(hdl_, buf, (size_t)len, (websocketpp::frame::opcode::value)frameType, ec);
     if (ec) {
         Log(ERROR) << "send failed: " << ec.message();
@@ -235,15 +250,20 @@ void WebSocket::OnSocketInit(ConnectHandler hdl, SocketType& socket) {
         Log(ERROR) << "socket open failed: " << ec.message();
         return;
     }
+//    asio::ip::tcp::endpoint local(network_.Address(), 0);
+//    rawSocket.bind(local, ec);
+//    if (ec) {
+//        Log(ERROR) << "socket bind failed: " << ec;
+//    }
 }
 
 void WebSocket::OnTCPPreInit(ConnectHandler hdl) {
-    Log(INFO) << "WebSocket::OnTCPPreInit.";
+    Log(VERBOSE) << "WebSocket::OnTCPPreInit.";
     
 }
 
 void WebSocket::OnTCPPostInit(ConnectHandler hdl) {
-    Log(INFO) << "WebSocket::OnTCPPostInit.";
+    Log(VERBOSE) << "WebSocket::OnTCPPostInit.";
 }
 
 void WebSocket::OnOpen(ConnectHandler hdl) {
@@ -251,19 +271,16 @@ void WebSocket::OnOpen(ConnectHandler hdl) {
     ErrorCode ec;
     ConnectionPtr con = clientRef_->get_con_from_hdl(hdl, ec);
     if (!con_ || con_ != con) {
-        Log(INFO) << "ignore";
+        Log(INFO) << "ignore.";
         return;
     }
     
-    auto& socket = con->get_socket();
-    Log(INFO) << "socket: " << socket.lowest_layer().local_endpoint(ec).data()
-                << " -> " << socket.lowest_layer().remote_endpoint(ec).data();
+//    auto& socket = con->get_socket();
+//    Log(INFO) << "socket: " << socket.lowest_layer().local_endpoint(ec).data()
+//                << " -> " << socket.lowest_layer().remote_endpoint(ec).data();
     uint32_t duration = util::get_current_time_milliseconds() - startConnectTime_;
     Log(INFO) << "connect duration: " << duration << "ms";
 
-//    if (initedHandler_) {
-//        initedHandler_(socket.lowest_layer().local_endpoint(ec).address());
-//    }
     SetState(State::kConnected);
 }
 
@@ -272,15 +289,15 @@ void WebSocket::OnClose(ConnectHandler hdl) {
     ErrorCode ec;
     ConnectionPtr con = clientRef_->get_con_from_hdl(hdl, ec);
     if (!con_ || con_ != con) {
-        Log(INFO) << "ignore";
+        Log(INFO) << "ignore.";
         return;
     }
     
     LogConnectionInfo(con);
     const std::string& resason = con->get_ec().message();
-    Log(INFO) << "on close: " << resason;
+    Log(INFO) << "On close: " << resason;
     if (state_ < State::kClosing) {
-        TriggerError(Error::kProtocol, resason);
+        TriggerError(Error::kNetwork, resason);
     } else {
         DeInit();
     }
@@ -291,12 +308,12 @@ void WebSocket::OnFail(ConnectHandler hdl) {
     ErrorCode ec;
     ConnectionPtr con = clientRef_->get_con_from_hdl(hdl, ec);
     if (!con_ || con_ != con) {
-        Log(INFO) << "ignore";
+        Log(INFO) << "ignore.";
         return;
     }
     LogConnectionInfo(con);
     const std::string& resason = con->get_ec().message();
-    Log(INFO) << " on fail: " << resason;
+    Log(INFO) << "on fail: " << resason;
     TriggerError(Error::kProtocol, resason);
 }
 
@@ -305,7 +322,7 @@ void WebSocket::OnPong(ConnectHandler hdl, std::string str) {
     ErrorCode ec;
     ConnectionPtr con = clientRef_->get_con_from_hdl(hdl, ec);
     if (!con_ || con_ != con) {
-        Log(INFO) << "ignore";
+        Log(INFO) << "ignore.";
         return;
     }
     lastReceivedPongTime_ = util::get_current_time_milliseconds();
@@ -322,7 +339,7 @@ void WebSocket::OnPongTimeout(ConnectHandler hdl, std::string str) {
     ErrorCode ec;
     ConnectionPtr con = clientRef_->get_con_from_hdl(hdl, ec);
     if (!con_ || con_ != con) {
-        Log(INFO) << "ignore";
+        Log(INFO) << "ignore.";
         return;
     }
     LogConnectionInfo(con);
@@ -332,15 +349,15 @@ void WebSocket::OnPongTimeout(ConnectHandler hdl, std::string str) {
 }
 
 void WebSocket::OnMessage(ConnectHandler hdl, MessagePtr msg) {
-    Log(INFO) << "WebSocket::OnMessage.";
+    Log(VERBOSE) << "WebSocket::OnMessage.";
     ErrorCode ec;
     ConnectionPtr con = clientRef_->get_con_from_hdl(hdl, ec);
     if (!con_ || con_ != con) {
-        Log(INFO) << "ignore";
+        Log(INFO) << "ignore.";
         return;
     }
     if (receivedFrameHandler_) {
-        receivedFrameHandler_((const uint8_t*)msg->get_payload().data(),
+        receivedFrameHandler_((const char*)msg->get_payload().data(),
                               (int)msg->get_payload().size(),
                               (SocketInterface::FrameType)msg->get_opcode());
     }
@@ -354,10 +371,10 @@ void WebSocket::LogConnectionInfo(ConnectionPtr con) {
     
     ErrorCode ec;
     auto& socket = con->get_socket();
-    Log(INFO) << "socket: " << socket.lowest_layer().local_endpoint(ec).data()
-                << " -> " << socket.lowest_layer().remote_endpoint(ec).data();
+//    Log(INFO) << "socket: " << socket.lowest_layer().local_endpoint(ec).address().to_string()
+//                << " -> " << socket.lowest_layer().remote_endpoint(ec).address().to_string();
     
-    Log(INFO) << "con info: " << con->get_ec().message() << "(" << con->get_ec().message() << "); "
+    Log(INFO) << "con info: " << con.get() << "(" << con->get_ec().message() << "); "
                 << "Local: " << con->get_local_close_code() << " ("
                 << websocketpp::close::status::get_string(con->get_local_close_code())
                 << "), close reason: " << con->get_local_close_reason()

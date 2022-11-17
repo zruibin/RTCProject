@@ -8,13 +8,12 @@
 
 #include "socket.h"
 #include "log/logging.h"
+#include "platform/platform.h"
 
 namespace network {
 
 const char kProtocolWS[] = "ws";
-const char kProtocolWSS[] = "wss";
 const char kProtocolKWS[] = "kws";
-const char kProtocolKWSS[] = "kwss";
 
 const int kConnnectTotalTimeout = 60 * 1000;
 const int kConnnectTimeout = 10 * 1000;
@@ -30,12 +29,8 @@ const char* SocketInterface::ProtocolToString(Protocol protocol) {
     switch (protocol) {
         case Protocol::kWS:
             return kProtocolWS;
-        case Protocol::kWSS:
-            return kProtocolWSS;
         case Protocol::kKWS:
             return kProtocolKWS;
-        case Protocol::kKWSS:
-            return kProtocolKWSS;
         default:
             return "";
     }
@@ -79,8 +74,30 @@ const char* SocketInterface::ErrorToString(Error error) {
     }
 }
 
-void Socket::SetGetOpenParamHandler(GetOpenParamHandler getOpenParamHandler) {
-    getOpenParamHandler_ = getOpenParamHandler;
+Socket::Socket() :
+        ioContext_(std::make_shared<asio::io_context>()),
+        workGuard_(asio::make_work_guard(*ioContext_)) {
+    
+    std::shared_ptr<asio::io_context> ioContext = ioContext_;
+    auto runLoop = [this, ioContext] {
+        Log(INFO) << "Post RunLoop Begin.";
+        ioContextThreadId_ = platform::thread_get_current_id();
+        asio::error_code ec;
+        ioContext->run(ec);
+        if (ec) {
+            Log(ERROR) << "Post RunLoop Failed: " << ec.message();
+        }
+        Log(INFO) << "Post RunLoop End.";
+    };
+    std::thread thread(runLoop);
+    thread.detach();
+}
+
+Socket::~Socket() {
+    if (ioContext_ != nullptr) {
+        ioContext_->stop();
+        ioContext_ = nullptr;
+    }
 }
 
 void Socket::SetConnectStateChangedHandler(ConnectStateChangedHandler connectStateChangedHandler) {
@@ -112,8 +129,16 @@ void Socket::SetState(State newState) {
 void Socket::TriggerError(Error error, const std::string& reason) {
     error_ = error;
     if (failedHandler_) {
-        failedHandler_(error);
+        failedHandler_(error, reason);
     }
+}
+
+bool Socket::IsCurrentContext() {
+    uint16_t currentThreadId = platform::thread_get_current_id();
+    if (currentThreadId == ioContextThreadId_) {
+        return true;
+    }
+    return false;
 }
 
 }
