@@ -174,10 +174,12 @@ message("all_list: ${all_list}")
 
 file (GLOB_RECURSE abseil ./webrtc/abseil/**/*.h)
 file (GLOB_RECURSE WebRTC ./webrtc/include/**/*.h)
+file (GLOB_RECURSE include_third_party ./webrtc/include_third_party/**/*.h)
 
 set(HEADERS
     ${abseil}
     ${WebRTC}
+    ${include_third_party}
     src/app.h
 )
 
