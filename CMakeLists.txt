@@ -180,6 +180,7 @@ set(HEADERS
     ${abseil}
     ${WebRTC}
     ${include_third_party}
+    ${Deps_include}
     src/app.h
 )
 

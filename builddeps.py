@@ -193,6 +193,8 @@ message("Deps Lib Directory: ${DEPS_LIB_DIR}")
 
 include_directories("${DEPS_INCLUDE_DIR}")
 link_directories("${DEPS_LIB_DIR}")
+file(GLOB_RECURSE Deps_include ${DEPS_INCLUDE_DIR}/**/*.h)
+
 """ + cmakeOther
     log("Deps CmakeList content: " + depsContent)
     with open(depsCamke, "w") as fileHandler:
