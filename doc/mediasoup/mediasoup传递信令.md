@@ -138,28 +138,28 @@ auto r = cpr::PostAsync(cpr::Url{url}, cpr::Body{body.dump()},
 响应为：
 
 ```js
+{
+"peers":[
     {
-    "peers":[
-        {
-            "id":"ej8ogujz",
-            "displayName":"Elgyem",
-            "device":{
-                "flag":"safari",
-                "name":"Safari",
-                "version":"14.1"
+        "id":"ej8ogujz",
+        "displayName":"Elgyem",
+        "device":{
+            "flag":"safari",
+            "name":"Safari",
+            "version":"14.1"
+        },
+        "producers":[
+            {
+                "id":"87230aeb-027e-4204-99eb-080cd4972bb0",
+                "kind":"audio"
             },
-            "producers":[
-                {
-                    "id":"87230aeb-027e-4204-99eb-080cd4972bb0",
-                    "kind":"audio"
-                },
-                {
-                    "id":"66c62c26-7101-43b2-b82c-cdf537b8d9ed",
-                    "kind":"video"
-                }
-            ]
-        }
-    ]
+            {
+                "id":"66c62c26-7101-43b2-b82c-cdf537b8d9ed",
+                "kind":"video"
+            }
+        ]
+    }
+]
 }
 ```
 
@@ -187,7 +187,7 @@ auto r = cpr::PostAsync(cpr::Url{url}, cpr::Body{body.dump()},
 这个请求的响应为：
 
 ```js
-    {
+{
     "id":"6eae5aae-3ae9-4545-a146-466b28e05da7",
     "iceParameters":{
         "iceLite":true,
