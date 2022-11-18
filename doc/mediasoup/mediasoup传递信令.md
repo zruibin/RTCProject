@@ -105,9 +105,9 @@ mediasoup-client 和 libmediasoupclient 都需要将 WebRTC 传输的发送和�
 
 对于发送媒体数据：
 
-    * WebRTC transport 必须首先在 mediasoup router 中创建： [router.createWebRtcTransport()](https://mediasoup.org/documentation/v3/mediasoup/api/#router-createWebRtcTransport)。
-    * 然后重复地在客户端应用程序中创建：[device.createSendTransport()](https://mediasoup.org/documentation/v3/mediasoup-client/api/#device-createSendTransport)。
-    * 客户端应用程序必须订阅本地 transport 中的 “connect” 和 “produce” 事件。
+* WebRTC transport 必须首先在 mediasoup router 中创建： [router.createWebRtcTransport()](https://mediasoup.org/documentation/v3/mediasoup/api/#router-createWebRtcTransport)。
+* 然后重复地在客户端应用程序中创建：[device.createSendTransport()](https://mediasoup.org/documentation/v3/mediasoup-client/api/#device-createSendTransport)。
+* 客户端应用程序必须订阅本地 transport 中的 “connect” 和 “produce” 事件。
 
 对于 [mediasoup-demo](https://github.com/versatica/mediasoup-demo) 的 server 的 `mediasoup-demo/server/server.js`，在创建 transport 之前，还需要先在服务器中创建Broadcaster，POST 请求为：
 
@@ -243,9 +243,9 @@ auto r = cpr::PostAsync(cpr::Url{url}, cpr::Body{body.dump()},
 
 对于接收媒体数据：
 
-    * WebRTC transport 必须首先在 mediasoup router 中创建： [router.createWebRtcTransport()](https://mediasoup.org/documentation/v3/mediasoup/api/#router-createWebRtcTransport)。
-    * 然后重复地在客户端应用程序中创建：[device.createRecvTransport()](https://mediasoup.org/documentation/v3/mediasoup-client/api/#device-createRecvTransport)。
-    * 客户端应用程序必须订阅本地 transport 中的 “connect” 和 “produce” 事件。
+* WebRTC transport 必须首先在 mediasoup router 中创建： [router.createWebRtcTransport()](https://mediasoup.org/documentation/v3/mediasoup/api/#router-createWebRtcTransport)。
+* 然后重复地在客户端应用程序中创建：[device.createRecvTransport()](https://mediasoup.org/documentation/v3/mediasoup-client/api/#device-createRecvTransport)。
+* 客户端应用程序必须订阅本地 transport 中的 “connect” 和 “produce” 事件。
 
 如果在这些 transports 中需要使用 SCTP (即 WebRTC 中的 DataChannel)，必须在其中启用 **enableSctp**(使用适当的 [numSctpStreams](https://mediasoup.org/documentation/v3/mediasoup/sctp-parameters/#NumSctpStreams)) 和其他 SCTP 相关设置。
 
@@ -253,11 +253,11 @@ auto r = cpr::PostAsync(cpr::Url{url}, cpr::Body{body.dump()},
 
 一旦创建了 send transport，客户端应用程序就可以在其上生成多个音频和视频 tracks。
 
-    * 应用程序获得一个 [track](https://www.w3.org/TR/mediacapture-streams/#mediastreamtrack) (例如，通过使用 **navigator.mediaDevices.getUserMedia()** API)。
-    * 它在本地 send transport 中调用 [transport.produce()](https://mediasoup.org/documentation/v3/mediasoup-client/api/#transport-produce)。 
-      * 如果这是对 **transport.produce()** 的第一次调用，则 transport 将发出 “connect” 事件。
-      * transport 将发出“produce” 事件，因此应用程序将把事件参数传递给服务器，并在服务器端创建一个 [Producer](https://mediasoup.org/documentation/v3/mediasoup/api/#Producer) 实例。
-    * 最后，**transport.produce()** 将在客户端使用 [Producer](https://mediasoup.org/documentation/v3/mediasoup-client/api/#Producer) 实例进行解析。
+* 应用程序获得一个 [track](https://www.w3.org/TR/mediacapture-streams/#mediastreamtrack) (例如，通过使用 **navigator.mediaDevices.getUserMedia()** API)。
+* 它在本地 send transport 中调用 [transport.produce()](https://mediasoup.org/documentation/v3/mediasoup-client/api/#transport-produce)。 
+  * 如果这是对 **transport.produce()** 的第一次调用，则 transport 将发出 “connect” 事件。
+  * transport 将发出“produce” 事件，因此应用程序将把事件参数传递给服务器，并在服务器端创建一个 [Producer](https://mediasoup.org/documentation/v3/mediasoup/api/#Producer) 实例。
+* 最后，**transport.produce()** 将在客户端使用 [Producer](https://mediasoup.org/documentation/v3/mediasoup-client/api/#Producer) 实例进行解析。
 
 这里的把事件参数传递给服务器，对应于 [mediasoup-demo](https://github.com/versatica/mediasoup-demo) 的 server 的 `mediasoup-demo/server/server.js` 的连接 send transport 请求：
 
@@ -347,31 +347,31 @@ auto r = cpr::PostAsync(cpr::Url{url}, cpr::Body{body.dump()},
 
 一旦创建了 receive transport，客户端应用程序就可以使用它上的多个音频和视频 tracks。但是顺序是相反的(这里消费者必须首先在服务器中创建)。
 
-    * 客户端应用程序向服务器发送它的 [device.rtpCapabilities](https://mediasoup.org/documentation/v3/mediasoup-client/api/#device-rtpCapabilities) (它可能已经提前完成了)。
-    * 服务器应用程序应该检查远端设备是否可以使用特定的生产者 (也就是说，它是否支持生产者媒体编解码器)。它可以通过使用 [router.canConsume()](https://mediasoup.org/documentation/v3/mediasoup/api/#router-canConsume) 方法来实现。
-    * 然后服务器应用程序在客户端为接收媒体数据而创建的 WebRTC transport 中调用 [transport.consume()](https://mediasoup.org/documentation/v3/mediasoup/api/#transport-consume) ，从而生成一个服务器端的 [Consumer](https://mediasoup.org/documentation/v3/mediasoup-client/api/#Consumer)。 
-      * 正如 [transport.consume()](https://mediasoup.org/documentation/v3/mediasoup/api/#transport-consume) 文档中所解释的，强烈建议使用 **paused: true** 创建服务器端 consumer，并在远程端点中创建 consumer 后恢复它。
-    * 服务器应用程序将 consumer 信息和参数传输到远程客户端应用程序，远程客户端应用程序在本地 receive transport 中调用 [transport.consume()](https://mediasoup.org/documentation/v3/mediasoup-client/api/#transport-consume)。 
-      * 如果这是对 **transport.consume()** 的第一次调用，transport 将发出 [“connect”](https://mediasoup.org/documentation/v3/mediasoup-client/api/#transport-on-connect) 事件。
-    * 最后，在客户端将以一个 [Consumer](https://mediasoup.org/documentation/v3/mediasoup-client/api/#Consumer) 实例解析 **transport.consume()**。
+* 客户端应用程序向服务器发送它的 [device.rtpCapabilities](https://mediasoup.org/documentation/v3/mediasoup-client/api/#device-rtpCapabilities) (它可能已经提前完成了)。
+* 服务器应用程序应该检查远端设备是否可以使用特定的生产者 (也就是说，它是否支持生产者媒体编解码器)。它可以通过使用 [router.canConsume()](https://mediasoup.org/documentation/v3/mediasoup/api/#router-canConsume) 方法来实现。
+* 然后服务器应用程序在客户端为接收媒体数据而创建的 WebRTC transport 中调用 [transport.consume()](https://mediasoup.org/documentation/v3/mediasoup/api/#transport-consume) ，从而生成一个服务器端的 [Consumer](https://mediasoup.org/documentation/v3/mediasoup-client/api/#Consumer)。 
+  * 正如 [transport.consume()](https://mediasoup.org/documentation/v3/mediasoup/api/#transport-consume) 文档中所解释的，强烈建议使用 **paused: true** 创建服务器端 consumer，并在远程端点中创建 consumer 后恢复它。
+* 服务器应用程序将 consumer 信息和参数传输到远程客户端应用程序，远程客户端应用程序在本地 receive transport 中调用 [transport.consume()](https://mediasoup.org/documentation/v3/mediasoup-client/api/#transport-consume)。 
+  * 如果这是对 **transport.consume()** 的第一次调用，transport 将发出 [“connect”](https://mediasoup.org/documentation/v3/mediasoup-client/api/#transport-on-connect) 事件。
+* 最后，在客户端将以一个 [Consumer](https://mediasoup.org/documentation/v3/mediasoup-client/api/#Consumer) 实例解析 **transport.consume()**。
 
 ### 生产数据 (DataChannels)
 
 一旦创建了 send transport，客户端应用程序就可以在其上生成多个[DataChannels](https://www.w3.org/TR/webrtc/#rtcdatachannel)。
 
-    * 应用程序在本地 send transport 中调用 [transport.produceData()](https://mediasoup.org/documentation/v3/mediasoup-client/api/#transport-producedata)。 
-      * 如果这是对 **transport.produceData()** 的第一次调用，则 transport 将发出 [“connect”](https://mediasoup.org/documentation/v3/mediasoup-client/api/#transport-on-connect) 事件。
-      * transport 将发出[“producedata”](https://mediasoup.org/documentation/v3/mediasoup-client/api/#transport-on-producedata) 事件，因此应用程序将把事件参数传递给服务器，并在服务器端创建一个 [DataProducer](https://mediasoup.org/documentation/v3/mediasoup/api/#DataProducer) 实例。
-    * 最后，**transport.produceData()** 将在客户端使用 [DataProducer](https://mediasoup.org/documentation/v3/mediasoup-client/api/#DataProducer) 实例进行解析。
+* 应用程序在本地 send transport 中调用 [transport.produceData()](https://mediasoup.org/documentation/v3/mediasoup-client/api/#transport-producedata)。 
+  * 如果这是对 **transport.produceData()** 的第一次调用，则 transport 将发出 [“connect”](https://mediasoup.org/documentation/v3/mediasoup-client/api/#transport-on-connect) 事件。
+  * transport 将发出[“producedata”](https://mediasoup.org/documentation/v3/mediasoup-client/api/#transport-on-producedata) 事件，因此应用程序将把事件参数传递给服务器，并在服务器端创建一个 [DataProducer](https://mediasoup.org/documentation/v3/mediasoup/api/#DataProducer) 实例。
+* 最后，**transport.produceData()** 将在客户端使用 [DataProducer](https://mediasoup.org/documentation/v3/mediasoup-client/api/#DataProducer) 实例进行解析。
 
 ### 消费数据 (DataChannels)
 
 一旦创建了 receive transport，客户端应用程序就可以使用它上的多个[DataChannels](https://www.w3.org/TR/webrtc/#rtcdatachannel) 了。但是顺序是相反的(这里消费者必须首先在服务器中创建)。
 
-    * 服务器应用程序在客户端为接收数据而创建的 WebRTC transport 中调用 [transport.consumeData()](https://mediasoup.org/documentation/v3/mediasoup/api/#transport-consumedata)，从而生成一个服务器端的 [DataConsumer](https://mediasoup.org/documentation/v3/mediasoup-client/api/#DataConsumer)。
-    * 服务器应用程序将 consumer 信息和参数传输到客户端应用程序，客户端应用程序在本地 receive transport 中调用 [transport.consumeData()](https://mediasoup.org/documentation/v3/mediasoup-client/api/#transport-consumedata)。 
-      * 如果这是对 **transport.consumeData()** 的第一次调用，transport 将发出 [“connect”](https://mediasoup.org/documentation/v3/mediasoup-client/api/#transport-on-connect) 事件。
-    * 最后，在客户端将以一个 [DataConsumer](https://mediasoup.org/documentation/v3/mediasoup-client/api/#Consumer) 实例解析 **transport.consumeData()**。
+* 服务器应用程序在客户端为接收数据而创建的 WebRTC transport 中调用 [transport.consumeData()](https://mediasoup.org/documentation/v3/mediasoup/api/#transport-consumedata)，从而生成一个服务器端的 [DataConsumer](https://mediasoup.org/documentation/v3/mediasoup-client/api/#DataConsumer)。
+* 服务器应用程序将 consumer 信息和参数传输到客户端应用程序，客户端应用程序在本地 receive transport 中调用 [transport.consumeData()](https://mediasoup.org/documentation/v3/mediasoup-client/api/#transport-consumedata)。 
+  * 如果这是对 **transport.consumeData()** 的第一次调用，transport 将发出 [“connect”](https://mediasoup.org/documentation/v3/mediasoup-client/api/#transport-on-connect) 事件。
+* 最后，在客户端将以一个 [DataConsumer](https://mediasoup.org/documentation/v3/mediasoup-client/api/#Consumer) 实例解析 **transport.consumeData()**。
 
 ### 通信行为和事件
 
@@ -379,23 +379,23 @@ auto r = cpr::PostAsync(cpr::Url{url}, cpr::Body{body.dump()},
 
 当一个 transport、producer、consumer、data producer 或 data consumer 在客户端或服务器端被关闭时(例如通过在它上调用 **close()**)，应用程序应该向另一端发出它的关闭信号，另一端也应该在相应的实体上调用**close()**。另外，服务器端应用程序应该监听以下关闭事件并通知客户端：
 
-    * Transport [“routerclose”](https://mediasoup.org/documentation/v3/mediasoup/api/#transport-on-routerclose)。客户端应该在对应的本地 transport 中调用 `close()`。
-    * Producer [“transportclose”](https://mediasoup.org/documentation/v3/mediasoup/api/#producer-on-transportclose)。客户端应该在对应的本地 producer 中调用 `close()`。
-    * Consumer [“transportclose”](https://mediasoup.org/documentation/v3/mediasoup/api/#consumer-on-transportclose)。客户端应该在对应的本地 consumer 中调用 `close()`。
-    * Consumer [“producerclose”](https://mediasoup.org/documentation/v3/mediasoup/api/#consumer-on-producerclose)。客户端应该在对应的本地 consumer 中调用 `close()`。
-    * DataProducer [“transportclose”](https://mediasoup.org/documentation/v3/mediasoup/api/#dataProducer-on-transportclose)。客户端应该在对应的本地 data producer 中调用 `close()`。
-    * DataConsumer [“transportclose”](https://mediasoup.org/documentation/v3/mediasoup/api/#dataConsumer-on-transportclose)。客户端应该在对应的本地 data consumer 中调用 `close()`。
-    * DataConsumer [“dataproducerclose”](https://mediasoup.org/documentation/v3/mediasoup/api/#dataConsumer-on-dataproducerclose)。客户端应该在对应的本地 data consumer 中调用 `close()`。
+* Transport [“routerclose”](https://mediasoup.org/documentation/v3/mediasoup/api/#transport-on-routerclose)。客户端应该在对应的本地 transport 中调用 `close()`。
+* Producer [“transportclose”](https://mediasoup.org/documentation/v3/mediasoup/api/#producer-on-transportclose)。客户端应该在对应的本地 producer 中调用 `close()`。
+* Consumer [“transportclose”](https://mediasoup.org/documentation/v3/mediasoup/api/#consumer-on-transportclose)。客户端应该在对应的本地 consumer 中调用 `close()`。
+* Consumer [“producerclose”](https://mediasoup.org/documentation/v3/mediasoup/api/#consumer-on-producerclose)。客户端应该在对应的本地 consumer 中调用 `close()`。
+* DataProducer [“transportclose”](https://mediasoup.org/documentation/v3/mediasoup/api/#dataProducer-on-transportclose)。客户端应该在对应的本地 data producer 中调用 `close()`。
+* DataConsumer [“transportclose”](https://mediasoup.org/documentation/v3/mediasoup/api/#dataConsumer-on-transportclose)。客户端应该在对应的本地 data consumer 中调用 `close()`。
+* DataConsumer [“dataproducerclose”](https://mediasoup.org/documentation/v3/mediasoup/api/#dataConsumer-on-dataproducerclose)。客户端应该在对应的本地 data consumer 中调用 `close()`。
 
 在客户端或服务器端暂停 RTP 生产者或消费者时也会发生同样的情况。行为必须向对方发出信号。另外，服务器端应用程序应该监听以下事件并通知客户端：
 
-    * Consumer [“producerpause”](https://mediasoup.org/documentation/v3/mediasoup/api/#consumer-on-producerpause)。客户端应该在对应的本地 transport 中调用 `pause()`。
-    * Consumer [“producerresume”](https://mediasoup.org/documentation/v3/mediasoup/api/#consumer-on-producerresume)。客户端应该在对应的本地 transport 中调用 `resume()`(除非 consumer 本身也被故意暂停)。
+* Consumer [“producerpause”](https://mediasoup.org/documentation/v3/mediasoup/api/#consumer-on-producerpause)。客户端应该在对应的本地 transport 中调用 `pause()`。
+* Consumer [“producerresume”](https://mediasoup.org/documentation/v3/mediasoup/api/#consumer-on-producerresume)。客户端应该在对应的本地 transport 中调用 `resume()`(除非 consumer 本身也被故意暂停)。
 
 当使用 simulcast 或 SVC 时，应用程序可能会对客户端和服务器端消费者之间的首选层和有效层感兴趣。
 
-    * 服务器端应用程序通过 [consumer.setPreferredLayers()](https://mediasoup.org/documentation/v3/mediasoup/api/#consumer-setPreferredLayers) 设置 consumer 首选层。
-    * 服务器端 consumer 订阅 [“layerschange”](https://mediasoup.org/documentation/v3/mediasoup/api/#consumer-on-layerschange) 事件，并通知客户端应用程序正在传输的有效层。
+* 服务器端应用程序通过 [consumer.setPreferredLayers()](https://mediasoup.org/documentation/v3/mediasoup/api/#consumer-setPreferredLayers) 设置 consumer 首选层。
+* 服务器端 consumer 订阅 [“layerschange”](https://mediasoup.org/documentation/v3/mediasoup/api/#consumer-on-layerschange) 事件，并通知客户端应用程序正在传输的有效层。
 
 ### 参考文档：  
 
