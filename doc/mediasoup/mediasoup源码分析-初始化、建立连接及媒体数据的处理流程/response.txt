@@ -1,0 +1,790 @@
+-------------------------------------------------------------------------------
+{
+    "accepted": true,
+    "id": 1
+}
+
+-------------------------------------------------------------------------------
+{
+    "accepted": true,
+    "id": 2
+}
+
+-------------------------------------------------------------------------------
+{
+    "accepted": true,
+    "data": {
+        "consumerIds": [],
+        "dataConsumerIds": [],
+        "dataProducerIds": [],
+        "direct": true,
+        "id": "a8e2a1e3-a090-443c-b4eb-8a59fa59b325",
+        "mapRtxSsrcConsumerId": {},
+        "mapSsrcConsumerId": {},
+        "maxMessageSize": 512,
+        "producerIds": [],
+        "recvRtpHeaderExtensions": {},
+        "rtpListener": {
+            "midTable": {},
+            "ridTable": {},
+            "ssrcTable": {}
+        },
+        "traceEventTypes": ""
+    },
+    "id": 3
+}
+
+-------------------------------------------------------------------------------
+{
+    "accepted": true,
+    "data": {
+        "id": "56f56b6c-fb77-4c68-a0df-7071d804c3d0",
+        "label": "bot",
+        "protocol": "",
+        "type": "direct"
+    },
+    "id": 4
+}
+
+-------------------------------------------------------------------------------
+{
+    "accepted": true,
+    "data": {
+        "consumerIds": [],
+        "dataConsumerIds": [],
+        "dataProducerIds": [],
+        "direct": false,
+        "dtlsParameters": {
+            "fingerprints": [
+                {
+                    "algorithm": "sha-1",
+                    "value": "12:FC:DE:57:75:5E:17:CF:10:C3:9A:88:3A:0D:5B:FF:C8:C8:B0:3D"
+                },
+                {
+                    "algorithm": "sha-224",
+                    "value": "0E:E2:F6:7E:BE:2A:70:D3:7C:5F:5C:28:E3:EB:06:04:81:3A:61:31:3B:C2:81:F7:03:D8:78:52"
+                },
+                {
+                    "algorithm": "sha-256",
+                    "value": "42:F5:D7:5D:F0:96:68:66:B4:F7:B9:0F:13:DA:7F:CE:26:48:94:0E:55:03:C2:B7:FA:1D:0D:ED:EB:10:7D:29"
+                },
+                {
+                    "algorithm": "sha-384",
+                    "value": "A7:33:AF:97:FF:B4:89:F7:95:77:A3:8B:38:45:0C:7C:D4:18:A2:4A:E8:24:41:6F:3A:D7:BD:02:42:9D:28:74:B4:43:D2:80:C1:42:F2:88:64:BC:4E:8F:AF:AA:20:77"
+                },
+                {
+                    "algorithm": "sha-512",
+                    "value": "A9:69:94:A9:1C:15:7C:48:3E:89:CE:D1:6A:BA:39:9A:21:B2:8D:E7:9D:D4:A6:07:59:73:0D:AE:52:CB:2B:45:E4:2A:F7:64:C0:A8:51:B5:37:EF:BC:4D:A0:8B:E2:8D:C5:5E:2F:1F:9D:09:EF:85:BC:FB:A1:81:89:53:B4:D5"
+                }
+            ],
+            "role": "auto"
+        },
+        "dtlsState": "new",
+        "iceCandidates": [
+            {
+                "foundation": "udpcandidate",
+                "ip": "192.168.10.12",
+                "port": 43439,
+                "priority": 1076302079,
+                "protocol": "udp",
+                "type": "host"
+            }
+        ],
+        "iceParameters": {
+            "iceLite": true,
+            "password": "apfkmkqlij8brze8zqohrd7e3kl0wwj9",
+            "usernameFragment": "1ga7pj9kdinmeqxb"
+        },
+        "iceRole": "controlled",
+        "iceState": "new",
+        "id": "253c0380-359c-4102-9dce-c6db3a625944",
+        "mapRtxSsrcConsumerId": {},
+        "mapSsrcConsumerId": {},
+        "maxMessageSize": 262144,
+        "producerIds": [],
+        "recvRtpHeaderExtensions": {},
+        "rtpListener": {
+            "midTable": {},
+            "ridTable": {},
+            "ssrcTable": {}
+        },
+        "sctpListener": {
+            "streamIdTable": {}
+        },
+        "sctpParameters": {
+            "MIS": 1024,
+            "OS": 1024,
+            "isDataChannel": true,
+            "maxMessageSize": 262144,
+            "port": 5000
+        },
+        "sctpState": "new",
+        "traceEventTypes": ""
+    },
+    "id": 5
+}
+
+-------------------------------------------------------------------------------
+{
+    "accepted": true,
+    "id": 6
+}
+
+-------------------------------------------------------------------------------
+{
+    "accepted": true,
+    "id": 7
+}
+
+-------------------------------------------------------------------------------
+{
+    "accepted": true,
+    "data": {
+        "consumerIds": [],
+        "dataConsumerIds": [],
+        "dataProducerIds": [],
+        "direct": false,
+        "dtlsParameters": {
+            "fingerprints": [
+                {
+                    "algorithm": "sha-1",
+                    "value": "12:FC:DE:57:75:5E:17:CF:10:C3:9A:88:3A:0D:5B:FF:C8:C8:B0:3D"
+                },
+                {
+                    "algorithm": "sha-224",
+                    "value": "0E:E2:F6:7E:BE:2A:70:D3:7C:5F:5C:28:E3:EB:06:04:81:3A:61:31:3B:C2:81:F7:03:D8:78:52"
+                },
+                {
+                    "algorithm": "sha-256",
+                    "value": "42:F5:D7:5D:F0:96:68:66:B4:F7:B9:0F:13:DA:7F:CE:26:48:94:0E:55:03:C2:B7:FA:1D:0D:ED:EB:10:7D:29"
+                },
+                {
+                    "algorithm": "sha-384",
+                    "value": "A7:33:AF:97:FF:B4:89:F7:95:77:A3:8B:38:45:0C:7C:D4:18:A2:4A:E8:24:41:6F:3A:D7:BD:02:42:9D:28:74:B4:43:D2:80:C1:42:F2:88:64:BC:4E:8F:AF:AA:20:77"
+                },
+                {
+                    "algorithm": "sha-512",
+                    "value": "A9:69:94:A9:1C:15:7C:48:3E:89:CE:D1:6A:BA:39:9A:21:B2:8D:E7:9D:D4:A6:07:59:73:0D:AE:52:CB:2B:45:E4:2A:F7:64:C0:A8:51:B5:37:EF:BC:4D:A0:8B:E2:8D:C5:5E:2F:1F:9D:09:EF:85:BC:FB:A1:81:89:53:B4:D5"
+                }
+            ],
+            "role": "auto"
+        },
+        "dtlsState": "new",
+        "iceCandidates": [
+            {
+                "foundation": "udpcandidate",
+                "ip": "192.168.10.12",
+                "port": 48109,
+                "priority": 1076302079,
+                "protocol": "udp",
+                "type": "host"
+            }
+        ],
+        "iceParameters": {
+            "iceLite": true,
+            "password": "oer9j5olyviqmxz21vwyg2dqfgfbfekj",
+            "usernameFragment": "rl2guojgp2hld0ed"
+        },
+        "iceRole": "controlled",
+        "iceState": "new",
+        "id": "9f5ebe5f-b2d8-405b-9e08-a58ae9486808",
+        "mapRtxSsrcConsumerId": {},
+        "mapSsrcConsumerId": {},
+        "maxMessageSize": 262144,
+        "producerIds": [],
+        "recvRtpHeaderExtensions": {},
+        "rtpListener": {
+            "midTable": {},
+            "ridTable": {},
+            "ssrcTable": {}
+        },
+        "sctpListener": {
+            "streamIdTable": {}
+        },
+        "sctpParameters": {
+            "MIS": 1024,
+            "OS": 1024,
+            "isDataChannel": true,
+            "maxMessageSize": 262144,
+            "port": 5000
+        },
+        "sctpState": "new",
+        "traceEventTypes": ""
+    },
+    "id": 8
+}
+
+-------------------------------------------------------------------------------
+{
+    "accepted": true,
+    "id": 9
+}
+
+-------------------------------------------------------------------------------
+{
+    "accepted": true,
+    "id": 10
+}
+
+-------------------------------------------------------------------------------
+{
+    "accepted": true,
+    "data": {
+        "dataProducerId": "56f56b6c-fb77-4c68-a0df-7071d804c3d0",
+        "id": "db1ac7b0-78ae-43be-b09b-6056d2d62440",
+        "label": "bot",
+        "protocol": "",
+        "sctpStreamParameters": {
+            "ordered": true,
+            "streamId": 0
+        },
+        "type": "sctp"
+    },
+    "id": 11
+}
+
+-------------------------------------------------------------------------------
+{
+    "accepted": true,
+    "data": {
+        "dtlsLocalRole": "server"
+    },
+    "id": 12
+}
+
+-------------------------------------------------------------------------------
+{
+    "accepted": true,
+    "data": {
+        "dtlsLocalRole": "client"
+    },
+    "id": 13
+}
+
+-------------------------------------------------------------------------------
+{
+    "accepted": true,
+    "data": {
+        "type": "simple"
+    },
+    "id": 14
+}
+
+-------------------------------------------------------------------------------
+{
+    "accepted": true,
+    "id": 15
+}
+
+-------------------------------------------------------------------------------
+{
+    "accepted": true,
+    "data": {
+        "id": "5ecd9aca-c428-40c2-9bff-a805ce6c7eb9",
+        "label": "chat",
+        "protocol": "",
+        "sctpStreamParameters": {
+            "maxRetransmits": 1,
+            "ordered": false,
+            "streamId": 0
+        },
+        "type": "sctp"
+    },
+    "id": 16
+}
+
+-------------------------------------------------------------------------------
+{
+    "accepted": true,
+    "data": {
+        "id": "03896fa7-2871-4829-a40d-8c6f59d15df6",
+        "label": "bot",
+        "protocol": "",
+        "sctpStreamParameters": {
+            "maxPacketLifeTime": 2000,
+            "ordered": false,
+            "streamId": 1
+        },
+        "type": "sctp"
+    },
+    "id": 17
+}
+
+-------------------------------------------------------------------------------
+{
+    "accepted": true,
+    "data": {
+        "dataProducerId": "03896fa7-2871-4829-a40d-8c6f59d15df6",
+        "id": "8ca4ba5b-8faa-4e01-b9b4-3a273ebe7a47",
+        "label": "bot",
+        "protocol": "",
+        "type": "direct"
+    },
+    "id": 18
+}
+
+-------------------------------------------------------------------------------
+{
+    "accepted": true,
+    "data": {
+        "type": "simulcast"
+    },
+    "id": 19
+}
+
+-------------------------------------------------------------------------------
+{
+    "accepted": true,
+    "data": {
+        "consumerIds": [],
+        "dataConsumerIds": [],
+        "dataProducerIds": [],
+        "direct": false,
+        "dtlsParameters": {
+            "fingerprints": [
+                {
+                    "algorithm": "sha-1",
+                    "value": "12:FC:DE:57:75:5E:17:CF:10:C3:9A:88:3A:0D:5B:FF:C8:C8:B0:3D"
+                },
+                {
+                    "algorithm": "sha-224",
+                    "value": "0E:E2:F6:7E:BE:2A:70:D3:7C:5F:5C:28:E3:EB:06:04:81:3A:61:31:3B:C2:81:F7:03:D8:78:52"
+                },
+                {
+                    "algorithm": "sha-256",
+                    "value": "42:F5:D7:5D:F0:96:68:66:B4:F7:B9:0F:13:DA:7F:CE:26:48:94:0E:55:03:C2:B7:FA:1D:0D:ED:EB:10:7D:29"
+                },
+                {
+                    "algorithm": "sha-384",
+                    "value": "A7:33:AF:97:FF:B4:89:F7:95:77:A3:8B:38:45:0C:7C:D4:18:A2:4A:E8:24:41:6F:3A:D7:BD:02:42:9D:28:74:B4:43:D2:80:C1:42:F2:88:64:BC:4E:8F:AF:AA:20:77"
+                },
+                {
+                    "algorithm": "sha-512",
+                    "value": "A9:69:94:A9:1C:15:7C:48:3E:89:CE:D1:6A:BA:39:9A:21:B2:8D:E7:9D:D4:A6:07:59:73:0D:AE:52:CB:2B:45:E4:2A:F7:64:C0:A8:51:B5:37:EF:BC:4D:A0:8B:E2:8D:C5:5E:2F:1F:9D:09:EF:85:BC:FB:A1:81:89:53:B4:D5"
+                }
+            ],
+            "role": "auto"
+        },
+        "dtlsState": "new",
+        "iceCandidates": [
+            {
+                "foundation": "udpcandidate",
+                "ip": "192.168.10.12",
+                "port": 45804,
+                "priority": 1076302079,
+                "protocol": "udp",
+                "type": "host"
+            }
+        ],
+        "iceParameters": {
+            "iceLite": true,
+            "password": "upwuf97lwxiny6m9ryxb0ywaxyvwfb7q",
+            "usernameFragment": "9ofhu4u03sduh110"
+        },
+        "iceRole": "controlled",
+        "iceState": "new",
+        "id": "870bb417-2843-483e-9919-6ae249ead2e9",
+        "mapRtxSsrcConsumerId": {},
+        "mapSsrcConsumerId": {},
+        "maxMessageSize": 262144,
+        "producerIds": [],
+        "recvRtpHeaderExtensions": {},
+        "rtpListener": {
+            "midTable": {},
+            "ridTable": {},
+            "ssrcTable": {}
+        },
+        "sctpListener": {
+            "streamIdTable": {}
+        },
+        "sctpParameters": {
+            "MIS": 1024,
+            "OS": 1024,
+            "isDataChannel": true,
+            "maxMessageSize": 262144,
+            "port": 5000
+        },
+        "sctpState": "new",
+        "traceEventTypes": ""
+    },
+    "id": 20
+}
+
+-------------------------------------------------------------------------------
+{
+    "accepted": true,
+    "id": 21
+}
+
+-------------------------------------------------------------------------------
+{
+    "accepted": true,
+    "id": 22
+}
+
+-------------------------------------------------------------------------------
+{
+    "accepted": true,
+    "data": {
+        "consumerIds": [],
+        "dataConsumerIds": [],
+        "dataProducerIds": [],
+        "direct": false,
+        "dtlsParameters": {
+            "fingerprints": [
+                {
+                    "algorithm": "sha-1",
+                    "value": "12:FC:DE:57:75:5E:17:CF:10:C3:9A:88:3A:0D:5B:FF:C8:C8:B0:3D"
+                },
+                {
+                    "algorithm": "sha-224",
+                    "value": "0E:E2:F6:7E:BE:2A:70:D3:7C:5F:5C:28:E3:EB:06:04:81:3A:61:31:3B:C2:81:F7:03:D8:78:52"
+                },
+                {
+                    "algorithm": "sha-256",
+                    "value": "42:F5:D7:5D:F0:96:68:66:B4:F7:B9:0F:13:DA:7F:CE:26:48:94:0E:55:03:C2:B7:FA:1D:0D:ED:EB:10:7D:29"
+                },
+                {
+                    "algorithm": "sha-384",
+                    "value": "A7:33:AF:97:FF:B4:89:F7:95:77:A3:8B:38:45:0C:7C:D4:18:A2:4A:E8:24:41:6F:3A:D7:BD:02:42:9D:28:74:B4:43:D2:80:C1:42:F2:88:64:BC:4E:8F:AF:AA:20:77"
+                },
+                {
+                    "algorithm": "sha-512",
+                    "value": "A9:69:94:A9:1C:15:7C:48:3E:89:CE:D1:6A:BA:39:9A:21:B2:8D:E7:9D:D4:A6:07:59:73:0D:AE:52:CB:2B:45:E4:2A:F7:64:C0:A8:51:B5:37:EF:BC:4D:A0:8B:E2:8D:C5:5E:2F:1F:9D:09:EF:85:BC:FB:A1:81:89:53:B4:D5"
+                }
+            ],
+            "role": "auto"
+        },
+        "dtlsState": "new",
+        "iceCandidates": [
+            {
+                "foundation": "udpcandidate",
+                "ip": "192.168.10.12",
+                "port": 49537,
+                "priority": 1076302079,
+                "protocol": "udp",
+                "type": "host"
+            }
+        ],
+        "iceParameters": {
+            "iceLite": true,
+            "password": "w35ywqwrwp2xh5si9oujxr1w5m3q62h7",
+            "usernameFragment": "v2odj5zqfk18g07h"
+        },
+        "iceRole": "controlled",
+        "iceState": "new",
+        "id": "376998e4-908a-419a-aa58-d420992ce2e9",
+        "mapRtxSsrcConsumerId": {},
+        "mapSsrcConsumerId": {},
+        "maxMessageSize": 262144,
+        "producerIds": [],
+        "recvRtpHeaderExtensions": {},
+        "rtpListener": {
+            "midTable": {},
+            "ridTable": {},
+            "ssrcTable": {}
+        },
+        "sctpListener": {
+            "streamIdTable": {}
+        },
+        "sctpParameters": {
+            "MIS": 1024,
+            "OS": 1024,
+            "isDataChannel": true,
+            "maxMessageSize": 262144,
+            "port": 5000
+        },
+        "sctpState": "new",
+        "traceEventTypes": ""
+    },
+    "id": 23
+}
+
+-------------------------------------------------------------------------------
+{
+    "accepted": true,
+    "id": 24
+}
+
+-------------------------------------------------------------------------------
+{
+    "accepted": true,
+    "id": 25
+}
+
+-------------------------------------------------------------------------------
+{
+    "accepted": true,
+    "data": {
+        "paused": true,
+        "producerPaused": false,
+        "score": {
+            "producerScore": 10,
+            "producerScores": [
+                10
+            ],
+            "score": 10
+        }
+    },
+    "id": 26
+}
+
+-------------------------------------------------------------------------------
+{
+    "accepted": true,
+    "data": {
+        "paused": true,
+        "preferredLayers": {
+            "spatialLayer": 2,
+            "temporalLayer": 2
+        },
+        "producerPaused": false,
+        "score": {
+            "producerScore": 0,
+            "producerScores": [
+                10,
+                10,
+                10
+            ],
+            "score": 10
+        }
+    },
+    "id": 27
+}
+
+-------------------------------------------------------------------------------
+{
+    "accepted": true,
+    "data": {
+        "dataProducerId": "5ecd9aca-c428-40c2-9bff-a805ce6c7eb9",
+        "id": "f14d1abd-fc80-4399-afe3-b4aadf5b0d98",
+        "label": "chat",
+        "protocol": "",
+        "sctpStreamParameters": {
+            "maxRetransmits": 1,
+            "ordered": false,
+            "streamId": 0
+        },
+        "type": "sctp"
+    },
+    "id": 28
+}
+
+-------------------------------------------------------------------------------
+{
+    "accepted": true,
+    "data": {
+        "dataProducerId": "56f56b6c-fb77-4c68-a0df-7071d804c3d0",
+        "id": "2c4aebb1-be54-4bf6-a6a5-564f0d28dd1a",
+        "label": "bot",
+        "protocol": "",
+        "sctpStreamParameters": {
+            "ordered": true,
+            "streamId": 1
+        },
+        "type": "sctp"
+    },
+    "id": 29
+}
+
+-------------------------------------------------------------------------------
+{
+    "accepted": true,
+    "data": {
+        "dtlsLocalRole": "server"
+    },
+    "id": 30
+}
+
+-------------------------------------------------------------------------------
+{
+    "accepted": true,
+    "data": {
+        "dtlsLocalRole": "client"
+    },
+    "id": 31
+}
+
+-------------------------------------------------------------------------------
+{
+    "accepted": true,
+    "id": 32
+}
+
+-------------------------------------------------------------------------------
+{
+    "accepted": true,
+    "data": {
+        "type": "simple"
+    },
+    "id": 33
+}
+
+-------------------------------------------------------------------------------
+{
+    "accepted": true,
+    "data": {
+        "paused": true,
+        "producerPaused": false,
+        "score": {
+            "producerScore": 10,
+            "producerScores": [
+                10
+            ],
+            "score": 10
+        }
+    },
+    "id": 34
+}
+
+-------------------------------------------------------------------------------
+{
+    "accepted": true,
+    "id": 35
+}
+
+-------------------------------------------------------------------------------
+{
+    "accepted": true,
+    "id": 36
+}
+
+-------------------------------------------------------------------------------
+{
+    "accepted": true,
+    "id": 37
+}
+
+-------------------------------------------------------------------------------
+{
+    "accepted": true,
+    "data": {
+        "type": "simulcast"
+    },
+    "id": 38
+}
+
+-------------------------------------------------------------------------------
+{
+    "accepted": true,
+    "data": {
+        "paused": true,
+        "preferredLayers": {
+            "spatialLayer": 2,
+            "temporalLayer": 2
+        },
+        "producerPaused": false,
+        "score": {
+            "producerScore": 0,
+            "producerScores": [
+                0,
+                0,
+                0
+            ],
+            "score": 10
+        }
+    },
+    "id": 39
+}
+
+-------------------------------------------------------------------------------
+{
+    "accepted": true,
+    "data": {
+        "id": "4c049f80-9f91-4fa5-95d9-94f23c3fbc6f",
+        "label": "chat",
+        "protocol": "",
+        "sctpStreamParameters": {
+            "maxRetransmits": 1,
+            "ordered": false,
+            "streamId": 0
+        },
+        "type": "sctp"
+    },
+    "id": 40
+}
+
+-------------------------------------------------------------------------------
+{
+    "accepted": true,
+    "data": {
+        "dataProducerId": "4c049f80-9f91-4fa5-95d9-94f23c3fbc6f",
+        "id": "46d6f776-eadd-477b-84a8-dec7bc129676",
+        "label": "chat",
+        "protocol": "",
+        "sctpStreamParameters": {
+            "maxRetransmits": 1,
+            "ordered": false,
+            "streamId": 1
+        },
+        "type": "sctp"
+    },
+    "id": 41
+}
+
+-------------------------------------------------------------------------------
+{
+    "accepted": true,
+    "id": 42
+}
+
+-------------------------------------------------------------------------------
+{
+    "accepted": true,
+    "data": {
+        "id": "62e21009-7f80-46c5-90a5-79274654e283",
+        "label": "bot",
+        "protocol": "",
+        "sctpStreamParameters": {
+            "maxPacketLifeTime": 2000,
+            "ordered": false,
+            "streamId": 1
+        },
+        "type": "sctp"
+    },
+    "id": 43
+}
+
+-------------------------------------------------------------------------------
+{
+    "accepted": true,
+    "data": {
+        "dataProducerId": "62e21009-7f80-46c5-90a5-79274654e283",
+        "id": "28d14198-8e63-42ae-92ef-017b7b460d89",
+        "label": "bot",
+        "protocol": "",
+        "type": "direct"
+    },
+    "id": 44
+}
+
+-------------------------------------------------------------------------------
+{
+    "accepted": true,
+    "id": 45
+}
+
+-------------------------------------------------------------------------------
+{
+    "accepted": true,
+    "id": 46
+}
+
+-------------------------------------------------------------------------------
+{
+    "accepted": true,
+    "id": 47
+}
+
+-------------------------------------------------------------------------------
+{
+    "accepted": true,
+    "id": 48
+}
+
+-------------------------------------------------------------------------------
+{
+    "accepted": true,
+    "id": 49
+}
+

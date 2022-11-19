@@ -1,0 +1,1296 @@
+-------------------------------------------------------------------------------
+method:worker.createRouter ,id:1
+data : {}
+
+internal : {
+    "routerId": "ab8baa18-e002-44d7-a6e2-dc298587dd8b"
+}
+
+
+-------------------------------------------------------------------------------
+method:router.createAudioLevelObserver ,id:2
+data : {
+    "interval": 800,
+    "maxEntries": 1,
+    "threshold": -80
+}
+
+internal : {
+    "routerId": "ab8baa18-e002-44d7-a6e2-dc298587dd8b",
+    "rtpObserverId": "079b1620-3865-4c0b-8c0a-e6acba5af7c2"
+}
+
+
+
+-------------------------------------------------------------------------------
+method:router.createWebRtcTransport ,id:5
+data : {
+    "enableSctp": true,
+    "enableTcp": false,
+    "enableUdp": true,
+    "initialAvailableOutgoingBitrate": 1000000,
+    "isDataChannel": true,
+    "listenIps": [
+        {
+            "ip": "192.168.10.12"
+        }
+    ],
+    "maxSctpMessageSize": 262144,
+    "numSctpStreams": {
+        "MIS": 1024,
+        "OS": 1024
+    },
+    "preferTcp": false,
+    "preferUdp": false
+}
+
+internal : {
+    "routerId": "ab8baa18-e002-44d7-a6e2-dc298587dd8b",
+    "transportId": "253c0380-359c-4102-9dce-c6db3a625944"
+}
+
+
+-------------------------------------------------------------------------------
+method:transport.enableTraceEvent ,id:6
+data : {
+    "types": [
+        "bwe"
+    ]
+}
+
+internal : {
+    "routerId": "ab8baa18-e002-44d7-a6e2-dc298587dd8b",
+    "transportId": "253c0380-359c-4102-9dce-c6db3a625944"
+}
+
+
+-------------------------------------------------------------------------------
+method:transport.setMaxIncomingBitrate ,id:7
+data : {
+    "bitrate": 1500000
+}
+
+internal : {
+    "routerId": "ab8baa18-e002-44d7-a6e2-dc298587dd8b",
+    "transportId": "253c0380-359c-4102-9dce-c6db3a625944"
+}
+
+
+-------------------------------------------------------------------------------
+method:router.createWebRtcTransport ,id:8
+data : {
+    "enableSctp": true,
+    "enableTcp": false,
+    "enableUdp": true,
+    "initialAvailableOutgoingBitrate": 1000000,
+    "isDataChannel": true,
+    "listenIps": [
+        {
+            "ip": "192.168.10.12"
+        }
+    ],
+    "maxSctpMessageSize": 262144,
+    "numSctpStreams": {
+        "MIS": 1024,
+        "OS": 1024
+    },
+    "preferTcp": false,
+    "preferUdp": false
+}
+
+internal : {
+    "routerId": "ab8baa18-e002-44d7-a6e2-dc298587dd8b",
+    "transportId": "9f5ebe5f-b2d8-405b-9e08-a58ae9486808"
+}
+
+
+-------------------------------------------------------------------------------
+method:transport.enableTraceEvent ,id:9
+data : {
+    "types": [
+        "bwe"
+    ]
+}
+
+internal : {
+    "routerId": "ab8baa18-e002-44d7-a6e2-dc298587dd8b",
+    "transportId": "9f5ebe5f-b2d8-405b-9e08-a58ae9486808"
+}
+
+
+-------------------------------------------------------------------------------
+method:transport.setMaxIncomingBitrate ,id:10
+data : {
+    "bitrate": 1500000
+}
+
+internal : {
+    "routerId": "ab8baa18-e002-44d7-a6e2-dc298587dd8b",
+    "transportId": "9f5ebe5f-b2d8-405b-9e08-a58ae9486808"
+}
+
+
+
+-------------------------------------------------------------------------------
+method:transport.connect ,id:12
+data : {
+    "dtlsParameters": {
+        "fingerprints": [
+            {
+                "algorithm": "sha-256",
+                "value": "C1:F9:58:53:72:83:ED:64:43:EF:E9:BA:56:10:64:E6:5E:42:92:12:0C:92:66:F1:8A:E3:3D:C7:CA:83:D8:C5"
+            }
+        ],
+        "role": "client"
+    }
+}
+
+internal : {
+    "routerId": "ab8baa18-e002-44d7-a6e2-dc298587dd8b",
+    "transportId": "9f5ebe5f-b2d8-405b-9e08-a58ae9486808"
+}
+
+
+-------------------------------------------------------------------------------
+method:transport.connect ,id:13
+data : {
+    "dtlsParameters": {
+        "fingerprints": [
+            {
+                "algorithm": "sha-256",
+                "value": "AE:20:E5:FD:92:15:DD:0A:9B:D0:D4:9F:3B:5A:18:73:C2:B6:C5:2E:AD:77:51:1E:8E:36:A3:8A:87:87:99:DD"
+            }
+        ],
+        "role": "server"
+    }
+}
+
+internal : {
+    "routerId": "ab8baa18-e002-44d7-a6e2-dc298587dd8b",
+    "transportId": "253c0380-359c-4102-9dce-c6db3a625944"
+}
+
+
+-------------------------------------------------------------------------------
+method:transport.produce ,id:14
+data : {
+    "kind": "audio",
+    "paused": false,
+    "rtpMapping": {
+        "codecs": [
+            {
+                "mappedPayloadType": 100,
+                "payloadType": 111
+            }
+        ],
+        "encodings": [
+            {
+                "mappedSsrc": 323744560,
+                "ssrc": 3536928023
+            }
+        ]
+    },
+    "rtpParameters": {
+        "codecs": [
+            {
+                "channels": 2,
+                "clockRate": 48000,
+                "mimeType": "audio/opus",
+                "parameters": {
+                    "minptime": 10,
+                    "sprop-stereo": 1,
+                    "usedtx": 1,
+                    "useinbandfec": 1
+                },
+                "payloadType": 111,
+                "rtcpFeedback": [
+                    {
+                        "parameter": "",
+                        "type": "transport-cc"
+                    }
+                ]
+            }
+        ],
+        "encodings": [
+            {
+                "dtx": false,
+                "ssrc": 3536928023
+            }
+        ],
+        "headerExtensions": [
+            {
+                "encrypt": false,
+                "id": 9,
+                "parameters": {},
+                "uri": "urn:ietf:params:rtp-hdrext:sdes:mid"
+            },
+            {
+                "encrypt": false,
+                "id": 1,
+                "parameters": {},
+                "uri": "urn:ietf:params:rtp-hdrext:ssrc-audio-level"
+            }
+        ],
+        "mid": "0",
+        "rtcp": {
+            "cname": "tAPOZzhquxMA1QjR",
+            "reducedSize": true
+        }
+    }
+}
+
+internal : {
+    "producerId": "52fd0ef8-1cf8-4580-aa08-9ae33414a714",
+    "routerId": "ab8baa18-e002-44d7-a6e2-dc298587dd8b",
+    "transportId": "253c0380-359c-4102-9dce-c6db3a625944"
+}
+
+
+-------------------------------------------------------------------------------
+method:rtpObserver.addProducer ,id:15
+data : {}
+
+internal : {
+    "producerId": "52fd0ef8-1cf8-4580-aa08-9ae33414a714",
+    "routerId": "ab8baa18-e002-44d7-a6e2-dc298587dd8b",
+    "rtpObserverId": "079b1620-3865-4c0b-8c0a-e6acba5af7c2"
+}
+
+
+
+-------------------------------------------------------------------------------
+method:transport.produce ,id:19
+data : {
+    "kind": "video",
+    "paused": false,
+    "rtpMapping": {
+        "codecs": [
+            {
+                "mappedPayloadType": 101,
+                "payloadType": 96
+            },
+            {
+                "mappedPayloadType": 102,
+                "payloadType": 97
+            }
+        ],
+        "encodings": [
+            {
+                "mappedSsrc": 214799301,
+                "scalabilityMode": "S1T3",
+                "ssrc": 448203859
+            },
+            {
+                "mappedSsrc": 214799302,
+                "scalabilityMode": "S1T3",
+                "ssrc": 448203860
+            },
+            {
+                "mappedSsrc": 214799303,
+                "scalabilityMode": "S1T3",
+                "ssrc": 448203861
+            }
+        ]
+    },
+    "rtpParameters": {
+        "codecs": [
+            {
+                "clockRate": 90000,
+                "mimeType": "video/VP8",
+                "parameters": {},
+                "payloadType": 96,
+                "rtcpFeedback": [
+                    {
+                        "parameter": "",
+                        "type": "goog-remb"
+                    },
+                    {
+                        "parameter": "",
+                        "type": "transport-cc"
+                    },
+                    {
+                        "parameter": "fir",
+                        "type": "ccm"
+                    },
+                    {
+                        "parameter": "",
+                        "type": "nack"
+                    },
+                    {
+                        "parameter": "pli",
+                        "type": "nack"
+                    }
+                ]
+            },
+            {
+                "clockRate": 90000,
+                "mimeType": "video/rtx",
+                "parameters": {
+                    "apt": 96
+                },
+                "payloadType": 97,
+                "rtcpFeedback": []
+            }
+        ],
+        "encodings": [
+            {
+                "active": true,
+                "dtx": false,
+                "maxBitrate": 500000,
+                "rtx": {
+                    "ssrc": 3051205391
+                },
+                "scalabilityMode": "S1T3",
+                "scaleResolutionDownBy": 4,
+                "ssrc": 448203859
+            },
+            {
+                "active": true,
+                "dtx": false,
+                "maxBitrate": 1000000,
+                "rtx": {
+                    "ssrc": 3051205392
+                },
+                "scalabilityMode": "S1T3",
+                "scaleResolutionDownBy": 2,
+                "ssrc": 448203860
+            },
+            {
+                "active": true,
+                "dtx": false,
+                "maxBitrate": 5000000,
+                "rtx": {
+                    "ssrc": 3051205393
+                },
+                "scalabilityMode": "S1T3",
+                "scaleResolutionDownBy": 1,
+                "ssrc": 448203861
+            }
+        ],
+        "headerExtensions": [
+            {
+                "encrypt": false,
+                "id": 9,
+                "parameters": {},
+                "uri": "urn:ietf:params:rtp-hdrext:sdes:mid"
+            },
+            {
+                "encrypt": false,
+                "id": 3,
+                "parameters": {},
+                "uri": "http://www.webrtc.org/experiments/rtp-hdrext/abs-send-time"
+            },
+            {
+                "encrypt": false,
+                "id": 5,
+                "parameters": {},
+                "uri": "http://www.ietf.org/id/draft-holmer-rmcat-transport-wide-cc-extensions-01"
+            },
+            {
+                "encrypt": false,
+                "id": 4,
+                "parameters": {},
+                "uri": "urn:3gpp:video-orientation"
+            },
+            {
+                "encrypt": false,
+                "id": 2,
+                "parameters": {},
+                "uri": "urn:ietf:params:rtp-hdrext:toffset"
+            }
+        ],
+        "mid": "2",
+        "rtcp": {
+            "cname": "tAPOZzhquxMA1QjR",
+            "reducedSize": true
+        }
+    }
+}
+
+internal : {
+    "producerId": "fca32301-23e9-4d48-bd4a-01af50695541",
+    "routerId": "ab8baa18-e002-44d7-a6e2-dc298587dd8b",
+    "transportId": "253c0380-359c-4102-9dce-c6db3a625944"
+}
+
+
+-------------------------------------------------------------------------------
+method:router.createWebRtcTransport ,id:20
+data : {
+    "enableSctp": true,
+    "enableTcp": false,
+    "enableUdp": true,
+    "initialAvailableOutgoingBitrate": 1000000,
+    "isDataChannel": true,
+    "listenIps": [
+        {
+            "ip": "192.168.10.12"
+        }
+    ],
+    "maxSctpMessageSize": 262144,
+    "numSctpStreams": {
+        "MIS": 1024,
+        "OS": 1024
+    },
+    "preferTcp": false,
+    "preferUdp": false
+}
+
+internal : {
+    "routerId": "ab8baa18-e002-44d7-a6e2-dc298587dd8b",
+    "transportId": "870bb417-2843-483e-9919-6ae249ead2e9"
+}
+
+
+-------------------------------------------------------------------------------
+method:transport.enableTraceEvent ,id:21
+data : {
+    "types": [
+        "bwe"
+    ]
+}
+
+internal : {
+    "routerId": "ab8baa18-e002-44d7-a6e2-dc298587dd8b",
+    "transportId": "870bb417-2843-483e-9919-6ae249ead2e9"
+}
+
+
+-------------------------------------------------------------------------------
+method:transport.setMaxIncomingBitrate ,id:22
+data : {
+    "bitrate": 1500000
+}
+
+internal : {
+    "routerId": "ab8baa18-e002-44d7-a6e2-dc298587dd8b",
+    "transportId": "870bb417-2843-483e-9919-6ae249ead2e9"
+}
+
+
+-------------------------------------------------------------------------------
+method:router.createWebRtcTransport ,id:23
+data : {
+    "enableSctp": true,
+    "enableTcp": false,
+    "enableUdp": true,
+    "initialAvailableOutgoingBitrate": 1000000,
+    "isDataChannel": true,
+    "listenIps": [
+        {
+            "ip": "192.168.10.12"
+        }
+    ],
+    "maxSctpMessageSize": 262144,
+    "numSctpStreams": {
+        "MIS": 1024,
+        "OS": 1024
+    },
+    "preferTcp": false,
+    "preferUdp": false
+}
+
+internal : {
+    "routerId": "ab8baa18-e002-44d7-a6e2-dc298587dd8b",
+    "transportId": "376998e4-908a-419a-aa58-d420992ce2e9"
+}
+
+
+-------------------------------------------------------------------------------
+method:transport.enableTraceEvent ,id:24
+data : {
+    "types": [
+        "bwe"
+    ]
+}
+
+internal : {
+    "routerId": "ab8baa18-e002-44d7-a6e2-dc298587dd8b",
+    "transportId": "376998e4-908a-419a-aa58-d420992ce2e9"
+}
+
+
+-------------------------------------------------------------------------------
+method:transport.setMaxIncomingBitrate ,id:25
+data : {
+    "bitrate": 1500000
+}
+
+internal : {
+    "routerId": "ab8baa18-e002-44d7-a6e2-dc298587dd8b",
+    "transportId": "376998e4-908a-419a-aa58-d420992ce2e9"
+}
+
+
+-------------------------------------------------------------------------------
+method:transport.consume ,id:26
+data : {
+    "consumableRtpEncodings": [
+        {
+            "dtx": false,
+            "ssrc": 323744560
+        }
+    ],
+    "kind": "audio",
+    "paused": true,
+    "rtpParameters": {
+        "codecs": [
+            {
+                "channels": 2,
+                "clockRate": 48000,
+                "mimeType": "audio/opus",
+                "parameters": {
+                    "minptime": 10,
+                    "sprop-stereo": 1,
+                    "usedtx": 1,
+                    "useinbandfec": 1
+                },
+                "payloadType": 100,
+                "rtcpFeedback": []
+            }
+        ],
+        "encodings": [
+            {
+                "ssrc": 762429432
+            }
+        ],
+        "headerExtensions": [
+            {
+                "encrypt": false,
+                "id": 1,
+                "parameters": {},
+                "uri": "urn:ietf:params:rtp-hdrext:sdes:mid"
+            },
+            {
+                "encrypt": false,
+                "id": 4,
+                "parameters": {},
+                "uri": "http://www.webrtc.org/experiments/rtp-hdrext/abs-send-time"
+            },
+            {
+                "encrypt": false,
+                "id": 10,
+                "parameters": {},
+                "uri": "urn:ietf:params:rtp-hdrext:ssrc-audio-level"
+            }
+        ],
+        "mid": "0",
+        "rtcp": {
+            "cname": "tAPOZzhquxMA1QjR",
+            "mux": true,
+            "reducedSize": true
+        }
+    },
+    "type": "simple"
+}
+
+internal : {
+    "consumerId": "545db098-3705-472a-bd21-27d6a5272c7c",
+    "producerId": "52fd0ef8-1cf8-4580-aa08-9ae33414a714",
+    "routerId": "ab8baa18-e002-44d7-a6e2-dc298587dd8b",
+    "transportId": "376998e4-908a-419a-aa58-d420992ce2e9"
+}
+
+
+-------------------------------------------------------------------------------
+method:transport.consume ,id:27
+data : {
+    "consumableRtpEncodings": [
+        {
+            "active": true,
+            "dtx": false,
+            "maxBitrate": 500000,
+            "scalabilityMode": "S1T3",
+            "scaleResolutionDownBy": 4,
+            "ssrc": 214799301
+        },
+        {
+            "active": true,
+            "dtx": false,
+            "maxBitrate": 1000000,
+            "scalabilityMode": "S1T3",
+            "scaleResolutionDownBy": 2,
+            "ssrc": 214799302
+        },
+        {
+            "active": true,
+            "dtx": false,
+            "maxBitrate": 5000000,
+            "scalabilityMode": "S1T3",
+            "scaleResolutionDownBy": 1,
+            "ssrc": 214799303
+        }
+    ],
+    "kind": "video",
+    "paused": true,
+    "rtpParameters": {
+        "codecs": [
+            {
+                "clockRate": 90000,
+                "mimeType": "video/VP8",
+                "parameters": {},
+                "payloadType": 101,
+                "rtcpFeedback": [
+                    {
+                        "parameter": "",
+                        "type": "transport-cc"
+                    },
+                    {
+                        "parameter": "fir",
+                        "type": "ccm"
+                    },
+                    {
+                        "parameter": "",
+                        "type": "nack"
+                    },
+                    {
+                        "parameter": "pli",
+                        "type": "nack"
+                    }
+                ]
+            },
+            {
+                "clockRate": 90000,
+                "mimeType": "video/rtx",
+                "parameters": {
+                    "apt": 101
+                },
+                "payloadType": 102,
+                "rtcpFeedback": []
+            }
+        ],
+        "encodings": [
+            {
+                "maxBitrate": 5000000,
+                "rtx": {
+                    "ssrc": 344149589
+                },
+                "scalabilityMode": "S3T3",
+                "ssrc": 919050306
+            }
+        ],
+        "headerExtensions": [
+            {
+                "encrypt": false,
+                "id": 1,
+                "parameters": {},
+                "uri": "urn:ietf:params:rtp-hdrext:sdes:mid"
+            },
+            {
+                "encrypt": false,
+                "id": 4,
+                "parameters": {},
+                "uri": "http://www.webrtc.org/experiments/rtp-hdrext/abs-send-time"
+            },
+            {
+                "encrypt": false,
+                "id": 5,
+                "parameters": {},
+                "uri": "http://www.ietf.org/id/draft-holmer-rmcat-transport-wide-cc-extensions-01"
+            },
+            {
+                "encrypt": false,
+                "id": 11,
+                "parameters": {},
+                "uri": "urn:3gpp:video-orientation"
+            },
+            {
+                "encrypt": false,
+                "id": 12,
+                "parameters": {},
+                "uri": "urn:ietf:params:rtp-hdrext:toffset"
+            }
+        ],
+        "mid": "1",
+        "rtcp": {
+            "cname": "tAPOZzhquxMA1QjR",
+            "mux": true,
+            "reducedSize": true
+        }
+    },
+    "type": "simulcast"
+}
+
+internal : {
+    "consumerId": "de8613b0-4f4e-441f-9417-fecad78d1a4b",
+    "producerId": "fca32301-23e9-4d48-bd4a-01af50695541",
+    "routerId": "ab8baa18-e002-44d7-a6e2-dc298587dd8b",
+    "transportId": "376998e4-908a-419a-aa58-d420992ce2e9"
+}
+
+
+
+-------------------------------------------------------------------------------
+method:transport.connect ,id:30
+data : {
+    "dtlsParameters": {
+        "fingerprints": [
+            {
+                "algorithm": "sha-256",
+                "value": "63:83:34:CE:F4:E7:80:BF:56:A6:BE:44:FE:3A:42:69:7B:ED:6C:D8:9D:4E:11:06:EE:9D:BB:C8:2A:1B:30:85"
+            }
+        ],
+        "role": "client"
+    }
+}
+
+internal : {
+    "routerId": "ab8baa18-e002-44d7-a6e2-dc298587dd8b",
+    "transportId": "376998e4-908a-419a-aa58-d420992ce2e9"
+}
+
+
+-------------------------------------------------------------------------------
+method:transport.connect ,id:31
+data : {
+    "dtlsParameters": {
+        "fingerprints": [
+            {
+                "algorithm": "sha-256",
+                "value": "79:78:B5:F5:D6:67:AA:D4:AB:C8:50:35:1A:BE:6D:04:2F:3B:96:EA:C6:2D:80:35:B5:2F:7C:C5:2A:2E:5B:F0"
+            }
+        ],
+        "role": "server"
+    }
+}
+
+internal : {
+    "routerId": "ab8baa18-e002-44d7-a6e2-dc298587dd8b",
+    "transportId": "870bb417-2843-483e-9919-6ae249ead2e9"
+}
+
+
+-------------------------------------------------------------------------------
+method:consumer.resume ,id:32
+data : {}
+
+internal : {
+    "consumerId": "545db098-3705-472a-bd21-27d6a5272c7c",
+    "producerId": "52fd0ef8-1cf8-4580-aa08-9ae33414a714",
+    "routerId": "ab8baa18-e002-44d7-a6e2-dc298587dd8b",
+    "transportId": "376998e4-908a-419a-aa58-d420992ce2e9"
+}
+
+
+-------------------------------------------------------------------------------
+method:transport.produce ,id:33
+data : {
+    "kind": "audio",
+    "paused": false,
+    "rtpMapping": {
+        "codecs": [
+            {
+                "mappedPayloadType": 100,
+                "payloadType": 111
+            }
+        ],
+        "encodings": [
+            {
+                "mappedSsrc": 909062888,
+                "ssrc": 927603747
+            }
+        ]
+    },
+    "rtpParameters": {
+        "codecs": [
+            {
+                "channels": 2,
+                "clockRate": 48000,
+                "mimeType": "audio/opus",
+                "parameters": {
+                    "minptime": 10,
+                    "sprop-stereo": 1,
+                    "usedtx": 1,
+                    "useinbandfec": 1
+                },
+                "payloadType": 111,
+                "rtcpFeedback": [
+                    {
+                        "parameter": "",
+                        "type": "transport-cc"
+                    }
+                ]
+            }
+        ],
+        "encodings": [
+            {
+                "dtx": false,
+                "ssrc": 927603747
+            }
+        ],
+        "headerExtensions": [
+            {
+                "encrypt": false,
+                "id": 9,
+                "parameters": {},
+                "uri": "urn:ietf:params:rtp-hdrext:sdes:mid"
+            },
+            {
+                "encrypt": false,
+                "id": 1,
+                "parameters": {},
+                "uri": "urn:ietf:params:rtp-hdrext:ssrc-audio-level"
+            }
+        ],
+        "mid": "0",
+        "rtcp": {
+            "cname": "ERYmVh4+AXmTmOEG",
+            "reducedSize": true
+        }
+    }
+}
+
+internal : {
+    "producerId": "3ee2afcf-bf9d-4619-a9fb-75dcdeec0581",
+    "routerId": "ab8baa18-e002-44d7-a6e2-dc298587dd8b",
+    "transportId": "870bb417-2843-483e-9919-6ae249ead2e9"
+}
+
+
+-------------------------------------------------------------------------------
+method:transport.consume ,id:34
+data : {
+    "consumableRtpEncodings": [
+        {
+            "dtx": false,
+            "ssrc": 909062888
+        }
+    ],
+    "kind": "audio",
+    "paused": true,
+    "rtpParameters": {
+        "codecs": [
+            {
+                "channels": 2,
+                "clockRate": 48000,
+                "mimeType": "audio/opus",
+                "parameters": {
+                    "minptime": 10,
+                    "sprop-stereo": 1,
+                    "usedtx": 1,
+                    "useinbandfec": 1
+                },
+                "payloadType": 100,
+                "rtcpFeedback": []
+            }
+        ],
+        "encodings": [
+            {
+                "ssrc": 439033764
+            }
+        ],
+        "headerExtensions": [
+            {
+                "encrypt": false,
+                "id": 1,
+                "parameters": {},
+                "uri": "urn:ietf:params:rtp-hdrext:sdes:mid"
+            },
+            {
+                "encrypt": false,
+                "id": 4,
+                "parameters": {},
+                "uri": "http://www.webrtc.org/experiments/rtp-hdrext/abs-send-time"
+            },
+            {
+                "encrypt": false,
+                "id": 10,
+                "parameters": {},
+                "uri": "urn:ietf:params:rtp-hdrext:ssrc-audio-level"
+            }
+        ],
+        "mid": "0",
+        "rtcp": {
+            "cname": "ERYmVh4+AXmTmOEG",
+            "mux": true,
+            "reducedSize": true
+        }
+    },
+    "type": "simple"
+}
+
+internal : {
+    "consumerId": "811e7ebd-8c6e-421d-a044-b52236284b5e",
+    "producerId": "3ee2afcf-bf9d-4619-a9fb-75dcdeec0581",
+    "routerId": "ab8baa18-e002-44d7-a6e2-dc298587dd8b",
+    "transportId": "9f5ebe5f-b2d8-405b-9e08-a58ae9486808"
+}
+
+
+-------------------------------------------------------------------------------
+method:rtpObserver.addProducer ,id:35
+data : {}
+
+internal : {
+    "producerId": "3ee2afcf-bf9d-4619-a9fb-75dcdeec0581",
+    "routerId": "ab8baa18-e002-44d7-a6e2-dc298587dd8b",
+    "rtpObserverId": "079b1620-3865-4c0b-8c0a-e6acba5af7c2"
+}
+
+
+-------------------------------------------------------------------------------
+method:consumer.resume ,id:36
+data : {}
+
+internal : {
+    "consumerId": "de8613b0-4f4e-441f-9417-fecad78d1a4b",
+    "producerId": "fca32301-23e9-4d48-bd4a-01af50695541",
+    "routerId": "ab8baa18-e002-44d7-a6e2-dc298587dd8b",
+    "transportId": "376998e4-908a-419a-aa58-d420992ce2e9"
+}
+
+
+-------------------------------------------------------------------------------
+method:consumer.resume ,id:37
+data : {}
+
+internal : {
+    "consumerId": "811e7ebd-8c6e-421d-a044-b52236284b5e",
+    "producerId": "3ee2afcf-bf9d-4619-a9fb-75dcdeec0581",
+    "routerId": "ab8baa18-e002-44d7-a6e2-dc298587dd8b",
+    "transportId": "9f5ebe5f-b2d8-405b-9e08-a58ae9486808"
+}
+
+
+-------------------------------------------------------------------------------
+method:transport.produce ,id:38
+data : {
+    "kind": "video",
+    "paused": false,
+    "rtpMapping": {
+        "codecs": [
+            {
+                "mappedPayloadType": 101,
+                "payloadType": 96
+            },
+            {
+                "mappedPayloadType": 102,
+                "payloadType": 97
+            }
+        ],
+        "encodings": [
+            {
+                "mappedSsrc": 208703812,
+                "scalabilityMode": "S1T3",
+                "ssrc": 574826877
+            },
+            {
+                "mappedSsrc": 208703813,
+                "scalabilityMode": "S1T3",
+                "ssrc": 574826878
+            },
+            {
+                "mappedSsrc": 208703814,
+                "scalabilityMode": "S1T3",
+                "ssrc": 574826879
+            }
+        ]
+    },
+    "rtpParameters": {
+        "codecs": [
+            {
+                "clockRate": 90000,
+                "mimeType": "video/VP8",
+                "parameters": {},
+                "payloadType": 96,
+                "rtcpFeedback": [
+                    {
+                        "parameter": "",
+                        "type": "goog-remb"
+                    },
+                    {
+                        "parameter": "",
+                        "type": "transport-cc"
+                    },
+                    {
+                        "parameter": "fir",
+                        "type": "ccm"
+                    },
+                    {
+                        "parameter": "",
+                        "type": "nack"
+                    },
+                    {
+                        "parameter": "pli",
+                        "type": "nack"
+                    }
+                ]
+            },
+            {
+                "clockRate": 90000,
+                "mimeType": "video/rtx",
+                "parameters": {
+                    "apt": 96
+                },
+                "payloadType": 97,
+                "rtcpFeedback": []
+            }
+        ],
+        "encodings": [
+            {
+                "active": true,
+                "dtx": false,
+                "maxBitrate": 500000,
+                "rtx": {
+                    "ssrc": 2285227224
+                },
+                "scalabilityMode": "S1T3",
+                "scaleResolutionDownBy": 4,
+                "ssrc": 574826877
+            },
+            {
+                "active": true,
+                "dtx": false,
+                "maxBitrate": 1000000,
+                "rtx": {
+                    "ssrc": 2285227225
+                },
+                "scalabilityMode": "S1T3",
+                "scaleResolutionDownBy": 2,
+                "ssrc": 574826878
+            },
+            {
+                "active": true,
+                "dtx": false,
+                "maxBitrate": 5000000,
+                "rtx": {
+                    "ssrc": 2285227226
+                },
+                "scalabilityMode": "S1T3",
+                "scaleResolutionDownBy": 1,
+                "ssrc": 574826879
+            }
+        ],
+        "headerExtensions": [
+            {
+                "encrypt": false,
+                "id": 9,
+                "parameters": {},
+                "uri": "urn:ietf:params:rtp-hdrext:sdes:mid"
+            },
+            {
+                "encrypt": false,
+                "id": 3,
+                "parameters": {},
+                "uri": "http://www.webrtc.org/experiments/rtp-hdrext/abs-send-time"
+            },
+            {
+                "encrypt": false,
+                "id": 5,
+                "parameters": {},
+                "uri": "http://www.ietf.org/id/draft-holmer-rmcat-transport-wide-cc-extensions-01"
+            },
+            {
+                "encrypt": false,
+                "id": 4,
+                "parameters": {},
+                "uri": "urn:3gpp:video-orientation"
+            },
+            {
+                "encrypt": false,
+                "id": 2,
+                "parameters": {},
+                "uri": "urn:ietf:params:rtp-hdrext:toffset"
+            }
+        ],
+        "mid": "1",
+        "rtcp": {
+            "cname": "ERYmVh4+AXmTmOEG",
+            "reducedSize": true
+        }
+    }
+}
+
+internal : {
+    "producerId": "b654b807-de51-4b0f-8469-b1a787a4d330",
+    "routerId": "ab8baa18-e002-44d7-a6e2-dc298587dd8b",
+    "transportId": "870bb417-2843-483e-9919-6ae249ead2e9"
+}
+
+
+-------------------------------------------------------------------------------
+method:transport.consume ,id:39
+data : {
+    "consumableRtpEncodings": [
+        {
+            "active": true,
+            "dtx": false,
+            "maxBitrate": 500000,
+            "scalabilityMode": "S1T3",
+            "scaleResolutionDownBy": 4,
+            "ssrc": 208703812
+        },
+        {
+            "active": true,
+            "dtx": false,
+            "maxBitrate": 1000000,
+            "scalabilityMode": "S1T3",
+            "scaleResolutionDownBy": 2,
+            "ssrc": 208703813
+        },
+        {
+            "active": true,
+            "dtx": false,
+            "maxBitrate": 5000000,
+            "scalabilityMode": "S1T3",
+            "scaleResolutionDownBy": 1,
+            "ssrc": 208703814
+        }
+    ],
+    "kind": "video",
+    "paused": true,
+    "rtpParameters": {
+        "codecs": [
+            {
+                "clockRate": 90000,
+                "mimeType": "video/VP8",
+                "parameters": {},
+                "payloadType": 101,
+                "rtcpFeedback": [
+                    {
+                        "parameter": "",
+                        "type": "transport-cc"
+                    },
+                    {
+                        "parameter": "fir",
+                        "type": "ccm"
+                    },
+                    {
+                        "parameter": "",
+                        "type": "nack"
+                    },
+                    {
+                        "parameter": "pli",
+                        "type": "nack"
+                    }
+                ]
+            },
+            {
+                "clockRate": 90000,
+                "mimeType": "video/rtx",
+                "parameters": {
+                    "apt": 101
+                },
+                "payloadType": 102,
+                "rtcpFeedback": []
+            }
+        ],
+        "encodings": [
+            {
+                "maxBitrate": 5000000,
+                "rtx": {
+                    "ssrc": 461152038
+                },
+                "scalabilityMode": "S3T3",
+                "ssrc": 584132886
+            }
+        ],
+        "headerExtensions": [
+            {
+                "encrypt": false,
+                "id": 1,
+                "parameters": {},
+                "uri": "urn:ietf:params:rtp-hdrext:sdes:mid"
+            },
+            {
+                "encrypt": false,
+                "id": 4,
+                "parameters": {},
+                "uri": "http://www.webrtc.org/experiments/rtp-hdrext/abs-send-time"
+            },
+            {
+                "encrypt": false,
+                "id": 5,
+                "parameters": {},
+                "uri": "http://www.ietf.org/id/draft-holmer-rmcat-transport-wide-cc-extensions-01"
+            },
+            {
+                "encrypt": false,
+                "id": 11,
+                "parameters": {},
+                "uri": "urn:3gpp:video-orientation"
+            },
+            {
+                "encrypt": false,
+                "id": 12,
+                "parameters": {},
+                "uri": "urn:ietf:params:rtp-hdrext:toffset"
+            }
+        ],
+        "mid": "1",
+        "rtcp": {
+            "cname": "ERYmVh4+AXmTmOEG",
+            "mux": true,
+            "reducedSize": true
+        }
+    },
+    "type": "simulcast"
+}
+
+internal : {
+    "consumerId": "9e020ef9-7c12-4cd9-969b-13646dd168e1",
+    "producerId": "b654b807-de51-4b0f-8469-b1a787a4d330",
+    "routerId": "ab8baa18-e002-44d7-a6e2-dc298587dd8b",
+    "transportId": "9f5ebe5f-b2d8-405b-9e08-a58ae9486808"
+}
+
+
+-------------------------------------------------------------------------------
+method:consumer.resume ,id:42
+data : {}
+
+internal : {
+    "consumerId": "9e020ef9-7c12-4cd9-969b-13646dd168e1",
+    "producerId": "b654b807-de51-4b0f-8469-b1a787a4d330",
+    "routerId": "ab8baa18-e002-44d7-a6e2-dc298587dd8b",
+    "transportId": "9f5ebe5f-b2d8-405b-9e08-a58ae9486808"
+}
+
+
+-------------------------------------------------------------------------------
+method:transport.close ,id:45
+data : {}
+
+internal : {
+    "routerId": "ab8baa18-e002-44d7-a6e2-dc298587dd8b",
+    "transportId": "870bb417-2843-483e-9919-6ae249ead2e9"
+}
+
+
+-------------------------------------------------------------------------------
+method:transport.close ,id:46
+data : {}
+
+internal : {
+    "routerId": "ab8baa18-e002-44d7-a6e2-dc298587dd8b",
+    "transportId": "376998e4-908a-419a-aa58-d420992ce2e9"
+}
+
+
+-------------------------------------------------------------------------------
+method:transport.close ,id:47
+data : {}
+
+internal : {
+    "routerId": "ab8baa18-e002-44d7-a6e2-dc298587dd8b",
+    "transportId": "253c0380-359c-4102-9dce-c6db3a625944"
+}
+
+
+-------------------------------------------------------------------------------
+method:transport.close ,id:48
+data : {}
+
+internal : {
+    "routerId": "ab8baa18-e002-44d7-a6e2-dc298587dd8b",
+    "transportId": "9f5ebe5f-b2d8-405b-9e08-a58ae9486808"
+}
+
+
+-------------------------------------------------------------------------------
+method:router.close ,id:49
+data : {}
+
+internal : {
+    "routerId": "ab8baa18-e002-44d7-a6e2-dc298587dd8b"
+}
