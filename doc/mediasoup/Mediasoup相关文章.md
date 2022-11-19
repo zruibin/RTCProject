@@ -573,7 +573,7 @@ Router是MediaSoup封装出的概念，用于管理Transport，和SDP协商无�
 
 **请求：**
 
-```json
+```
 {
     "data":{},
     "id":0,	#id:信令的编号是0
@@ -586,7 +586,7 @@ Router是MediaSoup封装出的概念，用于管理Transport，和SDP协商无�
 
 **回复：**
 
-```json
+```
 {
     "accepted": true,
     "id": 0     #指明是对哪条信令的回复
@@ -603,7 +603,7 @@ WebRTC的SDP协商其实包括两种，连接信息的协商和媒体信息的�
 
 **请求：**
 
-```json
+```
 {
     "data":{
         "enableSctp":false,
@@ -656,7 +656,7 @@ e. ice state : new
 
 DTLS信息包括：
 
-```json
+```
 a. fingerprints : 指明使用的哈希算法以及证书的哈希值
 b. role : Auto dtls角色
 c. dtlsState : new
@@ -750,7 +750,7 @@ a=fingerprint:sha-256 7E:27:BF:16:30:FC:E3:BE:2F:2C:D3:4A:13:24:E9:09:EF:B1:72:D
 
 **请求：**
 
-```json
+```
 {
     "data":{
         "dtlsParameters":{
@@ -776,7 +776,7 @@ a=fingerprint:sha-256 7E:27:BF:16:30:FC:E3:BE:2F:2C:D3:4A:13:24:E9:09:EF:B1:72:D
 
 **回复：**
 
-```json
+```
 {
     "accepted":true,
     "data":{
@@ -839,7 +839,7 @@ a=rtcp-rsize
 
 **请求：**
 
-```json
+```
 {
     "data":{
         "kind":"audio",	## 类型是audio
@@ -916,7 +916,7 @@ a=rtcp-rsize
 
 **回复：**
 
-```json
+```
 {
     "accepted":true,
     "data":{
@@ -942,7 +942,7 @@ a=fmtp:97 apt=96
 
 **请求：**
 
-```json
+```
 {
     "data":{
         "kind":"video",
@@ -1051,7 +1051,7 @@ a=fmtp:97 apt=96
 
 **回复：**
 
-```json
+```
 {
     "accepted":true,
     "data":{
@@ -1068,7 +1068,7 @@ a=fmtp:97 apt=96
 
 **请求：**
 
-```json
+```
 {
     "data":{
         "consumableRtpEncodings":[
@@ -1137,7 +1137,7 @@ a=fmtp:97 apt=96
 
 **回复：**
 
-```json
+```
 {
     "accepted":true,
     "data":{
@@ -1160,7 +1160,7 @@ a=fmtp:97 apt=96
 
 **请求：**
 
-```json
+```
 {
     "data":{
         "consumableRtpEncodings":[
@@ -1245,7 +1245,7 @@ a=fmtp:97 apt=96
 
 **回复：**
 
-```json
+```
 {
     "accepted":true,
     "data":{

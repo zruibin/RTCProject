@@ -104,7 +104,7 @@ Worker进程也可以主动给应用层进程发送消息，通过Notifier::Emit
 
 **request**
 
-```json
+```
 method:worker.createRouter ,id:1    #id:信令的编号是1
 data : {}
 internal : {
@@ -114,7 +114,7 @@ internal : {
 
 **response**
 
-```json
+```
 {
     "accepted": true,
     "id": 1     #指明是对哪条信令的回复
@@ -167,7 +167,7 @@ Router::Router(const std::string& id)
 
 **request**
 
-```json
+```
 method:router.createAudioLevelObserver ,id:2
 data : {
     "interval": 800,  #用于检查音频音量的时间间隔（单位：毫秒）
@@ -182,7 +182,7 @@ internal : {
 
 **response**
 
-```json
+```
 {
     "accepted": true,
     "id": 2
@@ -303,7 +303,7 @@ void AudioLevelObserver::Update()
 
 **request**
 
-```json
+```
 method:router.createWebRtcTransport ,id:5
 data : {
     "enableTcp": false,       #不使用TCP
@@ -328,7 +328,7 @@ internal : {
 
 **response**
 
-```json
+```
 {
     "accepted": true,
     "data": {
@@ -754,7 +754,7 @@ closed：当 transport 已关闭时，DTLS 的状态。
 
 **request**
 
-```json
+```
 method:transport.setMaxIncomingBitrate ,id:7
 data : {
     "bitrate": 1500000
@@ -767,7 +767,7 @@ internal : {
 
 **response**
 
-```json
+```
 {
     "accepted": true,
     "id": 7
@@ -806,7 +806,7 @@ mediasoup从WebRTC中移植了remb和TCC相关的处理代码，所以如果客�
 
 **request**
 
-```json
+```
 method:transport.connect ,id:13
 data : {
     "dtlsParameters": {
@@ -827,7 +827,7 @@ internal : {
 
 **response**
 
-```json
+```
 {
     "accepted": true,
     "data": {
@@ -889,7 +889,7 @@ void WebRtcTransport::HandleRequest(Channel::Request* request)
 
 **request**
 
-```json
+```
 method:transport.produce ,id:14
 data : {
     "kind": "audio",  #用于接收音频的producer
@@ -961,7 +961,7 @@ internal : {
 
 **response**
 
-```json
+```
 {
     "accepted": true,
     "data": {
@@ -1023,7 +1023,7 @@ inline void Router::OnTransportNewProducer(RTC::Transport* /*transport*/, RTC::P
 
 **request**
 
-```json
+```
 method:rtpObserver.addProducer ,id:15
 data : {}
 internal : {
@@ -1035,7 +1035,7 @@ internal : {
 
 **response**
 
-```json
+```
 {
     "accepted": true,
     "id": 15
@@ -1070,7 +1070,7 @@ void Router::HandleRequest(Channel::Request* request)
 
 **request**
 
-```json
+```
 method:transport.produce ,id:19
 data : {
     "kind": "video",    #用于接收视频的producer
@@ -1173,7 +1173,7 @@ internal : {
 
 **response**
 
-```json
+```
 {
     "accepted": true,
     "data": {
@@ -1189,7 +1189,7 @@ internal : {
 
 **request**
 
-```json
+```
 method:router.createWebRtcTransport ,id:20
 data : {
 ...
@@ -1201,7 +1201,7 @@ internal : {
 
 **response**
 
-```json
+```
 {
     "accepted": true,
     "data": {
@@ -1217,7 +1217,7 @@ internal : {
 
 **request**
 
-```json
+```
 method:transport.setMaxIncomingBitrate ,id:22
 data : {
     "bitrate": 1500000
@@ -1230,7 +1230,7 @@ internal : {
 
 **response**
 
-```json
+```
 {
     "accepted": true,
     "id": 22
@@ -1303,7 +1303,7 @@ internal : {
 
 **response**
 
-```json
+```
 {
     "accepted": true,
     "data": {
@@ -1406,7 +1406,7 @@ inline void Router::OnTransportNewConsumer(RTC::Transport* /*transport*/, RTC::C
 
 **request**
 
-```json
+```
 method:transport.consume ,id:27
 data : {
     "consumableRtpEncodings": [  #consumer可以消费的流信息，也就是producer提供的流信息。
@@ -1490,7 +1490,7 @@ internal : {
 
 **response**
 
-```json
+```
 {
     "accepted": true,
     "data": {
@@ -1520,7 +1520,7 @@ internal : {
 
 **request**
 
-```json
+```
 method:transport.connect ,id:30
 data : {
     "dtlsParameters": {
@@ -1534,7 +1534,7 @@ internal : {
 
 **response**
 
-```json
+```
 {
     "accepted": true,
     ...
@@ -1547,7 +1547,7 @@ internal : {
 
 **request**
 
-```json
+```
 method:consumer.resume ,id:32
 data : {}
 internal : {
@@ -1560,7 +1560,7 @@ internal : {
 
 **response**
 
-```json
+```
 {
     "accepted": true,
     "id": 32
@@ -1614,7 +1614,7 @@ void SimpleConsumer::RequestKeyFrame()
 
 **request**
 
-```json
+```
 method:consumer.resume ,id:36
 data : {}
 internal : {
@@ -1627,7 +1627,7 @@ internal : {
 
 **response**
 
-```json
+```
 {
     "accepted": true,
     "id": 36
