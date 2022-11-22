@@ -136,6 +136,7 @@ set(DEPENDS_LIBS
     ${lua_all_file}
     ${websocketpp_all_file}
     ${nlohmann_json_all_file}
+    ${nlohmann_json_reflect_all_file}
     ${sigslot_all_file}
     ${httplib_all_file}
 )
@@ -159,6 +160,7 @@ set(modules_list
 set(DEPENDS_LIBS 
     ${websocketpp_all_file}
     ${nlohmann_json_all_file}
+    ${nlohmann_json_reflect_all_file}
     ${sigslot_all_file}
     ${httplib_all_file}
 )
