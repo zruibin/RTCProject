@@ -8,6 +8,7 @@ set(LIB_NAME "engine")
 #set(CMAKE_BUILD_TYPE "Debug")
 set(CMAKE_BUILD_TYPE "Release")
 
+set(BUILD_WITH_LIBS true)
 set(BUILD_WITH_VIEW false)
 
 # 生成compile_commands.json,用于在VSCode等编辑器/IDE中给C/C++代码做函数定义跳转支持
@@ -83,10 +84,13 @@ if(WIN32)
     message(WARNING "Now is windows")
 elseif(APPLE)
     message(WARNING "Now is Apple systens.")
-    set(CMAKE_OSX_ARCHITECTURES "x86_64")
-    #set(CMAKE_OSX_ARCHITECTURES arm64)
+    #set(CMAKE_OSX_ARCHITECTURES "x86_64")
+    set(CMAKE_OSX_ARCHITECTURES arm64)
     message(STATUS "osx architectures was ${CMAKE_OSX_ARCHITECTURES}")
-    add_definitions("-D__x86_64__=1")
+
+    if(CMAKE_OSX_ARCHITECTURES MATCHES "x86_64")
+        add_definitions("-D__x86_64__=1")
+    endif()
     add_definitions("-DWEBRTC_MAC=1")
     add_definitions("-DWEBRTC_POSIX=1")
 
@@ -259,10 +263,12 @@ message(STATUS "ARCHIVE_OUTPUT_DIRECTORY: ${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}")
 message(STATUS "LIBRARY_OUTPUT_DIRECTORY: ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}")
 message(STATUS "RUNTIME_OUTPUT_DIRECTORY: ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
 
-set(TARGET_STATIC_LIB "${LIB_NAME}_static")
-# add_library(${TARGET_STATIC_LIB} STATIC ${DEPENDS_LIBS} ${HEADERS} ${SOURCES} ${all_list})
-set(TARGET_SHARED_LIB "${LIB_NAME}_shared")
-# add_library(${TARGET_SHARED_LIB} SHARED ${DEPENDS_LIBS} ${HEADERS} ${SOURCES} ${all_list})
+if(BUILD_WITH_LIBS)
+    set(TARGET_STATIC_LIB "${LIB_NAME}_static")
+    add_library(${TARGET_STATIC_LIB} STATIC ${DEPENDS_LIBS} ${HEADERS} ${SOURCES} ${all_list})
+    set(TARGET_SHARED_LIB "${LIB_NAME}_shared")
+    add_library(${TARGET_SHARED_LIB} SHARED ${DEPENDS_LIBS} ${HEADERS} ${SOURCES} ${all_list})
+endif()
 
 if(BUILD_WITH_VIEW)
 
@@ -278,11 +284,11 @@ set_target_properties(${TARGET} PROPERTIES
 
 if(APPLE AND NOT IOS)
     set_target_properties(${TARGET} PROPERTIES
-        MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_SOURCE_DIR}/plistInfo.plist.in"
+        MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_SOURCE_DIR}/assets/plist/Info.plist.in"
     )
 elseif(IOS)
     set_target_properties(${TARGET} PROPERTIES
-        MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_SOURCE_DIR}/plist/Info.plist.in"
+        MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_SOURCE_DIR}/assets/plist/Info.plist.in"
         MACOSX_BUNDLE_BUNDLE_NAME ${PROJECT_NAME}
         #MACOSX_BUNDLE_SHORT_VERSION_STRING ${VERSION}
     )
@@ -308,7 +314,7 @@ endif()
 
 #-------------------------------------------------------------------------------
 
-#[[
+
 message(STATUS "origin installed directory: ${CMAKE_INSTALL_PREFIX}")
 if(${CMAKE_INSTALL_PREFIX} MATCHES "/usr/local")
     set(install_directory "${PROJECT_SOURCE_DIR}/install")
@@ -318,16 +324,21 @@ if(${CMAKE_INSTALL_PREFIX} MATCHES "/usr/local")
 endif()
 message(STATUS "Project will be installed to ${CMAKE_INSTALL_PREFIX}")
 
+set(targets ${TARGET})
+if(BUILD_WITH_LIBS)
+    list(APPEND targets ${TARGET_STATIC_LIB} ${TARGET_SHARED_LIB})
+endif()
+
 install(
     TARGETS ${TARGET} ${TARGET_STATIC_LIB} ${TARGET_SHARED_LIB}
     RUNTIME DESTINATION bin 
     LIBRARY DESTINATION lib
+    BUNDLE DESTINATION bundle
 )
 set(output_head_files
     "${src_dir}/app.h"
 )
 install(FILES ${output_head_files} DESTINATION include)
-]]
 
 #-------------------------------------------------------------------------------
 
