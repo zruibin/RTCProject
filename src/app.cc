@@ -100,6 +100,10 @@ void App::Init() {
     Log(INFO) << "App Init End.";
 }
 
+void App::Run(int argc, const char * argv[]) {
+    
+}
+
 }
 
 

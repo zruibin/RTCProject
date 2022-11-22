@@ -13,7 +13,10 @@ namespace app {
 class App {
     
 public:
-    static void Init(void);
+    explicit App() = default;
+    
+    void Init(void);
+    void Run(int argc, const char * argv[]);
 };
 
 }

@@ -14,26 +14,31 @@
 
 namespace engine {
 
-std::string replace(std::string strSrc,
-                    const std::string &oldStr,
-                    const std::string &newStr,
-                    int count=-1) {
-    std::string strRet=strSrc;
-    size_t pos = 0;
-    int l_count=0;
-    if(-1 == count) // replace all
-        count = strRet.size();
-    while ((pos = strRet.find(oldStr, pos)) != std::string::npos) {
-        strRet.replace(pos, oldStr.size(), newStr);
-        if(++l_count >= count) break;
-        pos += newStr.size();
-    }
-    return strRet;
-}
-
 void testSocket() {
- 
-    //*
+    MessageType messageType;
+    messageType.FromJsonString(testSignaling);
+    if (messageType.request.has_value()) {
+        RequestHeader reqestHaeder;
+        reqestHaeder.FromJsonString(testSignaling);
+        Log(VERBOSE) << "messageType was request: " << reqestHaeder.method.value();
+    } else if (messageType.response.has_value()) {
+        ResponseHeader responseHeader;
+        responseHeader.FromJsonString(testSignaling);
+        Log(VERBOSE) << "messageType was response: " << responseHeader.id.value();
+        if (responseHeader.ok.value()) {
+            GetRouterRtpCapabilitiesResponse response;
+            response.FromJsonString(testSignaling);
+            Log(DEBUG) << "response: " <<response.ToJsonString();
+        }
+    } else if (messageType.notification.has_value()) {
+        NotificationHeader notificationHeader;
+        notificationHeader.FromJsonString(testSignaling);
+        Log(VERBOSE) << "messageType was notification: " << notificationHeader.method.value();
+    } else {
+        Log(VERBOSE) << "messageType error.";
+    }
+    
+    /*
     using namespace network;
     std::string url = "ws://localhost:8001/?roomId=123221&peerId=ffdsds";//"ws://localhost:9806";
     std::shared_ptr<SocketInterface> socket = CreateSocket(url,
