@@ -13,7 +13,7 @@
 #include "log/logging.h"
 #include "util/timer.h"
 #include "platform/platform.h"
-#include "network/socket_factory.h"
+#include "engine/signalings/signaling_manager.h"
 
 namespace app {
 
@@ -85,35 +85,7 @@ void testTimer() {
 
 void testSocket() {
     Log(DEBUG) << "App Socket Start.";
-    using namespace network;
-    std::string url = "ws://localhost:8001/?roomId=123221&peerId=ffdsds";//"ws://localhost:9806";
-    std::shared_ptr<SocketInterface> socket = CreateSocket(url,
-                                                           SocketInterface::Protocol::kWS);
-    socket->SetConnectStateChangedHandler([](bool connected,
-                                             SocketInterface::Protocol protocol,
-                                             const std::string& networkName,
-                                             int networkType) {
-        Log(DEBUG) << "SetConnectStateChangedHandler: " << connected;
-    });
-    socket->SetFailedHandler([](SocketInterface::Error code,
-                                const std::string& reason) {
-        Log(DEBUG) << "SetFailedHandler: " << SocketInterface::ErrorToString(code)
-                    << ", reason: " << reason;
-    });
-    socket->SetReceivedFrameHandler([](const char* buf,
-                                       int len,
-                                       SocketInterface::FrameType frameType) {
-        std::string str(buf, len);
-        Log(DEBUG) << "ReceivedFrameHandler: " << str;
-    });
-    socket->SetSubProtocol("protoo");
-    socket->Open();
-    util::Timer::Sleep(3*TIME_NSEC_PER_SEC);
-//    std::string data = "一二三四五...";
-//    socket->Send(data.c_str(), data.length(), SocketInterface::FrameType::kText);
-    util::Timer::Sleep(10*TIME_NSEC_PER_SEC);
-    socket->Close();
-    util::Timer::Sleep(3*TIME_NSEC_PER_SEC);
+    engine::testSocket();
     Log(DEBUG) << "App Socket End.";
 }
 

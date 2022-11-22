@@ -1,7 +1,7 @@
 
 message("Network Module.")
 
-set(network_name log)
+set(network_name network)
 
 file (GLOB_RECURSE network_all_file "${src_dir}/network/*")
 sourceGroup("/src" ${network_all_file})
