@@ -24,7 +24,7 @@ outputDir = ""
 sourceDirName = "depsSource"
 outputDirName = "deps"
 cmakeOther = ""
-libSufixs = [".a", ".so", ".dylib"]
+libSufixs = [".a", ".so", ".dylib", "dll"]
 
 logList = []
 

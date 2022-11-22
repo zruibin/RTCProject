@@ -1,0 +1,28 @@
+/*
+ * style.css
+ *
+ * Created by Ruibin.Chow on 2022/11/14.
+ * Copyright (c) 2022年 Ruibin.Chow All rights reserved.
+ */
+
+QPushButton {
+    font-size:13px;
+}
+
+QPushButton#Left1 {
+    color:red;
+    background-color:#FFF;
+}
+
+QPushButton#Left1:hover {
+    background-color:rgb(50, 170, 200);
+}
+
+QPushButton#Left1:pressed {
+    background-color:rgb(0, 255, 0);
+}
+
+#Left2 {
+    color:blue;
+    background-color:#eee;
+}
