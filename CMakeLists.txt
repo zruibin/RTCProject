@@ -108,6 +108,7 @@ include("${src_dir}/util/CMakeLists.txt")
 include("${src_dir}/network/CMakeLists.txt")
 # libs
 include("${libs_dir}/nlohmann/CMakeLists.txt")
+include("${libs_dir}/nlohmann_json_reflect/CMakeLists.txt")
 include("${libs_dir}/asio/CMakeLists.txt")
 include("${libs_dir}/websocketpp/CMakeLists.txt")
 include("${libs_dir}/kcp/CMakeLists.txt")
