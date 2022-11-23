@@ -16,6 +16,7 @@
 
 namespace logger {
 
+extern void SetDefaultLoggerDir(const std::string& defaultLoggerDir);
 extern std::string GetDefaultLoggerDir();
 extern std::string GetDefaultLoggerFile();
 

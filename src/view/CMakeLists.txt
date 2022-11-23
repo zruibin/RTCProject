@@ -8,10 +8,6 @@ set(view_name view)
 file (GLOB_RECURSE view_all_file "${src_dir}/view/*")
 sourceGroup("/src" ${view_all_file})
 
-if(NOT USE_DEPENDS_MODEL)
-    add_library(${view_name} ${view_all_file})
-endif()
-
 
 add_definitions("-DVIEW_DISPLAY=1")
 

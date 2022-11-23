@@ -8,7 +8,7 @@ set(LIB_NAME "engine")
 #set(CMAKE_BUILD_TYPE "Debug")
 set(CMAKE_BUILD_TYPE "Release")
 
-set(BUILD_WITH_LIBS false)
+set(BUILD_WITH_LIBS true)
 set(BUILD_WITH_VIEW false)
 
 # 生成compile_commands.json,用于在VSCode等编辑器/IDE中给C/C++代码做函数定义跳转支持
@@ -173,7 +173,6 @@ set(DEPENDS_LIBS
     ${util_all_file}
     ${network_all_file}
     ${engine_all_file}
-    ${view_all_file}
 
     ${asio_all_file}
     ${kcp_all_file}
@@ -230,14 +229,14 @@ set(HEADERS
     ${WebRTC}
     ${include_third_party}
     ${Deps_include}
-    src/app.h
 )
 
 set(SOURCES
-    src/app.cc
 )
 
 set(EXECUTE_SOURCES
+    src/app.h
+    src/app.cc
     src/main.cc
 )
 
@@ -269,10 +268,9 @@ message(STATUS "LIBRARY_OUTPUT_DIRECTORY: ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}")
 message(STATUS "RUNTIME_OUTPUT_DIRECTORY: ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
 
 if(BUILD_WITH_LIBS)
-    set(TARGET_STATIC_LIB "${LIB_NAME}_static")
-    add_library(${TARGET_STATIC_LIB} STATIC ${DEPENDS_LIBS} ${HEADERS} ${SOURCES} ${all_list})
-    set(TARGET_SHARED_LIB "${LIB_NAME}_shared")
-    add_library(${TARGET_SHARED_LIB} SHARED ${DEPENDS_LIBS} ${HEADERS} ${SOURCES} ${all_list})
+    set(TARGET_LIB "${LIB_NAME}")
+    add_library(${TARGET_LIB} STATIC ${DEPENDS_LIBS} ${HEADERS} ${SOURCES} ${all_list})
+    #add_library(${TARGET_LIB} SHARED ${DEPENDS_LIBS} ${HEADERS} ${SOURCES} ${all_list})
 endif()
 
 if(BUILD_WITH_VIEW)
@@ -280,7 +278,7 @@ if(BUILD_WITH_VIEW)
 file (GLOB_RECURSE ASSETS "assets/*")
 sourceGroup("" ${ASSETS})
 
-qt_add_executable(${TARGET} MANUAL_FINALIZATION ${DEPENDS_LIBS} ${HEADERS} ${SOURCES} ${EXECUTE_SOURCES} ${ASSETS})
+qt_add_executable(${TARGET} MANUAL_FINALIZATION ${view_all_file} ${EXECUTE_SOURCES} ${ASSETS})
 
 set_target_properties(${TARGET} PROPERTIES
     WIN32_EXECUTABLE TRUE
@@ -306,14 +304,19 @@ add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
     "$<TARGET_FILE_DIR:${PROJECT_NAME}>/../Resources/assets"
 )
 
-target_link_libraries(${TARGET} PRIVATE ${all_list} ${deps_list} ${QtModuleLibs})
+target_link_libraries(${TARGET} PRIVATE
+    ${all_list}
+    ${deps_list}
+    ${QtModuleLibs}
+    ${TARGET_LIB}
+)
 
 qt_finalize_executable(${TARGET})
 
 else()
 
-add_executable(${TARGET} ${DEPENDS_LIBS} ${HEADERS} ${SOURCES} ${EXECUTE_SOURCES})
-target_link_libraries(${TARGET} PRIVATE ${all_list} ${deps_list})
+add_executable(${TARGET} ${EXECUTE_SOURCES})
+target_link_libraries(${TARGET} PRIVATE ${all_list} ${deps_list} ${TARGET_LIB})
 
 endif()
 

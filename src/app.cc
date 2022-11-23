@@ -18,6 +18,7 @@
 #if VIEW_DISPLAY
 #include <QApplication>
 #include <QTextCodec>
+#include <QDir>
 #include "view/window.h"
 #endif
 
@@ -117,6 +118,16 @@ void App::Run(int &argc, char **argv) {
     QApplication app(argc, argv);
     app.setApplicationName("RTCProject");
     app.setApplicationVersion("V1.0.0");
+
+    QString dirPath = QCoreApplication::applicationDirPath().append("/Log");
+    QDir dir(dirPath);
+    if(!dir.exists()) dir.mkdir(dirPath);
+    logger::SetDefaultLoggerDir(dirPath.toStdString());
+#else
+    namespace fs = std::filesystem;
+    fs::path dst = fs::current_path() / std::string("Log");
+    if (!fs::exists(dst)) fs::create_directory(dst);
+    logger::SetDefaultLoggerDir(dst.string());
 #endif
     
     Init();
