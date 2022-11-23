@@ -56,7 +56,7 @@ LogMessage::~LogMessage() {
     stringBuffer_->append("\n");
     std::cout << stringBuffer_->c_str();
     if (severity_ >= minWriteLevel) {
-        LogFileManager::GetInstance().Write(stringBuffer_->c_str());
+//        LogFileManager::GetInstance().Write(stringBuffer_->c_str());
     }
     delete stringBuffer_;
 }

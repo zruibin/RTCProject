@@ -8,7 +8,7 @@ set(LIB_NAME "engine")
 #set(CMAKE_BUILD_TYPE "Debug")
 set(CMAKE_BUILD_TYPE "Release")
 
-set(BUILD_WITH_LIBS true)
+set(BUILD_WITH_LIBS false)
 set(BUILD_WITH_VIEW false)
 
 # 生成compile_commands.json,用于在VSCode等编辑器/IDE中给C/C++代码做函数定义跳转支持
@@ -58,9 +58,12 @@ endfunction()
 file(GLOB_RECURSE delete_seerch_all_file "*")
 deleteFiles(${delete_seerch_all_file})
 
+# default was /src
+set(sourceGroupPrefixName "")
+
 # 按文件层次结构显示
 function(sourceGroup prefix)
-    message("prefix: ${prefix}")
+    #message("prefix: ${prefix}")
     foreach(FILE IN LISTS ARGN) 
         get_filename_component(PARENT_DIR "${FILE}" DIRECTORY)
         string(REPLACE "${CMAKE_CURRENT_SOURCE_DIR}" "" GROUP "${PARENT_DIR}")
@@ -184,7 +187,6 @@ set(DEPENDS_LIBS
 else()
 
 set(libs_list 
-    asio
     kcp
     lua
 )
@@ -196,10 +198,10 @@ set(modules_list
     util
     network
     engine
-    view
 )
 
 set(DEPENDS_LIBS 
+    ${asio_all_file}
     ${websocketpp_all_file}
     ${nlohmann_json_all_file}
     ${nlohmann_json_reflect_all_file}
@@ -339,6 +341,7 @@ set(output_head_files
     "${src_dir}/app.h"
 )
 install(FILES ${output_head_files} DESTINATION include)
+
 
 #-------------------------------------------------------------------------------
 
