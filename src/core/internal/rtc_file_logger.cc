@@ -34,7 +34,7 @@ RTCFileLogger::RTCFileLogger(const RTCString& dirPath,
     } else {
         dirPath_ = std::make_unique<RTCString>(GetDefaultRTCLoggerDir());
     }
-    maxFileSize_ = maxFileSize;
+    maxFileSize_ = maxFileSize * 1024 * 1024;
     SetSeverity(RTCFileLoggerSeverity::Info);
 }
 
@@ -66,6 +66,7 @@ void RTCFileLogger::Start() {
     }
     rtc::LogMessage::LogThreads(true);
     rtc::LogMessage::LogTimestamps(true);
+    rtc::LogMessage::SetLogToStderr(true);
     rtc::LogMessage::AddLogToStream(logSink_.get(), rtcSeverity());
     hasStarted_ = true;
 }

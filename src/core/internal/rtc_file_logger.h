@@ -28,6 +28,7 @@ class RTCFileLogger {
     
 public:
     RTCFileLogger();
+    /// dirPath: 日志输出路径; maxFileSize: 单个文件最大值，单位MB.
     RTCFileLogger(const RTCString& dirPath, uint32_t maxFileSize);
     ~RTCFileLogger();
     
