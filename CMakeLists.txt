@@ -332,13 +332,8 @@ if(${CMAKE_INSTALL_PREFIX} MATCHES "/usr/local")
 endif()
 message(STATUS "Project will be installed to ${CMAKE_INSTALL_PREFIX}")
 
-set(targets ${TARGET})
-if(BUILD_WITH_LIBS)
-    list(APPEND targets ${TARGET_STATIC_LIB} ${TARGET_SHARED_LIB})
-endif()
-
 install(
-    TARGETS ${TARGET} ${TARGET_STATIC_LIB} ${TARGET_SHARED_LIB}
+    TARGETS ${TARGET} ${TARGET_LIB}
     RUNTIME DESTINATION bin 
     LIBRARY DESTINATION lib
     BUNDLE DESTINATION bundle
