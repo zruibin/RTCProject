@@ -14,6 +14,7 @@
 #include <limits>
 #include <nlohmann/json.hpp>
 #include <nlohmann_json_reflect/json_reflect.hpp>
+#include "signaling_enum.h"
 
 namespace {
 

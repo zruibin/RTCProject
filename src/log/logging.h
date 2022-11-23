@@ -113,10 +113,10 @@ public:
         return *this;
     }
     
-//    self& operator<<(const std::string_view str) {
-//        stringBuffer_->append(str.data(), str.length());
-//        return *this;
-//    }
+    self& operator<<(const std::string_view str) {
+        stringBuffer_->append(str.data(), str.length());
+        return *this;
+    }
 
     self& operator<<(void* pVoid) {
         std::ostringstream oss;

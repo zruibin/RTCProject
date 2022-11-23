@@ -155,6 +155,7 @@ include("${libs_dir}/kcp/CMakeLists.txt")
 include("${libs_dir}/lua/CMakeLists.txt")
 include("${libs_dir}/sigslot/CMakeLists.txt")
 include("${libs_dir}/httplib/CMakeLists.txt")
+include("${libs_dir}/magic_enum/CMakeLists.txt")
 
 
 if(USE_DEPENDS_MODEL)
@@ -182,6 +183,7 @@ set(DEPENDS_LIBS
     ${nlohmann_json_reflect_all_file}
     ${sigslot_all_file}
     ${httplib_all_file}
+    ${magic_enum_all_file}
 )
 
 else()
@@ -207,6 +209,7 @@ set(DEPENDS_LIBS
     ${nlohmann_json_reflect_all_file}
     ${sigslot_all_file}
     ${httplib_all_file}
+    ${magic_enum_all_file}
 )
 
 endif()

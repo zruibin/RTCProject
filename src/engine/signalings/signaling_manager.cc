@@ -11,10 +11,14 @@
 #include "log/logging.h"
 #include "util/timer.h"
 #include "network/socket_factory.h"
+#include <magic_enum/magic_enum.hpp>
 
 namespace engine {
 
 void testSocket() {
+    NotificationMethod method = NotificationMethod::ProducerScore;
+    Log(INFO) << "methodName: " << NotificationMethodToString(method);
+    
     MessageType messageType;
     messageType.FromJsonString(testSignaling);
     if (messageType.request.has_value()) {
