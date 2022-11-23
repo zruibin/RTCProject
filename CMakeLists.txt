@@ -86,14 +86,16 @@ endfunction()
 if(WIN32)
     message(WARNING "Now is windows")
 elseif(APPLE)
-    message(WARNING "Now is Apple systens.")
-    #set(CMAKE_OSX_ARCHITECTURES "x86_64")
-    set(CMAKE_OSX_ARCHITECTURES arm64)
-    message(STATUS "osx architectures was ${CMAKE_OSX_ARCHITECTURES}")
-
-    if(CMAKE_OSX_ARCHITECTURES MATCHES "x86_64")
+    message(STATUS "Now is Apple systens.")
+    if(CMAKE_HOST_SYSTEM_PROCESSOR MATCHES "x86_64")
         add_definitions("-D__x86_64__=1")
+        set(CMAKE_OSX_ARCHITECTURES "x86_64")
+    else()
+        set(CMAKE_OSX_ARCHITECTURES arm64)
     endif()
+    message(STATUS "OSX Architectures: ${CMAKE_OSX_ARCHITECTURES}")
+    message(WARNING "Host System Processor: ${CMAKE_HOST_SYSTEM_PROCESSOR}")
+    
     add_definitions("-DWEBRTC_MAC=1")
     add_definitions("-DWEBRTC_POSIX=1")
 
@@ -110,7 +112,7 @@ elseif(APPLE)
 elseif(UNIX)
     message(WARNING "Now is UNIX-like OS's. Including aPPLE os x  and CygWin")
 endif()
-message(WARNING "operation system is ${CMAKE_SYSTEM}")
+message(WARNING "Operation System: ${CMAKE_SYSTEM}")
 
 #-------------------------------------------------------------------------------
 
