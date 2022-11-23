@@ -271,7 +271,10 @@ if(BUILD_WITH_LIBS)
     set(TARGET_LIB "${LIB_NAME}")
     add_library(${TARGET_LIB} STATIC ${DEPENDS_LIBS} ${HEADERS} ${SOURCES} ${all_list})
     #add_library(${TARGET_LIB} SHARED ${DEPENDS_LIBS} ${HEADERS} ${SOURCES} ${all_list})
+else()
+    list(APPEND EXECUTE_SOURCES ${DEPENDS_LIBS} ${HEADERS} ${SOURCES} ${all_list})
 endif()
+
 
 if(BUILD_WITH_VIEW)
 
