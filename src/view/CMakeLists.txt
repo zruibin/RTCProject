@@ -15,8 +15,10 @@ endif()
 
 add_definitions("-DVIEW_DISPLAY=1")
 
+set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 #在这里添加要使用的模块，不要忘记了下面链接时候也要添加相应模块
 set(QtModule
