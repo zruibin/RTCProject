@@ -10,7 +10,7 @@
 
 #include <fstream>
 
-namespace log {
+namespace logger {
 
 class LogFileManager
 {

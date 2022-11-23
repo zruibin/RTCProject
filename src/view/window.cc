@@ -8,5 +8,12 @@
 
 #include "window.h"
 
+namespace view {
 
+Window::Window(QWidget *parent) : QMainWindow(parent) {
+    this->setFixedSize(800, 500);
+}
+
+
+}
 

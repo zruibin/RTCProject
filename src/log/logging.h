@@ -12,9 +12,9 @@
 #include <string>
 #include <sstream>
 
-#define Log(severity) log::LogMessage(__FILE__, __LINE__, log::severity)
+#define Log(severity) logger::LogMessage(__FILE__, __LINE__, logger::severity)
 
-namespace log {
+namespace logger {
 
 extern std::string GetDefaultLoggerDir();
 extern std::string GetDefaultLoggerFile();

@@ -5,15 +5,11 @@
 //  Created by ruibin.chow on 2021/12/13.
 //
 
-#include <iostream>
 #include "app.h"
 
-int main(int argc, const char * argv[]) {
-    // insert code here...
-    std::cout << "Hello, World!\n";
-    
+int main(int argc, char * argv[]) {
     app::App app;
-    app.Init();
+    app.Run(argc, argv);
     
     return 0;
 }

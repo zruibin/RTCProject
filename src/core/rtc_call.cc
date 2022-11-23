@@ -44,7 +44,7 @@ RTCCall::RTCCall(std::unique_ptr<RTCCallObserverInterface> observer,
     videoTrackSources_ = new RTCVideoTrackSourceMap;
     createSDPObserverMap_ = new RTCCreateSDPObserverMap;
     setSDPObserverMap_ = new RTCSetSDPObserverMap;
-    fileLogger_ = std::make_unique<RTCFileLogger>(log::GetDefaultLoggerDir(), 20);
+    fileLogger_ = std::make_unique<RTCFileLogger>(logger::GetDefaultLoggerDir(), 20);
 }
 
 RTCCall::~RTCCall() {

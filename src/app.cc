@@ -15,6 +15,12 @@
 #include "platform/platform.h"
 #include "engine/signalings/signaling_manager.h"
 
+#if VIEW_DISPLAY
+#include <QApplication>
+#include <QTextCodec>
+#include "view/window.h"
+#endif
+
 namespace app {
 
 using namespace::core;
@@ -90,18 +96,37 @@ void testSocket() {
 }
 
 void App::Init() {
+    logger::SetMinWriteLogLevel(logger::VERBOSE);
     platform::thread_set_name("RTCProject.main-thread");
     Log(INFO) << "App Init Start.";
     Log(VERBOSE) << "Current Thread Name: " << platform::thread_get_current_name();
 //    testHttplib();
 //    testTimer();
-    testSocket();
-//    testRTC();
+//    testSocket();
+    testRTC();
     Log(INFO) << "App Init End.";
 }
 
-void App::Run(int argc, const char * argv[]) {
+void App::Run(int &argc, char **argv) {
+#if VIEW_DISPLAY
+    QApplication::setAttribute(Qt::AA_UseOpenGLES);
+    QApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
+    QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+    QTextCodec::setCodecForLocale(QTextCodec::codecForName("UTF-8"));
     
+    QApplication app(argc, argv);
+    app.setApplicationName("RTCProject");
+    app.setApplicationVersion("V1.0.0");
+#endif
+    
+    Init();
+    
+#if VIEW_DISPLAY
+    view::Window w;
+    w.show();
+    
+    app.exec();
+#endif
 }
 
 }

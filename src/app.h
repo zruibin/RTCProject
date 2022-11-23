@@ -16,7 +16,7 @@ public:
     explicit App() = default;
     
     void Init(void);
-    void Run(int argc, const char * argv[]);
+    void Run(int &argc, char **argv);
 };
 
 }

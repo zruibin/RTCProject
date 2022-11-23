@@ -11,24 +11,34 @@
 #include <mutex>
 #include <thread>
 #include <filesystem>
+#if VIEW_DISPLAY
+#include <QApplication>
+#include <QDir>
+#endif
 
-namespace log {
+namespace logger {
 
 std::string GetDefaultLoggerDir() {
-    namespace fs = std::filesystem;
-    fs::path dst = fs::current_path() / std::string("log");
-    if (!fs::exists(dst)) {
-        fs::create_directory(dst);
+#if VIEW_DISPLAY
+    QString dirPath = QCoreApplication::applicationDirPath().append("/Log");
+    QDir dir(dirPath);
+    if(!dir.exists()) {
+        dir.mkdir(dirPath);
     }
-    return dst.string();
-}
-
-std::string GetDefaultLoggerFile() {
+    return dirPath.toStdString();
+#else
     namespace fs = std::filesystem;
     fs::path dst = fs::current_path() / std::string("Log");
     if (!fs::exists(dst)) {
         fs::create_directory(dst);
     }
+    return dst.string();
+#endif
+}
+
+std::string GetDefaultLoggerFile() {
+    namespace fs = std::filesystem;
+    fs::path dst(GetDefaultLoggerDir());
     dst.append("log.log");
     return dst.string();
 }
