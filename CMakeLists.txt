@@ -116,10 +116,6 @@ message(WARNING "Operation System: ${CMAKE_SYSTEM}")
 
 #-------------------------------------------------------------------------------
 
-
-# 开关，是否要源码依赖方式
-set(USE_DEPENDS_MODEL true)
-
 set(src_dir "${PROJECT_SOURCE_DIR}/src")
 set(libs_dir "${PROJECT_SOURCE_DIR}/libs")
 
@@ -159,23 +155,16 @@ include("${libs_dir}/sigslot/CMakeLists.txt")
 include("${libs_dir}/httplib/CMakeLists.txt")
 include("${libs_dir}/magic_enum/CMakeLists.txt")
 
-
-if(USE_DEPENDS_MODEL)
-
-set(libs_list 
-)
-
-set(modules_list 
-)
-
-set(DEPENDS_LIBS 
+set(MODULES
     ${core_all_file}
     ${log_all_file}
     ${platform_all_file}
     ${util_all_file}
     ${network_all_file}
     ${engine_all_file}
+)
 
+set(DEPENDS_LIBS
     ${asio_all_file}
     ${kcp_all_file}
     ${lua_all_file}
@@ -187,37 +176,7 @@ set(DEPENDS_LIBS
     ${magic_enum_all_file}
 )
 
-else()
-
-set(libs_list 
-    kcp
-    lua
-)
-
-set(modules_list 
-    core
-    log
-    platform
-    util
-    network
-    engine
-)
-
-set(DEPENDS_LIBS 
-    ${asio_all_file}
-    ${websocketpp_all_file}
-    ${nlohmann_json_all_file}
-    ${nlohmann_json_reflect_all_file}
-    ${sigslot_all_file}
-    ${httplib_all_file}
-    ${magic_enum_all_file}
-)
-
-endif()
-
-set(all_list ${libs_list} ${modules_list})
-message("all_list: ${all_list}")
-
+list(APPEND ALL_SOURCES ${MODULES} ${DEPENDS_LIBS})
 
 #-------------------------------------------------------------------------------
 
@@ -271,10 +230,10 @@ message(STATUS "RUNTIME_OUTPUT_DIRECTORY: ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
 
 if(BUILD_WITH_LIBS)
     set(TARGET_LIB "${LIB_NAME}")
-    add_library(${TARGET_LIB} STATIC ${DEPENDS_LIBS} ${HEADERS} ${SOURCES} ${all_list})
-    #add_library(${TARGET_LIB} SHARED ${DEPENDS_LIBS} ${HEADERS} ${SOURCES} ${all_list})
+    add_library(${TARGET_LIB} STATIC ${ALL_SOURCES} ${HEADERS} ${SOURCES})
+    #add_library(${TARGET_LIB} SHARED ${ALL_SOURCES} ${HEADERS} ${SOURCES})
 else()
-    list(APPEND EXECUTE_SOURCES ${DEPENDS_LIBS} ${HEADERS} ${SOURCES} ${all_list})
+    list(APPEND EXECUTE_SOURCES ${ALL_SOURCES} ${HEADERS} ${SOURCES})
 endif()
 
 
