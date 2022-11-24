@@ -185,15 +185,15 @@ message("This is deps.cmake")
 
 set(deps_list pthread dl)
 
-set(DEPS_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/"""+outputDirName+"""/include")
-set(DEPS_LIB_DIR "${CMAKE_CURRENT_SOURCE_DIR}/"""+outputDirName+"""/lib")
+set(DEPS_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/"""+outputDirName+"""/include/")
+set(DEPS_LIB_DIR "${CMAKE_CURRENT_SOURCE_DIR}/"""+outputDirName+"""/lib/")
 
 message("Deps Include Directory: ${DEPS_INCLUDE_DIR}")
 message("Deps Lib Directory: ${DEPS_LIB_DIR}")
 
 include_directories("${DEPS_INCLUDE_DIR}")
 link_directories("${DEPS_LIB_DIR}")
-file(GLOB_RECURSE Deps_include ${DEPS_INCLUDE_DIR}/**/*.h)
+file(GLOB_RECURSE Deps_include ${DEPS_INCLUDE_DIR}**/*.h)
 
 """ + cmakeOther
     log("Deps CmakeList content: " + depsContent)

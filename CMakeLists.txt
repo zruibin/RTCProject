@@ -3,7 +3,7 @@ cmake_minimum_required (VERSION 3.0)
 # projectname is the same as the main-executable
 project(RTCProject)
 set(TARGET ${PROJECT_NAME})
-set(LIB_NAME "engine")
+set(LIB_NAME "Engine")
 
 #set(CMAKE_BUILD_TYPE "Debug")
 set(CMAKE_BUILD_TYPE "Release")
@@ -324,6 +324,34 @@ set(output_head_files
 )
 install(FILES ${output_head_files} DESTINATION include)
 
+set(output_libs_head_files_directory
+    webrtc/abseil/absl
+    webrtc/include/
+    webrtc/include_third_party/
+    ${DEPS_INCLUDE_DIR}
+)
+install(
+    DIRECTORY ${output_libs_head_files_directory}
+    DESTINATION include
+    FILES_MATCHING
+    PATTERN "*.h"
+    PATTERN "*.hpp"
+    PERMISSIONS OWNER_EXECUTE OWNER_WRITE OWNER_READ
+    GROUP_EXECUTE GROUP_READ
+)
+install(
+    DIRECTORY ${DEPS_LIB_DIR}
+    DESTINATION lib
+    PATTERN "cmake" EXCLUDE
+    PERMISSIONS OWNER_EXECUTE OWNER_WRITE OWNER_READ
+    GROUP_EXECUTE GROUP_READ
+)
+install(
+    FILES ${WebRTCLib}
+    DESTINATION lib
+    PERMISSIONS OWNER_EXECUTE OWNER_WRITE OWNER_READ
+    GROUP_EXECUTE GROUP_READ
+)
 
 #-------------------------------------------------------------------------------
 
