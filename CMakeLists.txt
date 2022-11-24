@@ -260,6 +260,12 @@ set_target_properties(${TARGET} PROPERTIES
     MACOSX_BUNDLE TRUE
 )
 
+set_target_properties(${TARGET} PROPERTIES
+    AUTOMOC TRUE
+    AUTOUIC TRUE
+    AUTORCC TRUE
+)
+
 if(APPLE AND NOT IOS)
     set_target_properties(${TARGET} PROPERTIES
         MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_SOURCE_DIR}/assets/plist/Info.plist.in"
