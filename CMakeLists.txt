@@ -87,6 +87,17 @@ if(WIN32)
     message(WARNING "Now is windows")
 elseif(APPLE)
     message(STATUS "Now is Apple systens.")
+
+    # Check whether we are running under Rosetta on arm64 hardware.
+    execute_process(COMMAND sysctl -q hw.optional.arm64
+        OUTPUT_VARIABLE _sysctl_stdout
+        ERROR_VARIABLE _sysctl_stderr
+        RESULT_VARIABLE _sysctl_result
+    )
+    if(_sysctl_result EQUAL 0 AND _sysctl_stdout MATCHES "hw.optional.arm64: 1")
+        set(CMAKE_HOST_SYSTEM_PROCESSOR "arm64")
+    endif()
+
     if(CMAKE_HOST_SYSTEM_PROCESSOR MATCHES "x86_64")
         add_definitions("-D__x86_64__=1")
         set(CMAKE_OSX_ARCHITECTURES "x86_64")
