@@ -7,23 +7,9 @@
  */
 
 #include "signaling_enum.h"
-#include <magic_enum/magic_enum.hpp>
 
 namespace engine {
 
-std::string NotificationMethodToOriginString(NotificationMethod method) {
-    auto methodName = magic_enum::enum_name(method);
-    std::string enumString(methodName);
-    return enumString;
-}
-
-std::string NotificationMethodToString(NotificationMethod method) {
-    std::string enumString = NotificationMethodToOriginString(method);
-    if (enumString.size() > 0) {
-        enumString[0] = tolower(enumString[0]);
-    }
-    return enumString;
-}
 
 }
 

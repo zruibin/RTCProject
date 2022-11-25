@@ -628,7 +628,7 @@ struct SetConsumerPreferredLayersRequest : Jsonable<SetConsumerPreferredLayersRe
     std::optional<bool> request = true;
     std::optional<int64_t> id = generateID();
 
-    std::optional<std::string> method = "setConsumerPriority";
+    std::optional<std::string> method = "setConsumerPreferredLayers";
     std::optional<Data> data;
     FIELDS_REFLECT(SetConsumerPreferredLayersRequest,
                    request, id, method, data);

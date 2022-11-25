@@ -17,7 +17,16 @@ namespace engine {
 
 void testSocket() {
     NotificationMethod method = NotificationMethod::ProducerScore;
-    Log(INFO) << "methodName: " << NotificationMethodToString(method);
+    Log(INFO) << "Notification Name: " << EnumMethodToString<NotificationMethod>(method);
+    Log(INFO) << "Notification method: "
+                << EnumMethodToString<NotificationMethod>(
+                        StringToEnumMethod<NotificationMethod>("activeSpeaker"));
+    
+    RequestMethod method1 = RequestMethod::GetTransportStats;
+    Log(INFO) << "Request Name: " << EnumMethodToString<RequestMethod>(method1);
+    Log(INFO) << "Request method: "
+                << EnumMethodToString<RequestMethod>(
+                        StringToEnumMethod<RequestMethod>("newConsumer"));
     
     MessageType messageType;
     messageType.FromJsonString(testSignaling);
