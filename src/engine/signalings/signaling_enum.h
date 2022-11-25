@@ -13,6 +13,7 @@
 namespace engine {
 
 enum class NotificationMethod {
+    None,
     ProducerScore,
     NewPeer,
     PeerClosed,

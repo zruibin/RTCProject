@@ -413,7 +413,7 @@ struct NewDataConsumerRequest : Jsonable<NewDataConsumerRequest> {
 
     std::optional<bool> request;
     std::optional<int64_t> id;
-    std::optional<std::string> method;
+    std::optional<std::string> method = "newDataConsumer";
     std::optional<Data> data;
     FIELDS_REFLECT(NewDataConsumerRequest, request, id, method, data);
 };
@@ -443,7 +443,7 @@ struct NewConsumerRequest : Jsonable<NewConsumerRequest> {
 
     std::optional<bool> request;
     std::optional<int64_t> id;
-    std::optional<std::string> method;
+    std::optional<std::string> method = "newConsumer";
     std::optional<Data> data;
     FIELDS_REFLECT(NewConsumerRequest, request, id,  method, data);
     FIELDS_MAP({"spropstereo", "sprop-stereo"});
