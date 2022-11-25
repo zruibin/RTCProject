@@ -17,6 +17,18 @@ namespace core {
 
 extern RTCString GetDefaultRTCLoggerDir();
 
+
+class RTCLogSink : public rtc::LogSink {
+
+public:
+    RTCLogSink() = default;
+    ~RTCLogSink() = default;
+    void OnLogMessage(const std::string& message) override;
+    void OnLogMessage(const std::string& message,
+                      rtc::LoggingSeverity severity) override;
+};
+
+
 enum class RTCFileLoggerSeverity {
     Verbose,
     Info,
@@ -32,6 +44,7 @@ public:
     RTCFileLogger(const RTCString& dirPath, uint32_t maxFileSize);
     ~RTCFileLogger();
     
+    void SetRTCLogThrowback(bool throwback) { throwback_ = throwback; }
     void SetSeverity(RTCFileLoggerSeverity severity);
     void SetShouldDisableBuffering(bool shouldDisableBuffering);
     void Start();
@@ -47,6 +60,8 @@ private:
     std::unique_ptr<RTCString> dirPath_;
     uint32_t maxFileSize_;
     std::unique_ptr<rtc::FileRotatingLogSink> logSink_;
+    std::unique_ptr<RTCLogSink> rtcLogSink_;
+    bool throwback_ = false;
 };
 
 

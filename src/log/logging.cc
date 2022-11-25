@@ -35,25 +35,32 @@ static const char* loggingSeverityCover(LoggingSeverity severity) {
     return severityList[severity];
 }
 
-LogMessage::LogMessage(const char* file, int line, LoggingSeverity severity)
-        : stringBuffer_(new std::string) {
+LogMessage::LogMessage(const char* file, int line, LoggingSeverity severity, bool origin)
+        : stringBuffer_(new std::string), origin_(origin) {
     severity_ = severity;
     std::string fileStr(file);
     stringBuffer_->append(util::get_current_time_string());
     stringBuffer_->append(" [");
     stringBuffer_->append(std::to_string(platform::thread_get_current_id()));
     stringBuffer_->append("]");
-    stringBuffer_->append("[");
-    stringBuffer_->append(fileStr.substr(fileStr.find_last_of("/")+1));
-    stringBuffer_->append(":");
-    stringBuffer_->append(std::to_string(line));
-    stringBuffer_->append("]");
-    stringBuffer_->append(loggingSeverityCover(severity));
-    stringBuffer_->append(" ");
+    if (!origin_) {
+        stringBuffer_->append("[");
+        stringBuffer_->append(fileStr.substr(fileStr.find_last_of("/")+1));
+        stringBuffer_->append(":");
+        stringBuffer_->append(std::to_string(line));
+        stringBuffer_->append("]");
+        stringBuffer_->append(loggingSeverityCover(severity));
+        stringBuffer_->append(" ");
+    }
 }
 
+LogMessage::LogMessage(const char* file, int line, LoggingSeverity severity)
+        : LogMessage(file, line, severity, false) {}
+
 LogMessage::~LogMessage() {
-    stringBuffer_->append("\n");
+    if (!origin_) {
+        stringBuffer_->append("\n");
+    }
     std::cout << stringBuffer_->c_str();
     if (severity_ >= minWriteLevel) {
         LogFileManager::GetInstance().Write(stringBuffer_->c_str());

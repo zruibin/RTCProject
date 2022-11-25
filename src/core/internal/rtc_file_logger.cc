@@ -8,6 +8,7 @@
 
 #include "core/internal/rtc_file_logger.h"
 #include <filesystem>
+#include "log/logging.h"
 
 namespace core {
 
@@ -22,6 +23,38 @@ RTCString GetDefaultRTCLoggerDir() {
     }
     return dst.string();
 }
+
+RTCString RTCLoggingSeverityToString(rtc::LoggingSeverity severity) {
+    RTCString severityString;
+    switch (severity) {
+        case rtc::LS_VERBOSE:
+            severityString = "[V]";
+            break;
+        case rtc::LS_INFO:
+            severityString = "[I]";
+            break;
+        case rtc::LS_WARNING:
+            severityString = "[W]";
+            break;
+        case rtc::LS_ERROR:
+            severityString = "[E]";
+            break;
+        default:
+            severityString = "[N]";
+            break;
+    }
+    return severityString;
+}
+
+void RTCLogSink::OnLogMessage(const std::string& message) {}
+
+void RTCLogSink::OnLogMessage(const std::string& message,
+                              rtc::LoggingSeverity severity) {
+    LogOrigin(INFO) << "[RTC]" << RTCLoggingSeverityToString(severity)
+                    << message;
+}
+
+
 
 RTCFileLogger::RTCFileLogger() : RTCFileLogger("", kDefaultMaxFileSize) {
 
@@ -55,19 +88,25 @@ void RTCFileLogger::Start() {
     if (hasStarted_) {
         return;
     }
-    logSink_.reset(new rtc::CallSessionFileRotatingLogSink(dirPath_.get()->c_str(), maxFileSize_));
-    if (!logSink_->Init()) {
-        RTC_LOG(LS_ERROR) << "Failed to open log files at path: " << dirPath_;
-        logSink_.reset();
-        return;
-    }
-    if (shouldDisableBuffering_) {
-        logSink_->DisableBuffering();
+    if (throwback_) {
+        rtcLogSink_.reset(new RTCLogSink());
+        rtc::LogMessage::AddLogToStream(rtcLogSink_.get(), rtcSeverity());
+        rtc::LogMessage::LogToDebug(rtc::LS_NONE); 
+    } else {
+        logSink_.reset(new rtc::CallSessionFileRotatingLogSink(dirPath_.get()->c_str(), maxFileSize_));
+        if (!logSink_->Init()) {
+            RTC_LOG(LS_ERROR) << "Failed to open log files at path: " << dirPath_;
+            logSink_.reset();
+            return;
+        }
+        if (shouldDisableBuffering_) {
+            logSink_->DisableBuffering();
+        }
+        rtc::LogMessage::AddLogToStream(logSink_.get(), rtcSeverity());
     }
     rtc::LogMessage::LogThreads(true);
     rtc::LogMessage::LogTimestamps(true);
     rtc::LogMessage::SetLogToStderr(true);
-    rtc::LogMessage::AddLogToStream(logSink_.get(), rtcSeverity());
     hasStarted_ = true;
 }
 
@@ -75,10 +114,18 @@ void RTCFileLogger::Stop() {
     if (!hasStarted_) {
         return;
     }
-    if (logSink_) {
-        RTC_DCHECK(logSink_);
-        rtc::LogMessage::RemoveLogToStream(logSink_.get());
-        logSink_.reset();
+    if (throwback_) {
+        if (rtcLogSink_) {
+            RTC_DCHECK(rtcLogSink_);
+            rtc::LogMessage::RemoveLogToStream(rtcLogSink_.get());
+            rtcLogSink_.reset();
+        }
+    } else {
+        if (logSink_) {
+            RTC_DCHECK(logSink_);
+            rtc::LogMessage::RemoveLogToStream(logSink_.get());
+            logSink_.reset();
+        }
     }
     hasStarted_ = false;
 }
@@ -93,6 +140,8 @@ rtc::LoggingSeverity RTCFileLogger::rtcSeverity() {
             return rtc::LS_WARNING;
         case RTCFileLoggerSeverity::Error:
             return rtc::LS_ERROR;
+        default:
+            return rtc::LS_NONE;
     }
 }
 

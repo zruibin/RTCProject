@@ -64,6 +64,7 @@ RTCCall::~RTCCall() {
 void RTCCall::Init(void) {
     Log(INFO) << "RTCCall Init.";
     
+    fileLogger_->SetRTCLogThrowback(true);
     fileLogger_->SetSeverity(RTCFileLoggerSeverity::Verbose);
     fileLogger_->Start();
     

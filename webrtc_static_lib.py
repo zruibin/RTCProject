@@ -131,7 +131,7 @@ https://www.cnblogs.com/ngxianyu/p/11412612.html
 gn gen out/arm64_libs_xcode --args='target_os="ios" ios_enable_code_signing=false is_component_build=false rtc_include_tests=false is_debug=false target_environment="device" target_cpu="arm64" ios_deployment_target="11.0" rtc_libvpx_build_vp9=false use_goma=false rtc_enable_objc_symbol_export=true enable_dsyms=true enable_stripping=true' --ide=xcode
 
 # arm64
-gn gen out/mac_libs --args='target_os="mac" target_cpu="x64" proprietary_codecs=true rtc_include_tests=false is_debug=false enable_dsyms=true rtc_build_tools=false rtc_build_examples=false use_custom_libcxx=false'
+gn gen out/mac_libs --args='target_os="mac" target_cpu="x64" proprietary_codecs=true rtc_include_tests=false is_debug=false enable_dsyms=true rtc_build_tools=false rtc_build_examples=false use_custom_libcxx=false use_rtti=true'
 """
 
 """

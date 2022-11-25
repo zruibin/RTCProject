@@ -3,7 +3,7 @@ cmake_minimum_required (VERSION 3.0)
 # projectname is the same as the main-executable
 project(RTCProject)
 set(TARGET ${PROJECT_NAME})
-set(LIB_NAME "Engine")
+set(LIB_NAME "RTCEngine")
 
 #set(CMAKE_BUILD_TYPE "Debug")
 set(CMAKE_BUILD_TYPE "Release")

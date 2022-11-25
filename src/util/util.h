@@ -13,6 +13,7 @@
 
 namespace util {
 
+std::string get_current_timestamp_string(int time_stamp_type = 0);
 std::string get_current_time_string(void);
 int64_t get_current_time_seconds(void);
 int64_t get_current_time_milliseconds(void);

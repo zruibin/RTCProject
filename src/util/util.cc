@@ -15,15 +15,54 @@
 
 namespace util {
 
-std::string get_current_time_string(void) {
+std::string get_current_timestamp_string(int time_stamp_type) {
     using namespace std::chrono;
-    auto now = system_clock::now();
-    auto time = system_clock::to_time_t(now);
-    auto ms = duration_cast<milliseconds>(now.time_since_epoch()) % 1000;
-    std::stringstream ss;
-    ss << std::put_time(std::localtime(&time), "%Y-%m-%d %H:%M:%S");
-    ss << '.' << std::setw(3) << std::setfill('0') << ms.count();
+    system_clock::time_point now = system_clock::now();
+    std::time_t now_time_t = system_clock::to_time_t(now);
+    std::tm* now_tm = std::localtime(&now_time_t);
+
+    char buffer[128];
+    strftime(buffer, sizeof(buffer), "%F %T", now_tm);
+
+    std::ostringstream ss;
+    ss.fill('0');
+
+    milliseconds ms;
+    microseconds cs;
+    nanoseconds ns;
+    
+    switch (time_stamp_type) {
+        case 0:
+            ss << buffer;
+            break;
+        case 1:
+            ms = duration_cast<milliseconds>(now.time_since_epoch()) % 1000;
+            ss << buffer << "." << std::setw(3) << std::setfill('0') << ms.count();
+            break;
+        case 2:
+            ms = duration_cast<milliseconds>(now.time_since_epoch()) % 1000;
+            cs = duration_cast<microseconds>(now.time_since_epoch()) % 1000000;
+            ss << buffer << "." << std::setw(3) << std::setfill('0') << ms.count()
+                         << "." << std::setw(3) << std::setfill('0') << cs.count() % 1000;
+            break;
+        case 3:
+            ms = duration_cast<milliseconds>(now.time_since_epoch()) % 1000;
+            cs = duration_cast<microseconds>(now.time_since_epoch()) % 1000000;
+            ns = duration_cast<nanoseconds>(now.time_since_epoch()) % 1000000000;
+            ss << buffer << "." << std::setw(3) << std::setfill('0') << ms.count()
+                         << "." << std::setw(3) << std::setfill('0') << cs.count() % 1000
+                         << "." << std::setw(3) << std::setfill('0') << ns.count() % 1000;
+            break;
+        default:
+            ss << buffer;
+            break;
+    }
+
     return ss.str();
+}
+
+std::string get_current_time_string(void) {
+    return get_current_timestamp_string(2);
 }
 
 int64_t get_current_time_seconds(void) {

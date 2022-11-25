@@ -103,8 +103,8 @@ void App::Init() {
     Log(VERBOSE) << "Current Thread Name: " << platform::thread_get_current_name();
 //    testHttplib();
 //    testTimer();
-    testSocket();
-//    testRTC();
+//    testSocket();
+    testRTC();
     Log(INFO) << "App Init End.";
 }
 
@@ -119,13 +119,13 @@ void App::Run(int &argc, char **argv) {
     app.setApplicationName("RTCProject");
     app.setApplicationVersion("V1.0.0");
 
-    QString dirPath = QCoreApplication::applicationDirPath().append("/Log");
+    QString dirPath = QCoreApplication::applicationDirPath().append("/Data");
     QDir dir(dirPath);
     if(!dir.exists()) dir.mkdir(dirPath);
     logger::SetDefaultLoggerDir(dirPath.toStdString());
 #else
     namespace fs = std::filesystem;
-    fs::path dst = fs::current_path() / std::string("Log");
+    fs::path dst = fs::current_path() / std::string("./Data");
     if (!fs::exists(dst)) fs::create_directory(dst);
     logger::SetDefaultLoggerDir(dst.string());
 #endif

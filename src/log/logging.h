@@ -13,6 +13,7 @@
 #include <sstream>
 
 #define Log(severity) logger::LogMessage(__FILE__, __LINE__, logger::severity)
+#define LogOrigin(severity) logger::LogMessage(__FILE__, __LINE__, logger::severity, true)
 
 namespace logger {
 
@@ -36,7 +37,8 @@ class LogMessage
 public:
     typedef LogMessage self;
 public:
-    explicit LogMessage(const char* file, int line, LoggingSeverity severity);
+    LogMessage(const char* file, int line, LoggingSeverity severity, bool origin);
+    LogMessage(const char* file, int line, LoggingSeverity severity);
     ~LogMessage();
     
 public:
@@ -140,6 +142,7 @@ public:
 private:
     std::string* stringBuffer_;
     LoggingSeverity severity_;
+    bool origin_ = false;
 };
 
 
