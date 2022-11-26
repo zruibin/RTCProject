@@ -154,6 +154,8 @@ include("${src_dir}/platform/CMakeLists.txt")
 include("${src_dir}/util/CMakeLists.txt")
 include("${src_dir}/network/CMakeLists.txt")
 include("${src_dir}/engine/CMakeLists.txt")
+include("${src_dir}/foundation/CMakeLists.txt")
+
 include("${src_dir}/view/CMakeLists.txt")
 # libs
 include("${libs_dir}/nlohmann/CMakeLists.txt")
@@ -173,6 +175,7 @@ set(MODULES
     ${util_all_file}
     ${network_all_file}
     ${engine_all_file}
+    ${foundation_all_file}
 )
 
 set(DEPENDS_LIBS
