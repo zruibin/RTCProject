@@ -325,7 +325,7 @@ install(
 
 set(output_head_files
     "${src_dir}/app.h"
-    "${src_dir}/engine/engine.h"
+    "${src_dir}/engine/engine_interface.h"
 )
 install(FILES ${output_head_files} DESTINATION include)
 

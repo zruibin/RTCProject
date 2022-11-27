@@ -8,8 +8,13 @@
 
 #include "engine/engine.h"
 #include <mutex>
+#include "log/logging.h"
 
 namespace engine {
+
+std::shared_ptr<EngineInterface> EngineInterface::SharedInstance() {
+    return Engine::SharedInstance();
+}
 
 std::shared_ptr<Engine>& Engine::SharedInstance() {
     static std::shared_ptr<Engine> instance_;
@@ -21,11 +26,15 @@ std::shared_ptr<Engine>& Engine::SharedInstance() {
 }
 
 Engine::Engine() {
-    
+    Log(VERBOSE) << "Engine::Engine.";
+}
+
+Engine::~Engine() {
+    Log(VERBOSE) << "Engine::~Engine.";
 }
 
 void Engine::Init() {
-    
+    Log(VERBOSE) << "Engine::Init.";
 }
 
 }

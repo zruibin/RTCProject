@@ -9,19 +9,23 @@
 #define ENGINE_H
 
 #include <memory>
+#include "engine/engine_interface.h"
 
 namespace engine {
 
-class Engine final {
+class Engine : public EngineInterface {
     
 public:
     ~Engine();
     static std::shared_ptr<Engine>& SharedInstance();
-    void Init();
+    void Init() override;
     
 protected:
     explicit Engine();
-    
+    Engine(const Engine&) = delete;
+    Engine& operator=(const Engine&) = delete;
+    Engine(Engine&&) = delete;
+    Engine& operator=(Engine&&) = delete;
 };
 
 }

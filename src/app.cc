@@ -14,6 +14,7 @@
 #include "util/timer.h"
 #include "platform/platform.h"
 #include "engine/signalings/signaling_manager.h"
+#include "engine/engine_interface.h"
 
 #if VIEW_DISPLAY
 #include <QApplication>
@@ -101,6 +102,8 @@ void App::Init() {
     platform::thread_set_name("RTCProject.main-thread");
     Log(INFO) << "App Init Start.";
     Log(VERBOSE) << "Current Thread Name: " << platform::thread_get_current_name();
+    using namespace engine;
+    EngineInterface::SharedInstance()->Init();
 //    testHttplib();
 //    testTimer();
     testSocket();
