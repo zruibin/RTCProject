@@ -322,10 +322,21 @@ install(
     LIBRARY DESTINATION lib
     BUNDLE DESTINATION bundle
 )
+
 set(output_head_files
     "${src_dir}/app.h"
+    "${src_dir}/engine/engine.h"
 )
 install(FILES ${output_head_files} DESTINATION include)
+
+install(DIRECTORY src/foundation
+        DESTINATION include
+        FILES_MATCHING
+        PATTERN "*.h"
+        PATTERN "*.hpp"
+        PERMISSIONS OWNER_EXECUTE OWNER_WRITE OWNER_READ
+                    GROUP_EXECUTE GROUP_READ)
+
 
 set(output_libs_head_files_directory
     webrtc/abseil/absl

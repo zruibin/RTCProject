@@ -14,10 +14,6 @@
 
 namespace engine {
 
-namespace  {
-    using namespace foundation;
-};
-
 void testSocket() {
     NotificationMethod method = NotificationMethod::ProducerScore;
     Log(INFO) << "Notification Name: " << EnumMethodToString<NotificationMethod>(method);

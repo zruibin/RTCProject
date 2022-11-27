@@ -14,10 +14,15 @@
 #include "engine/signalings/signaling.h"
 #include "engine/signalings/signaling_socket.h"
 #include "log/logging.h"
+#include "foundation/singleton.h"
 
 namespace engine {
 
 void testSocket();
+
+namespace  {
+    using namespace foundation;
+};
 
 #define SignalingRequest(T) std::shared_ptr<T>
 #define SignalingHandler(T) std::function<void( \
@@ -25,19 +30,11 @@ void testSocket();
                                     const std::string& msg, \
                                     std::shared_ptr<T> response)>
 
-class SignalingManager final {
+class SignalingManager final : public Singleton<SignalingManager> {
 
 public:
+    explicit SignalingManager();
     ~SignalingManager();
-    static std::shared_ptr<SignalingManager>& SharedInstance() {
-        static std::shared_ptr<SignalingManager> instance_;
-        static std::once_flag flag;
-        std::call_once(flag, [](){
-            instance_.reset(new SignalingManager);
-        });
-        return instance_;
-    }
-    
     void Init();
     
     void GetRouterRtpCapabilities(SignalingHandler(GetRouterRtpCapabilitiesResponse) handler);
@@ -90,9 +87,6 @@ public:
                               SignalingHandler(BasicResponse) handler);
     void ResetNetworkThrottle(const std::string& secret,
                               SignalingHandler(BasicResponse) handler);
-  
-protected:
-    explicit SignalingManager();
     
 private:
     template<typename Request, typename Response>
