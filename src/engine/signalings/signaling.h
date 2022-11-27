@@ -66,7 +66,7 @@ struct Jsonable {
     
     virtual std::string ToJsonString() {
         T* value = dynamic_cast<T *>(this);
-        jString jsonString = jreflect::to_json(*value);
+        jString jsonString = jreflect::to_json(*value, jreflect::INDENT);
         for (auto& [k, v] : GetReplaceMap()) {
             jsonString = replace(jsonString, k, v);
         }

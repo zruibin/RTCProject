@@ -11,5 +11,6 @@
 #include "foundation/foundation_define.h"
 #include "foundation/notification_center.h"
 #include "foundation/watchdog.h"
+#include "foundation/singleton.h"
 
 #endif /* !FOUNDATION_H */

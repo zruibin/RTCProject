@@ -15,6 +15,7 @@ namespace engine {
 
 enum class RequestMethod {
     None,
+    GetRouterRtpCapabilities,
     CreateWebRtcTransport,
     Join,
     ConnectWebRtcTransport,
@@ -76,7 +77,7 @@ std::string EnumMethodToString(T method) {
 }
 
 template<typename T>
-T StringToEnumMethod(const std::string& methodString) {
+T EnumMethodFromString(const std::string& methodString) {
     if (methodString.length() == 0) {
         return T::None;
     }

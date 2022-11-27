@@ -4,7 +4,7 @@
 
 namespace jreflect {
 
-constexpr int INDENT = 4;
+constexpr int INDENT = 2;
 
 template<typename T>
 static T from_json_detail(const nlohmann::json& json);
@@ -287,8 +287,8 @@ static nlohmann::json to_json_detail(T&& obj) {
 }
 
 template<typename T>
-static std::string to_json(T&& obj) {
+static std::string to_json(T&& obj, int indent = 0) {
     auto j = to_json_detail(std::forward<T>(obj));
-    return j.dump(INDENT);
+    return j.dump(indent);
 }
 }

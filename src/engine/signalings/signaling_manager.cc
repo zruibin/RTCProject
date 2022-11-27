@@ -7,76 +7,46 @@
  */
 
 #include "engine/signalings/signaling_manager.h"
-#include "engine/signalings/signaling.h"
-#include "log/logging.h"
 #include "util/timer.h"
 #include "network/socket_factory.h"
 #include <magic_enum/magic_enum.hpp>
+#include "foundation/notification_center.h"
 
 namespace engine {
+
+namespace  {
+    using namespace foundation;
+};
 
 void testSocket() {
     NotificationMethod method = NotificationMethod::ProducerScore;
     Log(INFO) << "Notification Name: " << EnumMethodToString<NotificationMethod>(method);
     Log(INFO) << "Notification method: "
                 << EnumMethodToString<NotificationMethod>(
-                        StringToEnumMethod<NotificationMethod>("activeSpeaker"));
+                        EnumMethodFromString<NotificationMethod>("activeSpeaker"));
     
     RequestMethod method1 = RequestMethod::GetTransportStats;
     Log(INFO) << "Request Name: " << EnumMethodToString<RequestMethod>(method1);
     Log(INFO) << "Request method: "
                 << EnumMethodToString<RequestMethod>(
-                        StringToEnumMethod<RequestMethod>("newConsumer"));
+                        EnumMethodFromString<RequestMethod>("newConsumer"));
     
-    MessageType messageType;
-    messageType.FromJsonString(testSignaling);
-    if (messageType.request.has_value()) {
-        RequestHeader reqestHaeder;
-        reqestHaeder.FromJsonString(testSignaling);
-        Log(VERBOSE) << "messageType was request: " << reqestHaeder.method.value();
-    } else if (messageType.response.has_value()) {
-        ResponseHeader responseHeader;
-        responseHeader.FromJsonString(testSignaling);
-        Log(VERBOSE) << "messageType was response: " << responseHeader.id.value();
-        if (responseHeader.ok.value()) {
-            GetRouterRtpCapabilitiesResponse response;
-            response.FromJsonString(testSignaling);
-            Log(DEBUG) << "response: " <<response.ToJsonString();
-        }
-    } else if (messageType.notification.has_value()) {
-        NotificationHeader notificationHeader;
-        notificationHeader.FromJsonString(testSignaling);
-        Log(VERBOSE) << "messageType was notification: " << notificationHeader.method.value();
-    } else {
-        Log(VERBOSE) << "messageType error.";
-    }
+    NotificationCenter::DefaultCenter()->AddNotification("testSignaling", [](NotificationRef notiRef) {
+        Log(DEBUG) << "Notification:" << notiRef->message;
+    });
+    SignalingManager::SharedInstance()->GetRouterRtpCapabilities([](int32_t code,
+                                                                    const std::string& msg,
+                                                                    std::shared_ptr<GetRouterRtpCapabilitiesResponse> response) {
+        Log(DEBUG) << "GetRouterRtpCapabilities:" << response->ToJsonString();
+    });
     
     /*
+
     using namespace network;
     std::string url = "ws://localhost:8001/?roomId=123221&peerId=ffdsds";//"ws://localhost:9806";
     std::shared_ptr<SocketInterface> socket = CreateSocket(url,
                                                            SocketInterface::Protocol::kWS);
-    socket->SetConnectStateChangedHandler([](bool connected,
-                                             SocketInterface::Protocol protocol,
-                                             const std::string& networkName,
-                                             int networkType) {
-        Log(DEBUG) << "SetConnectStateChangedHandler: " << connected;
-    });
-    socket->SetFailedHandler([](SocketInterface::Error code,
-                                const std::string& reason) {
-        Log(DEBUG) << "SetFailedHandler: " << SocketInterface::ErrorToString(code)
-                    << ", reason: " << reason;
-    });
-    socket->SetReceivedFrameHandler([](const char* buf,
-                                       int len,
-                                       SocketInterface::FrameType frameType) {
-        std::string str(buf, len);
-        GetRouterRtpCapabilitiesResponse response;
-        response.FromJsonString(str);
-        Log(DEBUG) << "ReceivedFrameHandler: " << str;
-        Log(DEBUG) << "response: " <<response.ToJsonString();
-    });
-    socket->SetSubProtocol("protoo");
+    
     socket->Open();
     util::Timer::Sleep(3*TIME_NSEC_PER_SEC);
     std::string data = "{\"method\":\"getRouterRtpCapabilities\", \"id\":3244342, \"request\": true}";
@@ -86,6 +56,23 @@ void testSocket() {
     util::Timer::Sleep(3*TIME_NSEC_PER_SEC);
     //*/
 }
+
+SignalingManager::SignalingManager() {
+    signalingSocketRef_.reset(new SignalingSocket);
+}
+
+void SignalingManager::Init() {
+    
+}
+
+void SignalingManager::GetRouterRtpCapabilities(
+    std::function<void(int32_t code,
+                       const std::string& msg,
+                       std::shared_ptr<GetRouterRtpCapabilitiesResponse> response)> handler) {
+    GetRouterRtpCapabilitiesRequest request;
+    Send<GetRouterRtpCapabilitiesRequest, GetRouterRtpCapabilitiesResponse>(request, handler);
+}
+
 
 
 }

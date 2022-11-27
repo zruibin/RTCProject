@@ -19,7 +19,7 @@ using Observer = void;
 struct Notification final {
     std::string name;
     Observer* object;
-    //userInfo
+    std::string message;
 };
 
 using NotificationRef = std::shared_ptr<Notification>;
