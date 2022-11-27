@@ -23,6 +23,9 @@ namespace {
 using SuccessCallback = std::function<void(const std::string& json)>;
 using FailureCallback = std::function<void(int32_t errorCode,
                                            const std::string& errorInfo)>;
+using StateChangeHandler = std::function<void(bool connected)>;
+using FailedHandler = std::function<void(SocketInterface::Error error,
+                                         const std::string& reason)>;
 
 struct SignalingRequest final {
     int64_t id = -1;
@@ -40,6 +43,14 @@ public:
     void Init(const std::string& url);
     void Open();
     void Close();
+    bool IsConnected();
+    
+    void SetStateChangeHandler(StateChangeHandler stateChangeHandler) {
+        stateChangeHandler_ = stateChangeHandler;
+    }
+    void SetFailedHandler(FailedHandler failedHandler) {
+        failedHandler_ = failedHandler;
+    }
     
     void Send(const std::string& text,
               int64_t transcation,
@@ -60,6 +71,9 @@ private:
     std::mutex requestMutex_;
     std::unordered_map<int64_t, std::shared_ptr<SignalingRequest>> requestMap_;
     std::shared_ptr<SocketInterface> socket_;
+    
+    StateChangeHandler stateChangeHandler_;
+    FailedHandler failedHandler_;
 };
 
 }

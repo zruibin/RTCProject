@@ -40,11 +40,22 @@ void SignalingSocket::Init(const std::string& url) {
 }
 
 void SignalingSocket::Open() {
-    socket_->Open();
+    if (socket_) {
+        socket_->Open();
+    }
 }
 
 void SignalingSocket::Close() {
-    socket_->Close();
+    if (socket_) {
+        socket_->Close();
+    }
+}
+
+bool SignalingSocket::IsConnected() {
+    if (socket_) {
+        return socket_->IsConnected();
+    }
+    return false;
 }
 
 void SignalingSocket::Send(const std::string& text,
@@ -63,11 +74,11 @@ void SignalingSocket::Send(const std::string& text,
         }
         // sending message.
         if (socket_ != nullptr) {
-            socket_->Send(text.c_str(), text.length(), SocketInterface::FrameType::kText);
+            socket_->Send(text);
         }
     }
     
-    // test
+    /* test
     std::shared_ptr<SignalingRequest> request;
     {
         std::lock_guard<std::mutex> locker(requestMutex_);
@@ -86,21 +97,27 @@ void SignalingSocket::Send(const std::string& text,
         notification->object = nullptr;
         NotificationCenter::DefaultCenter()->PostNotification("testSignaling", notification);
     }
+    //*/
 }
 
 void SignalingSocket::OnConnectStateChanged(bool connected) {
     Log(DEBUG) << "OnConnectStateChanged: " << connected;
+    if (stateChangeHandler_) {
+        stateChangeHandler_(connected);
+    }
 }
 
 void SignalingSocket::OnFailed(SocketInterface::Error code,
                                const std::string& reason) {
     Log(DEBUG) << "OnFailed: " << SocketInterface::ErrorToString(code)
                 << ", reason: " << reason;
+    if (failedHandler_) {
+        failedHandler_(code, reason);
+    }
 }
 
 void SignalingSocket::OnMessage(const std::string& message) {
-    Log(DEBUG) << "OnMessage: " << message;
-    
+//    Log(DEBUG) << "OnMessage: " << message;
     MessageType messageType;
     messageType.FromJsonString(message);
     if (messageType.request.has_value()) {
@@ -129,7 +146,7 @@ void SignalingSocket::HandleRequest(const std::string& message) {
 }
 
 void SignalingSocket::HandleResponse(const std::string& message) {
-    if (!message.empty()) {
+    if (message.empty()) {
         return;
     }
     ResponseHeader header;

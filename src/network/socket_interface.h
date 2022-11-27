@@ -70,7 +70,8 @@ public:
     virtual void UseTLS(bool useTLS) = 0;
     virtual void Open() = 0;
     virtual void Close() = 0;
-    virtual void Send(const char* buf, int len, FrameType frameType) = 0;
+    virtual void Send(const std::string& payload) = 0;
+    virtual void Send(const uint8_t* buf, int len, FrameType frameType) = 0;
     virtual State GetState() = 0;
     virtual Error GetError() = 0;
     virtual bool IsConnected() = 0;

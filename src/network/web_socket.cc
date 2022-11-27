@@ -204,7 +204,27 @@ void WebSocket::Close() {
     Close(websocketpp::close::status::normal, "normal");
 }
 
-void WebSocket::Send(const char* buf, int len, FrameType frameType) {
+void WebSocket::Send(const std::string& payload){
+    if (!IsCurrentContext()) {
+        asio::post(*ioContext_, [this, payload] {
+            Send(payload);
+        });
+        return;
+    }
+    
+    if (!IsConnected()) {
+        Log(WARNING) << "It must connected before Send.";
+        return;
+    }
+    
+    ErrorCode ec;
+    clientRef_->send(hdl_, payload, (websocketpp::frame::opcode::value)FrameType::kText, ec);
+    if (ec) {
+        Log(ERROR) << "send failed: " << ec.message();
+    }
+}
+
+void WebSocket::Send(const uint8_t* buf, int len, FrameType frameType) {
     if (!IsCurrentContext()) {
         asio::post(*ioContext_, [this, buf, len, frameType] {
             Send(buf, len, frameType);
@@ -218,7 +238,7 @@ void WebSocket::Send(const char* buf, int len, FrameType frameType) {
     }
     
     ErrorCode ec;
-    clientRef_->send(hdl_, buf, (size_t)len, (websocketpp::frame::opcode::value)frameType, ec);
+    clientRef_->send(hdl_, buf, len, (websocketpp::frame::opcode::value)frameType, ec);
     if (ec) {
         Log(ERROR) << "send failed: " << ec.message();
     }

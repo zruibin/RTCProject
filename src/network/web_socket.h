@@ -34,7 +34,8 @@ public:
     void SetConnectTimeout(int timeout) override;
     void Open() override;
     void Close() override;
-    void Send(const char/*uint8_t*/* buf, int len, FrameType frameType) override;
+    void Send(const std::string& payload) override;
+    void Send(const uint8_t* buf, int len, FrameType frameType) override;
     void TriggerError(Error error, const std::string& reason) override;
     
 private:
