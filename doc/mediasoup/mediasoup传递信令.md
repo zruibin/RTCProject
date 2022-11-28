@@ -4,7 +4,7 @@
 
 mediasoup 是一个 SFU，先来看一下 mediasoup 的架构，看一下 mediasoup 的主要概念和抽象，如Transport，Producer，Consumer，DataProducer，DataConsumer 在 mediasoup的媒体数据转发系统中的位置和作用：
 
-![1640916356184.jpg](./20220620-1420-0.png)
+![1640916356184.jpg](./image/20220620-1420-0.png)
 
 一般来说，这些抽象在 mediasoup SFU 中有实体对象与之对应。这些抽象在 libmediasoupclient 中对应 C++ 类的含义可以参考[API 文档](https://mediasoup.org/documentation/v3/mediasoup-client/api/)。这些抽象的名称是以 mediasoup SFU 服务器端为中心建立的，如 Producer，指的是可以给 mediasoup SFU 服务器提供媒体数据的实体，是 mediasoup SFU 服务器的媒体数据生产者，对应到 libmediasoupclient 中的 C++ 类 Producer，它是音频源/音频采集模块或视频源/视频采集模块的代理。
 

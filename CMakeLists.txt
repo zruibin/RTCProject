@@ -229,6 +229,17 @@ link_libraries(${WebRTCLib})
 
 #-------------------------------------------------------------------------------
 
+set(RESOURCES
+    webrtc_static_lib.py
+    builddeps.py
+    deps.json
+    deps.cmake
+    README.md
+    LICENSE
+)
+source_group(Resources FILES ${RESOURCES})
+
+#-------------------------------------------------------------------------------
 
 set(OUTPUT_DIR "${CMAKE_BINARY_DIR}/${CMAKE_BUILD_TYPE}")
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${OUTPUT_DIR}/Lib)
@@ -253,7 +264,12 @@ if(BUILD_WITH_VIEW)
 file (GLOB_RECURSE ASSETS "assets/*")
 sourceGroup("" ${ASSETS})
 
-qt_add_executable(${TARGET} MANUAL_FINALIZATION ${view_all_file} ${EXECUTE_SOURCES} ${ASSETS})
+qt_add_executable(${TARGET} MANUAL_FINALIZATION
+    ${view_all_file}
+    ${EXECUTE_SOURCES}
+    ${ASSETS}
+    ${RESOURCES}
+)
 
 set_target_properties(${TARGET} PROPERTIES
     WIN32_EXECUTABLE TRUE
@@ -296,7 +312,7 @@ qt_finalize_executable(${TARGET})
 
 else()
 
-add_executable(${TARGET} ${EXECUTE_SOURCES})
+add_executable(${TARGET} ${EXECUTE_SOURCES} ${RESOURCES})
 target_link_libraries(${TARGET} PRIVATE ${all_list} ${deps_list} ${TARGET_LIB})
 
 endif()
