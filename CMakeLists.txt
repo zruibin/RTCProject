@@ -195,12 +195,10 @@ list(APPEND ALL_SOURCES ${MODULES} ${DEPENDS_LIBS})
 #-------------------------------------------------------------------------------
 
 
-file (GLOB_RECURSE abseil ./webrtc/abseil/**/*.h)
 file (GLOB_RECURSE WebRTC ./webrtc/include/**/*.h)
 file (GLOB_RECURSE include_third_party ./webrtc/include_third_party/**/*.h)
 
 set(HEADERS
-    ${abseil}
     ${WebRTC}
     ${include_third_party}
     ${Deps_include}
@@ -221,7 +219,6 @@ source_group(TREE "${CMAKE_SOURCE_DIR}" FILES ${HEADERS} ${SOURCES} ${EXECUTE_SO
 
 # 相当于g++选项中的-I参数的作用
 include_directories(
-    "${CMAKE_SOURCE_DIR}/webrtc/abseil"
     "${CMAKE_SOURCE_DIR}/webrtc/include"
     "${CMAKE_SOURCE_DIR}/webrtc/include_third_party"
 )
@@ -339,7 +336,6 @@ install(DIRECTORY src/foundation
 
 
 set(output_libs_head_files_directory
-    webrtc/abseil/absl
     webrtc/include/
     webrtc/include_third_party/
     ${DEPS_INCLUDE_DIR}
@@ -357,6 +353,7 @@ install(
     DIRECTORY ${DEPS_LIB_DIR}
     DESTINATION lib
     PATTERN "cmake" EXCLUDE
+    PATTERN "pkgconfig" EXCLUDE
     PERMISSIONS OWNER_EXECUTE OWNER_WRITE OWNER_READ
     GROUP_EXECUTE GROUP_READ
 )

@@ -11,20 +11,26 @@
 
 """
 
+
 import os, re, json, sys, platform
-import subprocess, shutil
+import subprocess, shutil, json
 import datetime
 import tarfile, gzip
 import urllib.request
+from pathlib import Path
 
 
 homeDir = ""
+thirdPartyDir = ""
 sourceDir = ""
 outputDir = ""
+thirdPartyDirName = "thirdParty"
 sourceDirName = "depsSource"
 outputDirName = "deps"
+depsName = "deps.json"
+buildDir = "buildGen" # cmake构建目录
 cmakeOther = ""
-libSufixs = [".a", ".so", ".dylib", "dll"]
+libSufixs = [".a", ".lib", ".so", ".dylib", "dll"]
 
 logList = []
 
@@ -66,11 +72,70 @@ def getAllFileInDirectory(DIR, beyoundDir=''):
             array.append(path)
     return array
 
+def json_minify(string, strip_space=True):
+    """
+    A port of the `JSON-minify` utility to the Python language.
+    Based on JSON.minify.js: https://github.com/getify/JSON.minify
+    """
+    tokenizer = re.compile('"|(/\*)|(\*/)|(//)|\n|\r')
+    end_slashes_re = re.compile(r'(\\)*$')
+
+    in_string = False
+    in_multi = False
+    in_single = False
+
+    new_str = []
+    index = 0
+    for match in re.finditer(tokenizer, string):
+        if not (in_multi or in_single):
+            tmp = string[index:match.start()]
+            if not in_string and strip_space:
+                # replace white space as defined in standard
+                tmp = re.sub('[ \t\n\r]+', '', tmp)
+            new_str.append(tmp)
+        elif not strip_space:
+            # Replace comments with white space so that the JSON parser reports
+            # the correct column numbers on parsing errors.
+            new_str.append(' ' * (match.start() - index))
+
+        index = match.end()
+        val = match.group()
+
+        if val == '"' and not (in_multi or in_single):
+            escaped = end_slashes_re.search(string, 0, match.start())
+
+            # start of string or unescaped quote character to end string
+            if not in_string or (escaped is None or len(escaped.group()) % 2 == 0):  # noqa
+                in_string = not in_string
+            index -= 1  # include " character in next catch
+        elif not (in_string or in_multi or in_single):
+            if val == '/*':
+                in_multi = True
+            elif val == '//':
+                in_single = True
+        elif val == '*/' and in_multi and not (in_string or in_single):
+            in_multi = False
+            if not strip_space:
+                new_str.append(' ' * len(val))
+        elif val in '\r\n' and not (in_multi or in_string) and in_single:
+            in_single = False
+        elif not ((in_multi or in_single) or (val in ' \r\n\t' and strip_space)):  # noqa
+            new_str.append(val)
+
+        if not strip_space:
+            if val in '\r\n':
+                new_str.append(val)
+            elif in_multi or in_single:
+                new_str.append(' ' * len(val))
+
+    new_str.append(string[index:])
+    return ''.join(new_str)
+
+
 
 def cmakeBuild(fileName, cmakeArgs, genBuilding=True, preCmdList=[], install=True):
     os.chdir(fileName)
     if genBuilding:
-        buildDir = "build"
         if os.path.exists(buildDir):
             shutil.rmtree(buildDir)
         os.makedirs(buildDir)
@@ -82,8 +147,8 @@ def cmakeBuild(fileName, cmakeArgs, genBuilding=True, preCmdList=[], install=Tru
         cmakeArgs = ""
     cmdList = ["cmake",
                 cmakeArgs,
-                "-D CMAKE_BUILD_TYPE=RELEASE", 
-                "-D", "CMAKE_INSTALL_PREFIX="+outputDir, 
+                "-DCMAKE_BUILD_TYPE=RELEASE", 
+                "-DCMAKE_INSTALL_PREFIX="+outputDir, 
                 "..",
                 ]
     operatorCMD(cmdList, False)
@@ -161,6 +226,41 @@ def buildDeps(dict):
     pass
 
 
+def buildThirdParty():
+    os.chdir(homeDir)
+    os.chdir(thirdPartyDir) #进入到第三方存放的目录
+    # runDir = Path(thirdPartyDir)
+    # folders = runDir.iterdir()
+    folders = os.listdir(thirdPartyDir)
+    for folder in folders:
+        if not os.path.exists(os.path.join(folder, "CMakeLists.txt")):
+            continue
+        # os.chdir(folder)
+        log("folder: " + str(folder))
+        fileName = str(folder)
+        cmakeArgs = "-DCMAKE_CXX_STANDARD=14"
+        cmakeBuild(fileName, cmakeArgs, genBuilding=True, preCmdList=[], install=True)
+        os.chdir(thirdPartyDir) #回到第三方代码存放的目录
+    pass
+
+
+def buildFromDepsFile():
+    os.chdir(homeDir)
+    depsJson = None
+    with open(depsName, 'r', encoding='utf-8') as fw:
+        # json.dump(json_str, fw, indent=4, ensure_ascii=False)
+        jsonString = json_minify(fw.read())
+        depsJson = json.loads(jsonString)
+    if depsJson is None: 
+        return
+    for depsDict in depsJson:
+        log("depDict: " + str(depsDict))
+        action = depsDict["action"]
+        if action == "git": buildDeps(depsDict)
+        if action == "gz": downloadAndBuild(depsDict)
+    pass
+
+
 def genDepsCmakeList():
     log("-"*80)
     log("Generate Deps CmakeList in Path: " + homeDir)
@@ -174,7 +274,7 @@ def genDepsCmakeList():
         sufix = os.path.splitext(lib)[-1]
         if sufix not in libSufixs:
             continue
-        log("lib: "+ lib)
+        # log("lib: "+ lib)
         libPath = os.path.join(libDir, lib)
         global cmakeOther
         cmakeOther = cmakeOther + "\n" + "link_libraries(\"" + libPath + "\")"
@@ -202,36 +302,44 @@ file(GLOB_RECURSE Deps_include ${DEPS_INCLUDE_DIR}**/*.h)
     pass
 
 
-if __name__ == '__main__':
-    begin = datetime.datetime.now()
-    log("更新时间：" + str(begin))
-
+def genDirs():
     if not os.path.exists(sourceDirName):
         os.makedirs(sourceDirName)
     if not os.path.exists(outputDirName):
         os.makedirs(outputDirName)
+    if not os.path.exists(thirdPartyDirName):
+        os.makedirs(thirdPartyDirName)
     
+    global homeDir, sourceDir, thirdPartyDir, outputDir
+
     homeDir = sys.path[0]
     log("Home Directory: " + homeDir)
     sourceDir = os.path.join(homeDir, sourceDirName)
     log("Deps Directory: " + sourceDir)
+    thirdPartyDir = os.path.join(homeDir, thirdPartyDirName)
+    log("ThirdParty Directory: " + thirdPartyDir)
     outputDir = os.path.join(homeDir, outputDirName)
     log("Install Directory: " + outputDir)
+    pass
 
-    opensslDict = {
-        "fileName": "libressl-3.6.1",
-        "url": "https://ftp.openbsd.org/pub/OpenBSD/LibreSSL/libressl-3.6.1.tar.gz",
-    }
-    # downloadAndBuild(opensslDict)
 
-    sqliteCppDict = {
-        "fileName": "SQLiteCpp",
-        "url": "git clone -b 3.1.1 --depth=1 https://github.com/SRombauts/SQLiteCpp SQLiteCpp",
-    }
 
-    # buildDeps(sqliteCppDict)
+if __name__ == '__main__':
+    begin = datetime.datetime.now()
+    log("更新时间：" + str(begin))
 
+    # 生成目录
+    genDirs()
+
+    # 构建本地第三方库
+    buildThirdParty()
+
+    # 构建第三方库
+    buildFromDepsFile()
+
+    # 生成cmake文件
     genDepsCmakeList()
+
     end = datetime.datetime.now()
     log(('花费时间: %.3f 秒' % (end - begin).seconds))
     logRecord()

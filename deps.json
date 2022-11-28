@@ -1,0 +1,15 @@
+[
+    
+    // {
+    //     "action": "gz",
+    //     "fileName": "libressl-3.6.1",
+    //     "url": "https://ftp.openbsd.org/pub/OpenBSD/LibreSSL/libressl-3.6.1.tar.gz"
+    // },
+
+    {
+        "action": "git",
+        "fileName": "SQLiteCpp",
+        "url": "git clone -b 3.1.1 --depth=1 https://github.com/SRombauts/SQLiteCpp SQLiteCpp"
+    }
+
+]
