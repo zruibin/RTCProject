@@ -31,9 +31,11 @@ struct SDPSerializer : public Jsonable<T> {
     virtual void FromSDPString(const std::string& sdpString) {
         json sdpObj = sdptransform::parse(sdpString);
         std::string jsonString = sdpObj.dump(2);
-        Log(INFO) << "SDP:" << jsonString;
         Jsonable<T>::FromJsonString(jsonString);
+        originJsonString = jsonString; // must after FromJsonString.
     }
+    
+    std::string originJsonString = "";
 };
 
 struct SDPGroups {
@@ -91,8 +93,9 @@ struct SDPRtcp {
 
 struct SDPRtcpFb {
     std::optional<std::string> type;
+    std::optional<std::string> subtype;
     std::optional<std::string> payload;
-    FIELDS_REFLECT(SDPRtcpFb, type, payload);
+    FIELDS_REFLECT(SDPRtcpFb, type, subtype, payload);
 };
 
 struct SDPRtp {
@@ -138,9 +141,11 @@ struct SDPMedia {
     std::optional<std::vector<SDPSsrc>> ssrcs;
     std::optional<std::vector<SDPSsrcGroups>> ssrcGroups;
     std::optional<std::string> type;
+    std::optional<std::string> rtcpRsize;
     FIELDS_REFLECT(SDPMedia, candidates, connection, direction, ext, fingerprint,
                    fmtp, iceOptions, icePwd, iceUfrag, mid, payloads, port, protocol,
-                   rtcp, rtcpFb, rtcpMux, rtp, setup, ssrcs, type, ssrcGroups);
+                   rtcp, rtcpFb, rtcpMux, rtp, setup, ssrcs, type, ssrcGroups,
+                   rtcpRsize);
 };
 
 struct SDPMsidSemantic {
