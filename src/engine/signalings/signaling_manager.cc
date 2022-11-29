@@ -11,6 +11,7 @@
 #include "network/socket_factory.h"
 #include <magic_enum/magic_enum.hpp>
 #include "foundation/notification_center.h"
+#include "engine/sdp/sdp.h"
 
 namespace engine {
 
@@ -30,9 +31,13 @@ void testSocket() {
     NotificationCenter::DefaultCenter()->AddNotification("testSignaling", [](NotificationRef notiRef) {
         Log(DEBUG) << "Notification:" << notiRef->message;
     });
+
+    std::shared_ptr<SessionDescription> sdp = std::make_shared<SessionDescription>();
+    sdp->FromSDPString(testSDPString);
+    Log(DEBUG) << "SDP: " << sdp->ToSDPString();
     
     /*
-//    SignalingManager::SharedInstance()->Init();
+    SignalingManager::SharedInstance()->Init();
     util::Timer::Sleep(3*TIME_NSEC_PER_SEC);
     SignalingManager::SharedInstance()->GetRouterRtpCapabilities([](int32_t code,
                                                                     const std::string& msg,

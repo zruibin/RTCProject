@@ -145,9 +145,22 @@ def cmakeBuild(fileName, cmakeArgs, genBuilding=True, preCmdList=[], install=Tru
         operatorCMD(preCmdList, False)
     if not cmakeArgs:
         cmakeArgs = ""
+
+    otherCmakeArgs = ""
+    osName = platform.system()
+    if(osName == 'Windows'):
+        log("Warning Windows.")
+    elif(osName == 'Linux'):
+        log("Warning Linux.")
+    elif(osName == 'Darwin'):
+        if platform.machine() == "arm64":
+            otherCmakeArgs = otherCmakeArgs + "-DCMAKE_OSX_ARCHITECTURES=arm64 "
+            otherCmakeArgs = otherCmakeArgs + "-DCMAKE_HOST_SYSTEM_PROCESSOR=arm64 "
+
     cmdList = ["cmake",
                 cmakeArgs,
-                "-DCMAKE_BUILD_TYPE=RELEASE", 
+                "-DCMAKE_BUILD_TYPE=RELEASE",
+                otherCmakeArgs,
                 "-DCMAKE_INSTALL_PREFIX="+outputDir, 
                 "..",
                 ]
@@ -293,7 +306,7 @@ message("Deps Lib Directory: ${DEPS_LIB_DIR}")
 
 include_directories("${DEPS_INCLUDE_DIR}")
 link_directories("${DEPS_LIB_DIR}")
-file(GLOB_RECURSE Deps_include ${DEPS_INCLUDE_DIR}**/*.h)
+file(GLOB_RECURSE Deps_include ${DEPS_INCLUDE_DIR}**/*)
 
 """ + cmakeOther
     log("Deps CmakeList content: " + depsContent)

@@ -167,6 +167,7 @@ include("${libs_dir}/lua/CMakeLists.txt")
 include("${libs_dir}/sigslot/CMakeLists.txt")
 include("${libs_dir}/httplib/CMakeLists.txt")
 include("${libs_dir}/magic_enum/CMakeLists.txt")
+include("${libs_dir}/sdptransform/CMakeLists.txt")
 
 set(MODULES
     ${core_all_file}
@@ -188,6 +189,7 @@ set(DEPENDS_LIBS
     ${sigslot_all_file}
     ${httplib_all_file}
     ${magic_enum_all_file}
+    ${sdptransform_all_file}
 )
 
 list(APPEND ALL_SOURCES ${MODULES} ${DEPENDS_LIBS})
