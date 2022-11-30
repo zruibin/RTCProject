@@ -290,7 +290,8 @@ def genDepsCmakeList():
         # log("lib: "+ lib)
         libPath = os.path.join(libDir, lib)
         global cmakeOther
-        cmakeOther = cmakeOther + "\n" + "link_libraries(\"" + libPath + "\")"
+        # cmakeOther = cmakeOther + "\n" + "link_libraries(\"" + libPath + "\")"
+        cmakeOther = cmakeOther + "\n" + "list(APPEND DEPS_LIBS \"" + libPath + "\")"
 
     depsCamke = "deps.cmake"
     depsContent = """

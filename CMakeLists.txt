@@ -113,16 +113,16 @@ elseif(APPLE)
     add_definitions("-DWEBRTC_MAC=1")
     add_definitions("-DWEBRTC_POSIX=1")
 
-    link_libraries("-framework Foundation")
-    link_libraries("-framework Foundation")
-    link_libraries("-framework CoreServices")
-    link_libraries("-framework Metal")
-    link_libraries("-framework AVFoundation")
-    link_libraries("-framework VideoToolbox")
-    link_libraries("-framework AudioUnit")
-    link_libraries("-framework AudioToolbox")
-    link_libraries("-framework CoreAudio")
-    link_libraries("-framework ApplicationServices")
+    list(APPEND DEPS_LIBS "-framework Foundation")
+    list(APPEND DEPS_LIBS "-framework Foundation")
+    list(APPEND DEPS_LIBS "-framework CoreServices")
+    list(APPEND DEPS_LIBS "-framework Metal")
+    list(APPEND DEPS_LIBS "-framework AVFoundation")
+    list(APPEND DEPS_LIBS "-framework VideoToolbox")
+    list(APPEND DEPS_LIBS "-framework AudioUnit")
+    list(APPEND DEPS_LIBS "-framework AudioToolbox")
+    list(APPEND DEPS_LIBS "-framework CoreAudio")
+    list(APPEND DEPS_LIBS "-framework ApplicationServices")
 elseif(UNIX)
     message(WARNING "Now is UNIX-like OS's. Including aPPLE os x  and CygWin")
 endif()
@@ -230,7 +230,7 @@ include_directories(
 
 set(WebRTCLib "${CMAKE_SOURCE_DIR}/webrtc/lib/libwebrtc.a")
 message(STATUS "WebRTC lis was ${CMAKE_BUILD_TYPE}: ${WebRTCLib}")
-link_libraries(${WebRTCLib})
+list(APPEND DEPS_LIBS "${WebRTCLib}")
 
 #-------------------------------------------------------------------------------
 
@@ -307,10 +307,9 @@ add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
 )
 
 target_link_libraries(${TARGET} PRIVATE
-    ${all_list}
-    ${deps_list}
     ${QtModuleLibs}
     ${TARGET_LIB}
+    ${DEPS_LIBS}
 )
 
 qt_finalize_executable(${TARGET})
@@ -318,7 +317,7 @@ qt_finalize_executable(${TARGET})
 else()
 
 add_executable(${TARGET} ${EXECUTE_SOURCES} ${RESOURCES})
-target_link_libraries(${TARGET} PRIVATE ${all_list} ${deps_list} ${TARGET_LIB})
+target_link_libraries(${TARGET} PRIVATE ${TARGET_LIB} ${DEPS_LIBS})
 
 endif()
 

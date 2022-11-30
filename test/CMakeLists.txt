@@ -34,7 +34,8 @@ target_link_libraries(
     gmock
     gmock_main
     pthread
-    ${all_list} ${deps_list} ${TARGET_LIB}
+    ${TARGET_LIB}
+    ${DEPS_LIBS}
 )
 
 
