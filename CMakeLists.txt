@@ -5,20 +5,23 @@ project(RTCProject)
 set(TARGET ${PROJECT_NAME})
 set(LIB_NAME "RTCEngine")
 
-#set(CMAKE_BUILD_TYPE "Debug")
-set(CMAKE_BUILD_TYPE "Release")
 
-set(BUILD_WITH_LIBS true)
-set(BUILD_WITH_VIEW false)
+# option(CMAKE_BUILD_TYPE "Build Type." Release)
+if(NOT CMAKE_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE Debug CACHE STRING "Build type" FORCE)
+endif()
+message(WARNING "Build type: ${CMAKE_BUILD_TYPE}")
+
+
+option(BUILD_WITH_LIBS "Build With Libs." ON)
+message(WARNING "Build With Libse: ${BUILD_WITH_LIBS}")
+option(BUILD_WITH_VIEW "Build With View." OFF)
+message(WARNING "Build With View: ${BUILD_WITH_VIEW}")
+
 
 # 生成compile_commands.json,用于在VSCode等编辑器/IDE中给C/C++代码做函数定义跳转支持
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-
-if(NOT CMAKE_BUILD_TYPE)
-    set(CMAKE_BUILD_TYPE Release CACHE STRING "Build type" FORCE)
-endif()
-message(WARNING "Build type: ${CMAKE_BUILD_TYPE}")
 
 # 设置c++的编译选项
 include(CheckCXXCompilerFlag)
@@ -318,6 +321,12 @@ add_executable(${TARGET} ${EXECUTE_SOURCES} ${RESOURCES})
 target_link_libraries(${TARGET} PRIVATE ${all_list} ${deps_list} ${TARGET_LIB})
 
 endif()
+
+#-------------------------------------------------------------------------------
+
+# 单元测试
+option(ENABLE_UNIT_TESTS "Enable Unit Tests." ON)
+include("${CMAKE_CURRENT_SOURCE_DIR}/test/CMakeLists.txt")
 
 #-------------------------------------------------------------------------------
 
