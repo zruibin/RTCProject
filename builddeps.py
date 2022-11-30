@@ -12,7 +12,7 @@
 """
 
 
-import os, re, json, sys, platform
+import os, re, json, sys, platform, fnmatch
 import subprocess, shutil, json
 import datetime
 import tarfile, gzip
@@ -35,7 +35,7 @@ libSufixs = [".a", ".lib", ".so", ".dylib", "dll"]
 logList = []
 
 def logRecord():
-    with open('builddeps.log', 'w') as fileHandle:
+    with open(os.path.join(homeDir, "builddeps.log"), "w") as fileHandle:
         for logStr in logList:
             fileHandle.write(str(logStr))
 
@@ -147,6 +147,15 @@ def cmakeBuild(fileName, cmakeArgs, genBuilding=True, preCmdList=[], install=Tru
         cmakeArgs = ""
 
     otherCmakeArgs = ""
+    outputBinDir = os.path.join(outputDir, "bin")
+    if os.path.exists(outputBinDir):
+        exeFiles = os.listdir(outputBinDir)
+        for exeFile in exeFiles:
+            if fnmatch.fnmatch(exeFile, "ninja*"):
+                otherCmakeArgs = otherCmakeArgs + "-GNinja -DCMAKE_MAKE_PROGRAM="
+                otherCmakeArgs = otherCmakeArgs + os.path.join(outputDir, "bin", exeFile) + " "
+                break
+
     osName = platform.system()
     if(osName == 'Windows'):
         log("Warning Windows.")
@@ -248,7 +257,7 @@ def buildThirdParty():
     for folder in folders:
         if not os.path.exists(os.path.join(folder, "CMakeLists.txt")):
             continue
-        # os.chdir(folder)
+        log("-"*80)
         log("folder: " + str(folder))
         fileName = str(folder)
         cmakeArgs = "-DCMAKE_CXX_STANDARD=14"
@@ -267,7 +276,7 @@ def buildFromDepsFile():
     if depsJson is None: 
         return
     for depsDict in depsJson:
-        log("depDict: " + str(depsDict))
+        # log("depDict: " + str(depsDict))
         action = depsDict["action"]
         if action == "git": buildDeps(depsDict)
         if action == "gz": downloadAndBuild(depsDict)
@@ -334,6 +343,7 @@ def genDirs():
     log("ThirdParty Directory: " + thirdPartyDir)
     outputDir = os.path.join(homeDir, outputDirName)
     log("Install Directory: " + outputDir)
+    # log("-"*80)
     pass
 
 
@@ -345,11 +355,11 @@ if __name__ == '__main__':
     # 生成目录
     genDirs()
 
-    # 构建本地第三方库
-    buildThirdParty()
-
     # 构建第三方库
     buildFromDepsFile()
+
+    # 构建本地第三方库
+    buildThirdParty()
 
     # 生成cmake文件
     genDepsCmakeList()
