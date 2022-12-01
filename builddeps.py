@@ -153,7 +153,7 @@ def cmakeBuild(fileName, cmakeArgs, genBuilding=True, preCmdList=[], install=Tru
         for exeFile in exeFiles:
             if fnmatch.fnmatch(exeFile, "ninja*"):
                 otherCmakeArgs = otherCmakeArgs + "-GNinja -DCMAKE_MAKE_PROGRAM="
-                otherCmakeArgs = otherCmakeArgs + os.path.join(outputDir, "bin", exeFile) + " "
+                otherCmakeArgs = otherCmakeArgs + os.path.join(outputBinDir, exeFile) + " "
                 break
 
     osName = platform.system()

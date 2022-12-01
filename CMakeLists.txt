@@ -10,11 +10,11 @@ set(LIB_NAME "RTCEngine")
 if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Debug CACHE STRING "Build type" FORCE)
 endif()
-message(WARNING "Build type: ${CMAKE_BUILD_TYPE}")
+message(WARNING "Build Type: ${CMAKE_BUILD_TYPE}")
 
 
 option(BUILD_WITH_LIBS "Build With Libs." ON)
-message(WARNING "Build With Libse: ${BUILD_WITH_LIBS}")
+message(WARNING "Build With Libs: ${BUILD_WITH_LIBS}")
 option(BUILD_WITH_VIEW "Build With View." OFF)
 message(WARNING "Build With View: ${BUILD_WITH_VIEW}")
 
@@ -37,7 +37,7 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c99")
 
 
 if(CMAKE_BUILD_TYPE MATCHES "Debug")
-    message(WARNING "Debug Model.")
+    message(STATUS "Debug Type.")
     add_definitions("-Wall")
     add_definitions("-fPIC")
     add_definitions("-Wl,-lm")
