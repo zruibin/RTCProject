@@ -6,9 +6,9 @@ set(TARGET ${PROJECT_NAME})
 set(LIB_NAME "RTCEngine")
 
 
-# option(CMAKE_BUILD_TYPE "Build Type." Release)
+option(CMAKE_BUILD_TYPE "Build Type." Release)
 if(NOT CMAKE_BUILD_TYPE)
-    set(CMAKE_BUILD_TYPE Debug CACHE STRING "Build type" FORCE)
+    set(CMAKE_BUILD_TYPE Release CACHE STRING "Build type" FORCE)
 endif()
 message(WARNING "Build Type: ${CMAKE_BUILD_TYPE}")
 
