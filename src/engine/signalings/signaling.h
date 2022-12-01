@@ -64,9 +64,9 @@ struct Jsonable {
     virtual ~Jsonable() = default;
     virtual std::unordered_map<jString, jString> GetReplaceMap() { return {}; };
     
-    virtual std::string ToJsonString() {
+    virtual std::string ToJsonString(int indent = jreflect::INDENT) {
         T* value = dynamic_cast<T *>(this);
-        jString jsonString = jreflect::to_json(*value, jreflect::INDENT);
+        jString jsonString = jreflect::to_json(*value, indent);
         for (auto& [k, v] : GetReplaceMap()) {
             jsonString = replace(jsonString, k, v);
         }

@@ -11,6 +11,7 @@
 #include <iomanip>
 #include <sstream>
 #include <ctime>
+#include <random>
 
 
 namespace util {
@@ -76,6 +77,22 @@ int64_t get_current_time_milliseconds(void) {
     using namespace std::chrono;
     auto millisec_since_epoch = duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
     return millisec_since_epoch;
+}
+
+
+std::string get_random_string(int32_t len) {
+    std::string charSet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    std::string randomString;
+    
+    using namespace std::chrono;
+    std::default_random_engine engine((int64_t)steady_clock::now().time_since_epoch().count());
+    std::uniform_int_distribution<int> dist(0, charSet.length() - 1);
+
+    for (int32_t i = 0; i < len; ++i) {
+        int32_t randomPoz = dist(engine);
+        randomString += charSet.substr(randomPoz, 1);
+    }
+    return randomString;
 }
 
 }

@@ -18,6 +18,8 @@ std::string get_current_time_string(void);
 int64_t get_current_time_seconds(void);
 int64_t get_current_time_milliseconds(void);
 
+std::string get_random_string(int32_t len);
+
 }
 
 
