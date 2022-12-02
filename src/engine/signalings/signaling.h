@@ -118,38 +118,46 @@ struct BasicResponse : Jsonable<BasicResponse> {
 
 #pragma mark - Common
 
-struct RTCPFeedback {
+struct RTCPFeedback : Jsonable<RTCPFeedback> {
     std::optional<std::string> type;
     std::optional<std::string> parameter;
     FIELDS_REFLECT(RTCPFeedback, type, parameter);
 };
 
-struct Device {
+struct Device : Jsonable<Device> {
     std::optional<std::string> flag;
     std::optional<std::string> name;
     std::optional<std::string> version;
     FIELDS_REFLECT(Device, flag, name, version);
 };
 
-struct Parameters {
+struct Parameters : Jsonable<Parameters> {
     std::optional<int32_t> apt;
     std::optional<int32_t> levelAsymmetryAllowed;
     std::optional<int32_t> packetizationMode;
     std::optional<std::string> profileLevelId;
     std::optional<int32_t> xGoogleStartBitrate;
+    std::optional<int32_t> xGoogleMaxBitrate;
+    std::optional<int32_t> xGoogleMinBitrate;
     std::optional<int32_t> minptime;
     std::optional<int32_t> useinbandfec;
     std::optional<int32_t> profileId;
     std::optional<int32_t> spropstereo;
+    std::optional<int32_t> stereo;
     std::optional<int32_t> usedtx;
+    std::optional<int32_t> maxplaybackrate;
+    std::optional<int32_t> maxaveragebitrate;
+    std::optional<int32_t> ptime;
     FIELDS_REFLECT(Parameters,
                    levelAsymmetryAllowed, packetizationMode,
-                   profileLevelId, xGoogleStartBitrate,
+                   profileLevelId, xGoogleStartBitrate, xGoogleMaxBitrate,
+                   xGoogleMinBitrate,
                    minptime, useinbandfec, profileId,
-                   spropstereo, usedtx);
+                   spropstereo, stereo, usedtx,
+                   maxplaybackrate, maxaveragebitrate, ptime);
 };
 
-struct Codec {
+struct Codec : Jsonable<Codec> {
     std::optional<std::string> kind;
     std::optional<std::string> mimeType;
     std::optional<int32_t> clockRate;
@@ -163,7 +171,23 @@ struct Codec {
                    rtcpFeedback, parameters, preferredPayloadType, payloadType);
 };
 
-struct HeaderExtension {
+struct CodecOptions : Jsonable<CodecOptions> {
+    std::optional<bool> opusStereo;
+    std::optional<bool> opusFec;
+    std::optional<bool> opusDtx;
+    std::optional<uint32_t> opusMaxPlaybackRate;
+    std::optional<uint32_t> opusMaxAverageBitrate;
+    std::optional<uint32_t> opusPtime;
+    std::optional<uint32_t> videoGoogleStartBitrate;
+    std::optional<uint32_t> videoGoogleMaxBitrate;
+    std::optional<uint32_t> videoGoogleMinBitrate;
+    FIELDS_REFLECT(CodecOptions,
+                   opusStereo, opusFec, opusDtx, opusMaxPlaybackRate,
+                   opusMaxAverageBitrate, opusPtime, videoGoogleStartBitrate,
+                   videoGoogleMaxBitrate, videoGoogleMinBitrate);
+};
+
+struct HeaderExtension : Jsonable<HeaderExtension> {
     std::optional<std::string> kind;
     std::optional<std::string> uri;
     std::optional<int32_t> id;
@@ -176,41 +200,41 @@ struct HeaderExtension {
                    kind, uri, preferredId, preferredEncrypt, direction);
 };
 
-struct NumStreams {
+struct NumStreams : Jsonable<NumStreams> {
     std::optional<int32_t> MIS;
     std::optional<int32_t> OS;
     FIELDS_REFLECT(NumStreams, MIS, OS);
 };
 
-struct SCTPCapabilities {
+struct SCTPCapabilities : Jsonable<SCTPCapabilities> {
     std::optional<NumStreams> numStreams;
     FIELDS_REFLECT(SCTPCapabilities, numStreams);
 };
 
-struct AppData {
+struct AppData : Jsonable<AppData> {
     std::optional<std::string> peerId;
     std::optional<std::string> info;
     FIELDS_REFLECT(AppData, peerId, info);
 };
 
-struct Fingerprint {
+struct Fingerprint : Jsonable<Fingerprint> {
     std::optional<std::string> algorithm;
     std::optional<std::string> value;
     FIELDS_REFLECT(Fingerprint, algorithm, value);
 };
 
-struct DTLSParameters {
+struct DTLSParameters : Jsonable<DTLSParameters> {
     std::optional<std::vector<Fingerprint>> fingerprints;
     std::optional<std::string> role;
     FIELDS_REFLECT(DTLSParameters, fingerprints, role);
 };
 
-struct RTX {
+struct RTX : Jsonable<RTX> {
     std::optional<int64_t> ssrc;
     FIELDS_REFLECT(RTX, ssrc);
 };
 
-struct Encoding {
+struct Encoding : Jsonable<Encoding> {
     std::optional<int64_t> ssrc;
     std::optional<bool> active;
     std::optional<bool> dtx;
@@ -224,14 +248,14 @@ struct Encoding {
                    scalabilityMode, scaleResolutionDownBy);
 };
 
-struct Rtcp {
+struct Rtcp : Jsonable<Rtcp> {
     std::optional<std::string> cname;
     std::optional<bool> mux;
     std::optional<bool> reducedSize;
     FIELDS_REFLECT(Rtcp, cname, mux, reducedSize);
 };
 
-struct RTPParameters {
+struct RTPParameters : Jsonable<RTPParameters> {
     std::optional<std::vector<Encoding>> encodings;
     std::optional<std::vector<Codec>> codecs;
     std::optional<std::vector<HeaderExtension>> headerExtensions;
@@ -240,11 +264,56 @@ struct RTPParameters {
     FIELDS_REFLECT(RTPParameters, encodings, codecs, headerExtensions, mid, rtcp);
 };
 
-struct SCTPStreamParameters {
+struct SCTPStreamParameters : Jsonable<SCTPStreamParameters> {
     std::optional<int32_t> streamId;
     std::optional<bool> ordered;
     std::optional<int32_t> maxRetransmits;
     FIELDS_REFLECT(SCTPStreamParameters, streamId, ordered, maxRetransmits);
+};
+
+struct ICECandidate : Jsonable<ICECandidate> {
+    std::optional<std::string> type;
+    std::optional<std::string> protocol;
+    std::optional<std::string> foundation;
+    std::optional<std::string> ip;
+    std::optional<int32_t> port;
+    std::optional<int32_t> priority;
+    std::optional<std::string> tcptype;
+    FIELDS_REFLECT(ICECandidate, type, protocol, foundation,
+                   ip, port, priority, tcptype);
+};
+
+struct ICEParameters : Jsonable<ICEParameters> {
+    std::optional<bool> iceLite;
+    std::optional<std::string> password;
+    std::optional<std::string> usernameFragment;
+    FIELDS_REFLECT(ICEParameters, iceLite, password, usernameFragment);
+};
+
+struct SCTPParameters : Jsonable<SCTPParameters> {
+    std::optional<int32_t> MIS;
+    std::optional<int32_t> OS;
+    std::optional<bool> isDataChannel;
+    std::optional<int32_t> port;
+    std::optional<int32_t> maxMessageSize;
+    std::optional<int32_t> sctpBufferedAmount;
+    std::optional<int32_t> sendBufferSize;
+    FIELDS_REFLECT(SCTPParameters,
+                   MIS, OS, isDataChannel, port, maxMessageSize,
+                   sctpBufferedAmount, sendBufferSize);
+};
+
+struct RTPCapabilities : Jsonable<RTPCapabilities> {
+    std::optional<std::vector<Codec>> codecs;
+    std::optional<std::vector<HeaderExtension>> headerExtensions;
+    FIELDS_REFLECT(RTPCapabilities, codecs, headerExtensions);
+};
+
+struct Peer : Jsonable<Peer> {
+    std::optional<std::string> id;
+    std::optional<std::string> displayName;
+    std::optional<Device> device;
+    FIELDS_REFLECT(Peer, id, displayName, device);
 };
 
 #pragma mark - GetRouterRtpCapabilities
@@ -272,7 +341,9 @@ struct GetRouterRtpCapabilitiesResponse : Jsonable<GetRouterRtpCapabilitiesRespo
                {"levelAsymmetryAllowed","level-asymmetry-allowed"},
                {"packetizationMode","packetization-mode"},
                {"profileLevelId", "profile-level-id"},
-               {"xGoogleStartBitrate", "x-google-start-bitrate"}
+               {"xGoogleStartBitrate", "x-google-start-bitrate"},
+               {"xGoogleMaxBitrate", "x-google-max-bitrate"},
+               {"xGoogleMinBitrate", "x-google-min-bitrate"}
                );
 };
 
@@ -295,37 +366,6 @@ struct CreateWebRtcTransportRequest : Jsonable<CreateWebRtcTransportRequest> {
 };
 
 struct CreateWebRtcTransportResponse : Jsonable<CreateWebRtcTransportResponse> {
-    struct ICECandidate {
-        std::optional<std::string> type;
-        std::optional<std::string> protocol;
-        std::optional<std::string> foundation;
-        std::optional<std::string> ip;
-        std::optional<int32_t> port;
-        std::optional<int32_t> priority;
-        FIELDS_REFLECT(ICECandidate,
-                       type, protocol, foundation, ip, port, priority);
-    };
-
-    struct ICEParameters {
-        std::optional<bool> iceLite;
-        std::optional<std::string> password;
-        std::optional<std::string> usernameFragment;
-        FIELDS_REFLECT(ICEParameters, iceLite, password, usernameFragment);
-    };
-
-    struct SCTPParameters {
-        std::optional<int32_t> MIS;
-        std::optional<int32_t> OS;
-        std::optional<bool> isDataChannel;
-        std::optional<int32_t> port;
-        std::optional<int32_t> maxMessageSize;
-        std::optional<int32_t> sctpBufferedAmount;
-        std::optional<int32_t> sendBufferSize;
-        FIELDS_REFLECT(SCTPParameters,
-                       MIS, OS, isDataChannel, port, maxMessageSize,
-                       sctpBufferedAmount, sendBufferSize);
-    };
-
     struct Data {
         std::optional<std::string> id;
         std::optional<DTLSParameters> dtlsParameters;
@@ -346,11 +386,6 @@ struct CreateWebRtcTransportResponse : Jsonable<CreateWebRtcTransportResponse> {
 #pragma mark - Join
 
 struct JoinRequest : Jsonable<JoinRequest> {
-    struct RTPCapabilities {
-        std::optional<std::vector<Codec>> codecs;
-        std::optional<std::vector<HeaderExtension>> headerExtensions;
-        FIELDS_REFLECT(RTPCapabilities, codecs, headerExtensions);
-    };
     struct Data {
         std::optional<std::string> displayName;
         std::optional<Device> device;
@@ -369,18 +404,13 @@ struct JoinRequest : Jsonable<JoinRequest> {
                {"packetizationMode", "packetization-mode"},
                {"profileLevelId", "profile-level-id"},
                {"xGoogleStartBitrate", "x-google-start-bitrate"},
+               {"xGoogleMaxBitrate", "x-google-max-bitrate"},
+               {"xGoogleMinBitrate", "x-google-min-bitrate"},
                {"profileId", "profile-id"}
                );
 };
 
 struct JoinResponse : Jsonable<JoinResponse> {
-    struct Peer {
-        std::optional<std::string> id;
-        std::optional<std::string> displayName;
-        std::optional<Device> device;
-        FIELDS_REFLECT(Peer, id, displayName, device);
-    };
-
     struct Data {
         std::optional<std::vector<Peer>> peers;
         FIELDS_REFLECT(Data, peers);
@@ -417,14 +447,6 @@ struct NewDataConsumerRequest : Jsonable<NewDataConsumerRequest> {
 };
 
 struct NewConsumerRequest : Jsonable<NewConsumerRequest> {
-    struct Parameters {
-        std::optional<int32_t> spropstereo;
-        std::optional<int32_t> minptime;
-        std::optional<int32_t> useinbandfec;
-        std::optional<int32_t> usedtx;
-        FIELDS_REFLECT(Parameters, spropstereo, usedtx, minptime, useinbandfec);
-    };
-    
     struct Data {
         std::optional<std::string> id;
         std::optional<std::string> peerId;

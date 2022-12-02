@@ -53,8 +53,9 @@ struct SDPCandidates {
     std::optional<std::string> type;
     std::optional<std::string> raddr;
     std::optional<int64_t> rport;
+    std::optional<std::string> tcptype;
     FIELDS_REFLECT(SDPCandidates, component, foundation, generation,
-                   ip, port, priority, transport, type, raddr, rport);
+                   ip, port, priority, transport, type, raddr, rport, tcptype);
 };
 
 struct SDPConnection {
@@ -117,6 +118,21 @@ struct SDPSsrcGroups {
     FIELDS_REFLECT(SDPSsrcGroups, semantics, ssrcs);
 };
 
+struct SDPSimulcast {
+    std::optional<std::string> dir1;
+    std::optional<std::string> list1;
+    std::optional<std::string> dir2;
+    std::optional<std::string> list2;
+    FIELDS_REFLECT(SDPSimulcast, dir1, list1, dir2, list2);
+};
+
+struct SDPRids {
+    std::optional<std::string> id;
+    std::optional<std::string> direction;
+    std::optional<std::string> params;
+    FIELDS_REFLECT(SDPRids, id, direction, params);
+};
+
 struct SDPMedia {
     std::optional<std::vector<SDPCandidates>> candidates;
     std::optional<SDPConnection> connection;
@@ -140,10 +156,17 @@ struct SDPMedia {
     std::optional<std::vector<SDPSsrcGroups>> ssrcGroups;
     std::optional<std::string> type;
     std::optional<std::string> rtcpRsize;
+    std::optional<std::string> endOfCandidates;
+    std::optional<std::string> extmapAllowMixed;
+    std::optional<SDPSimulcast> simulcast;
+    std::optional<std::vector<SDPRids>> rids;
+    std::optional<int32_t> sctpPort;
+    std::optional<int32_t> maxMessageSize;
     FIELDS_REFLECT(SDPMedia, candidates, connection, direction, ext, fingerprint,
                    fmtp, iceOptions, icePwd, iceUfrag, mid, payloads, port, protocol,
                    rtcp, rtcpFb, rtcpMux, rtp, setup, ssrcs, type, ssrcGroups,
-                   rtcpRsize);
+                   rtcpRsize, endOfCandidates, extmapAllowMixed, simulcast, rids,
+                   sctpPort, maxMessageSize);
 };
 
 struct SDPMsidSemantic {
@@ -181,9 +204,10 @@ struct SessionDescription : SDPSerializer<SessionDescription> {
     std::optional<SDPMsidSemantic> msidSemantic;
     std::optional<std::string> icelite;
     std::optional<std::vector<SDPMedia>> media;
+    std::optional<SDPFingerprint> fingerprint;
     FIELDS_REFLECT(SessionDescription, name, origin, description, uri,
                    timing, version, groups, extmapAllowMixed,
-                   msidSemantic, icelite, media);
+                   msidSemantic, icelite, media, fingerprint);
 };
 
 
