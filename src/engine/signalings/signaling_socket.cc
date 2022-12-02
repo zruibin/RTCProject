@@ -77,27 +77,6 @@ void SignalingSocket::Send(const std::string& text,
             socket_->Send(text);
         }
     }
-    
-    /* test
-    std::shared_ptr<SignalingRequest> request;
-    {
-        std::lock_guard<std::mutex> locker(requestMutex_);
-        
-        if (requestMap_.find(transcation) != requestMap_.end()) {
-            request = requestMap_[transcation];
-            requestMap_.erase(transcation);
-        }
-    }
-    if (request) {
-        request->resolve(testSignaling);
-        using namespace foundation;
-        NotificationRef notification = std::make_shared<Notification>();
-        notification->name = "testSignaling";
-        notification->message = testSignaling;
-        notification->object = nullptr;
-        NotificationCenter::DefaultCenter()->PostNotification("testSignaling", notification);
-    }
-    //*/
 }
 
 void SignalingSocket::OnConnectStateChanged(bool connected) {
@@ -167,7 +146,7 @@ void SignalingSocket::HandleResponse(const std::string& message) {
         }
     }
     if (request) {
-        request->resolve(testSignaling);
+        request->resolve(message);
     }
 }
 

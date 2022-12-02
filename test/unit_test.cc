@@ -7,22 +7,11 @@
  */
 
 #include <string>
+#include <iostream>
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
-#include "engine/signalings/signaling.h"
-
-
-// Demonstrate some basic assertions.
-TEST(HelloTest, BasicAssertions) {
-    // Expect two strings not to be equal.
-    EXPECT_STRNE("hello", "world");
-    // Expect equality.
-    EXPECT_EQ(7 * 6, 42);
-}
-
-TEST(sample_test_case, sample_test) {
-    EXPECT_EQ(1, 1);
-}
+#include <httplib/httplib.h>
+#include "util/timer.h"
 
 
 class FooInterface {
@@ -51,3 +40,29 @@ TEST(MockFooTest, mockFooTest) {
 
 
 
+TEST(UnitTest, HttplibTest) {
+    httplib::Client cli("http://www.baidu.com");
+    if (auto res = cli.Get("/")) {
+        std::cout << res->status << std::endl;
+        std::cout << res->get_header_value("Content-Type") << std::endl;
+//        std::cout << res->body << std::endl;
+    } else {
+        std::cout << "error code: " << httplib::to_string(res.error())
+                    << std::endl;
+    }
+}
+
+TEST(UnitTest, TimerTest) {
+    util::AsynTimer::Detach([](void* pUser) {
+        std::cout << "Detach timer no repeate." << std::endl;
+    }, 1*TIME_NSEC_PER_SEC, false, nullptr);
+    
+    int runningTime = 0;
+    util::AsynTimer::Detach([&runningTime](void* pUser) {
+        runningTime += 4;
+        std::cout << "Detach timer has been running for "
+                    << runningTime << " second(s)." << std::endl;
+    }, 4*TIME_NSEC_PER_SEC, true, nullptr);
+    
+    util::Timer::Sleep(30*TIME_NSEC_PER_SEC); // must
+}

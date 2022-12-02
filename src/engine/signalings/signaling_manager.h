@@ -18,8 +18,6 @@
 
 namespace engine {
 
-void testSocket();
-
 namespace  {
     using namespace foundation;
 };

@@ -7,46 +7,10 @@
  */
 
 #include "engine/signalings/signaling_manager.h"
-#include "util/timer.h"
 #include "network/socket_factory.h"
 #include <magic_enum/magic_enum.hpp>
-#include "foundation/notification_center.h"
-#include "engine/sdp/sdp.h"
 
 namespace engine {
-
-void testSocket() {
-    NotificationMethod method = NotificationMethod::ProducerScore;
-    Log(INFO) << "Notification Name: " << EnumMethodToString<NotificationMethod>(method);
-    Log(INFO) << "Notification method: "
-                << EnumMethodToString<NotificationMethod>(
-                        EnumMethodFromString<NotificationMethod>("activeSpeaker"));
-    
-    RequestMethod method1 = RequestMethod::GetTransportStats;
-    Log(INFO) << "Request Name: " << EnumMethodToString<RequestMethod>(method1);
-    Log(INFO) << "Request method: "
-                << EnumMethodToString<RequestMethod>(
-                        EnumMethodFromString<RequestMethod>("newConsumer"));
-    
-    NotificationCenter::DefaultCenter()->AddNotification("testSignaling", [](NotificationRef notiRef) {
-        Log(DEBUG) << "Notification:" << notiRef->message;
-    });
-
-    std::shared_ptr<SessionDescription> sdp = std::make_shared<SessionDescription>();
-    sdp->FromSDPString(testSDPString);
-    Log(DEBUG) << "SDP: " << sdp->ToSDPString();
-    
-    /*
-    SignalingManager::SharedInstance()->Init();
-    util::Timer::Sleep(3*TIME_NSEC_PER_SEC);
-    SignalingManager::SharedInstance()->GetRouterRtpCapabilities([](int32_t code,
-                                                                    const std::string& msg,
-                                                                    std::shared_ptr<GetRouterRtpCapabilitiesResponse> response) {
-        Log(DEBUG) << "GetRouterRtpCapabilities:" << response->ToJsonString();
-    });
-    util::Timer::Sleep(2*TIME_NSEC_PER_SEC);
-    //*/
-}
 
 SignalingManager::SignalingManager() {
     socketRef_.reset(new SignalingSocket);

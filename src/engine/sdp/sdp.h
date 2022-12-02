@@ -11,11 +11,9 @@
 #include <string>
 #include <sdptransform/sdptransform.hpp>
 #include "engine/signalings/signaling.h"
-#include "log/logging.h"
+
 
 namespace engine {
-
-extern const std::string testSDPString;
 
 template<typename T>
 struct SDPSerializer : public Jsonable<T> {

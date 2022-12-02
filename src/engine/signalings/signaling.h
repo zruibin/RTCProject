@@ -57,8 +57,6 @@ jString replace(jString strSrc,
 
 namespace engine {
 
-extern const std::string testSignaling;
-
 template<typename T>
 struct Jsonable {
     virtual ~Jsonable() = default;

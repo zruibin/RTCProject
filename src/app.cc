@@ -7,8 +7,6 @@
  */
 
 #include "app.h"
-#include <iostream>
-#include <httplib/httplib.h>
 #include "core/rtc_call_interface.h"
 #include "log/logging.h"
 #include "util/timer.h"
@@ -63,40 +61,6 @@ void testRTC() {
     Log(INFO) << "App RTC End.";
 }
 
-void testHttplib() {
-    httplib::Client cli("http://www.baidu.com");
-    if (auto res = cli.Get("/")) {
-        Log(INFO) << res->status;
-        Log(INFO)  << res->get_header_value("Content-Type");
-        Log(INFO)  << res->body;
-    } else {
-        Log(INFO) << "error code: " << httplib::to_string(res.error());
-    }
-}
-
-void testTimer() {
-    Log(DEBUG) << "App timer Start.";
-    util::AsynTimer::Detach([](void* pUser) {
-        Log(DEBUG) << "Detach timer no repeate.";
-    }, 1*TIME_NSEC_PER_SEC, false, nullptr);
-    
-    int runningTime = 0;
-    util::AsynTimer::Detach([&runningTime](void* pUser) {
-        runningTime += 4;
-        Log(DEBUG) << "Detach timer has been running for "
-                    << runningTime << " second(s).";
-    }, 4*TIME_NSEC_PER_SEC, true, nullptr);
-    
-    util::Timer::Sleep(30*TIME_NSEC_PER_SEC); // must
-    Log(DEBUG) << "App timer End.";
-}
-
-void testSocket() {
-    Log(DEBUG) << "App Socket Start.";
-    engine::testSocket();
-    Log(DEBUG) << "App Socket End.";
-}
-
 void App::Init() {
     logger::SetMinWriteLogLevel(logger::VERBOSE);
     platform::thread_set_name("RTCProject.main-thread");
@@ -104,9 +68,6 @@ void App::Init() {
     Log(VERBOSE) << "Current Thread Name: " << platform::thread_get_current_name();
     using namespace engine;
     EngineInterface::SharedInstance()->Init();
-//    testHttplib();
-//    testTimer();
-    testSocket();
 //    testRTC();
     Log(INFO) << "App Init End.";
 }
