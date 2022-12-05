@@ -6,7 +6,7 @@
  * Copyright (c) 2022年 Ruibin.Chow All rights reserved.
  */
 
-#include "sdp_media_builder.h"
+#include "engine/builder/sdp_media_builder.h"
 #include <algorithm> // ::transform
 #include <cctype>    // ::tolower
 #include <regex>
@@ -32,7 +32,7 @@ SDPMediaBuilder::SDPMediaBuilder(const Optional(ICEParameters)& iceParameters,
     SetIceParameters(iceParameters);
     
     this->mediaObject.candidates = std::vector<SDPCandidates>();
-    for (auto& candidate : iceCandidates.value()) {
+    for (auto& candidate : iceCandidates.value_or(std::vector<ICECandidate>())) {
         auto candidateObj = SDPCandidates();
 
         candidateObj.component = 1;
@@ -59,7 +59,7 @@ SDPMedia SDPMediaBuilder::GetObject() const {
 }
 
 std::string SDPMediaBuilder::GetMid() const {
-    return this->mediaObject.mid.value();
+    return this->mediaObject.mid.value_or("");
 }
 
 bool SDPMediaBuilder::IsClosed() const {
@@ -103,15 +103,15 @@ AnswerSDPMediaBuilder::AnswerSDPMediaBuilder(const Optional(ICEParameters)& iceP
                                              const Optional(RTPParameters)& answerRtpParameters,
                                              const Optional(CodecOptions)& codecOptions)
         : SDPMediaBuilder(iceParameters, iceCandidates) {
-    auto type = offerMediaObject->type.value();
-    
+    auto type = offerMediaObject->type.value_or("");
+
     this->mediaObject.mid = offerMediaObject->mid;
     this->mediaObject.type = type;
     this->mediaObject.protocol = offerMediaObject->protocol;
     this->mediaObject.connection = SDPConnection{.version = 4, .ip = "127.0.0.1"};
     this->mediaObject.port = 7;
     
-    auto dtlsRole = dtlsParameters->role.value();
+    auto dtlsRole = dtlsParameters->role.value_or("");
     if (dtlsRole == "client")
         this->mediaObject.setup = "active";
     else if (dtlsRole == "server")
@@ -124,8 +124,8 @@ AnswerSDPMediaBuilder::AnswerSDPMediaBuilder(const Optional(ICEParameters)& iceP
         this->mediaObject.rtp = std::vector<SDPRtp>();
         this->mediaObject.rtcpFb = std::vector<SDPRtcpFb>();
         this->mediaObject.fmtp = std::vector<SDPFmtp>();
-        
-        for (auto& codec : answerRtpParameters->codecs.value()) {
+
+        for (auto& codec : answerRtpParameters->codecs.value_or(std::vector<Codec>())) {
             SDPRtp rtp {
                 .payload = codec.payloadType.value(),
                 .codec = GetCodecName(codec),
@@ -313,7 +313,8 @@ OfferSDPMediaBuilder::OfferSDPMediaBuilder(const Optional(ICEParameters)& icePar
         this->mediaObject.rtp = std::vector<SDPRtp>();
         this->mediaObject.rtcpFb = std::vector<SDPRtcpFb>();
         this->mediaObject.fmtp = std::vector<SDPFmtp>();
-        for (auto& codec : offerRtpParameters->codecs.value()) {
+        
+        for (auto& codec : offerRtpParameters->codecs.value_or(std::vector<Codec>())) {
             SDPRtp rtp {
                 .payload = codec.payloadType.value(),
                 .codec = GetCodecName(codec),
@@ -349,7 +350,8 @@ OfferSDPMediaBuilder::OfferSDPMediaBuilder(const Optional(ICEParameters)& icePar
                 this->mediaObject.fmtp->push_back(fmtp);
             }
             
-            for (const auto& fb : codec.rtcpFeedback.value()) {
+            for (const auto& fb : codec.rtcpFeedback
+                                            .value_or(std::vector<RTCPFeedback>())) {
                 this->mediaObject.rtcpFb->push_back({
                     .payload = std::to_string(codec.payloadType.value()),
                     .type = fb.type,
@@ -359,7 +361,8 @@ OfferSDPMediaBuilder::OfferSDPMediaBuilder(const Optional(ICEParameters)& icePar
         }
         
         std::string payloads;
-        for (const auto& codec : offerRtpParameters->codecs.value()) {
+        for (const auto& codec : offerRtpParameters->codecs
+                                        .value_or(std::vector<Codec>())) {
             auto payloadType = codec.payloadType.value();
             if (!payloads.empty()) payloads.append(" ");
             payloads.append(std::to_string(payloadType));
@@ -367,7 +370,8 @@ OfferSDPMediaBuilder::OfferSDPMediaBuilder(const Optional(ICEParameters)& icePar
         this->mediaObject.payloads = payloads;
         
         this->mediaObject.ext = std::vector<SDPExt>();
-        for (const auto& ext : offerRtpParameters->headerExtensions.value()) {
+        for (const auto& ext : offerRtpParameters->headerExtensions
+                                        .value_or(std::vector<HeaderExtension>())) {
             this->mediaObject.ext->push_back({
                 .uri = ext.uri,
                 .value = ext.id
@@ -377,19 +381,21 @@ OfferSDPMediaBuilder::OfferSDPMediaBuilder(const Optional(ICEParameters)& icePar
         this->mediaObject.rtcpMux   = "rtcp-mux";
         this->mediaObject.rtcpRsize = "rtcp-rsize";
         
-        const auto& encoding = offerRtpParameters->encodings.value()[0];
-        auto ssrc = encoding.ssrc.value();
-        uint32_t rtxSsrc;
-        if (encoding.rtx.has_value() && encoding.rtx.value().ssrc.has_value())
-            rtxSsrc = encoding.rtx.value().ssrc.value();
-        else
-            rtxSsrc = 0u;
+        int64_t ssrc = 0u;
+        uint32_t rtxSsrc = 0u;
+        if (offerRtpParameters->encodings->size() > 0) {
+            const auto& encoding = offerRtpParameters->encodings.value()[0];
+            ssrc = encoding.ssrc.value_or(0);
+            if (encoding.rtx.has_value() && encoding.rtx.value().ssrc.has_value())
+                rtxSsrc = encoding.rtx.value().ssrc.value();
+        }
         
         this->mediaObject.ssrcs = std::vector<SDPSsrc>();
         this->mediaObject.ssrcGroups = std::vector<SDPSsrcGroups>();
         
-        if (offerRtpParameters->rtcp.value().cname.has_value()) {
-            auto cname = offerRtpParameters->rtcp.value().cname.value();
+        if (offerRtpParameters->rtcp.has_value() &&
+            offerRtpParameters->rtcp.value().cname.has_value()) {
+            auto cname = offerRtpParameters->rtcp.value_or(Rtcp()).cname.value_or("");
             std::string msid(streamId);
             msid.append(" ").append(trackId);
             this->mediaObject.ssrcs->push_back({

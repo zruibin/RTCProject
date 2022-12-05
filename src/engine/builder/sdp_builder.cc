@@ -6,7 +6,7 @@
  * Copyright (c) 2022年 Ruibin.Chow All rights reserved.
  */
 
-#include "sdp_builder.h"
+#include "engine/builder/sdp_builder.h"
 
 namespace engine {
 
@@ -43,11 +43,14 @@ SDPBuilder::SDPBuilder(const Optional(ICEParameters)& iceParameters,
     
     // NOTE: We take the latest fingerprint.
     auto numFingerprints = this->dtlsParameters_->fingerprints->size();
-    Fingerprint lastFingerprint = this->dtlsParameters_->fingerprints.value()[numFingerprints - 1];
-    this->sdpObject.fingerprint = {
-        .type = lastFingerprint.algorithm,
-        .hash = lastFingerprint.value
-    };
+    if (this->dtlsParameters_->fingerprints.has_value()
+        && numFingerprints > 0) {
+        Fingerprint lastFingerprint = this->dtlsParameters_->fingerprints.value()[numFingerprints - 1];
+        this->sdpObject.fingerprint = {
+            .type = lastFingerprint.algorithm,
+            .hash = lastFingerprint.value
+        };
+    }
     
     this->sdpObject.groups->push_back({
         .type = "BUNDLE",
@@ -200,7 +203,9 @@ void SDPBuilder::RegenerateBundleMids() {
                 mids.append(" ").append(mediaBuilder->GetMid());
         }
     }
-    this->sdpObject.groups.value()[0].mids = mids;
+    if (this->sdpObject.groups.has_value() && this->sdpObject.groups->size() > 0) {
+        this->sdpObject.groups.value()[0].mids = mids;
+    }
 }
 
 void SDPBuilder::UpdateIceParameters(Optional(ICEParameters) iceParameters) {

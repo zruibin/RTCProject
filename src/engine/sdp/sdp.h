@@ -133,7 +133,7 @@ struct SDPRids {
     FIELDS_REFLECT(SDPRids, id, direction, params);
 };
 
-struct SDPMedia {
+struct SDPMedia : SDPSerializer<SDPMedia> {
     std::optional<std::vector<SDPCandidates>> candidates;
     std::optional<SDPConnection> connection;
     std::optional<std::string> direction;

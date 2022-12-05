@@ -11,6 +11,7 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 #include "engine/sdp/sdp.h"
+#include "engine/builder/sdp_builder.h"
 
 static const std::string testSDPString = R"(v=0
 o=- 2769202419187616652 2 IN IP4 127.0.0.1
@@ -194,3 +195,36 @@ TEST(SDPTest, BasicSDPTest) {
     ASSERT_TRUE(sdp.originJsonString.length() > 0);
 }
 
+TEST(SDPTest, SDPBuilderTest) {
+    using namespace engine;
+    SDPMediaBuilder *answerSdp = new AnswerSDPMediaBuilder(std::nullopt,
+                                                           std::nullopt,
+                                                           std::nullopt,
+                                                           std::nullopt,
+                                                           std::nullopt,
+                                                           std::nullopt,
+                                                           std::nullopt,
+                                                           std::nullopt);
+    std::cout << "AnswerSDPMedia: " << answerSdp->GetObject().ToSDPString();
+    
+    
+    SDPMediaBuilder *offerSdp = new OfferSDPMediaBuilder(std::nullopt,
+                                                         std::nullopt,
+                                                         std::nullopt,
+                                                         std::nullopt,
+                                                         "",
+                                                         "video",
+                                                         std::nullopt,
+                                                         "",
+                                                         "");
+    std::cout << "OfferSDPMedia: " << offerSdp->GetObject().ToSDPString();
+    
+    SDPBuilder sdpBuilder(std::nullopt, std::nullopt, std::nullopt, std::nullopt);
+    sdpBuilder.Send(std::nullopt, "", std::nullopt, std::nullopt, std::nullopt);
+    sdpBuilder.Receive("", "", std::nullopt, "", "");
+    std::cout << "SDPBuilder: " << sdpBuilder.GetSdp().ToSDPString();
+    ASSERT_TRUE(sdpBuilder.GetSdp().ToSDPString().length() > 0);
+    
+    delete offerSdp;
+    delete answerSdp;
+}
