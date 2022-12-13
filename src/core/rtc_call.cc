@@ -102,6 +102,9 @@ void RTCCall::TransferNetTypeToWebrtc(RTCNetType netType,
 }
 
 RTCVideoTrackSourceRef RTCCall::GetVideoTrackSource(const RTCString& peerId) {
+    INVOKE_RETURN(RTCVideoTrackSourceRef, [&]{
+        return this->GetVideoTrackSource(peerId);
+    })
     Log(INFO) << "RTCCall GetVideoTrackSource, peerId:" << peerId;
     
     RTCVideoTrackSourceRef videoTrackSource;
@@ -119,6 +122,7 @@ RTCVideoTrackSourceRef RTCCall::GetVideoTrackSource(const RTCString& peerId) {
 void RTCCall::CreateOffer(RTCSdpType sdpType,
                           int layers,
                           const RTCString& peerId) {
+    INVOKE([&]{ this->CreateOffer(sdpType, layers, peerId); });
     Log(INFO) << "RTCCall CreateOffer, peerId:" << peerId
                 << ", sdpType:" << RTCStringBySdpType(sdpType)
                 << ", layers:" << layers;
@@ -174,6 +178,7 @@ void RTCCall::CreateOffer(RTCSdpType sdpType,
 void RTCCall::CreateAnswer(RTCSdpType sdpType,
                            RTCStringMap& offerMap,
                            const RTCString& peerId) {
+    INVOKE([&]{ this->CreateAnswer(sdpType, offerMap, peerId); });
     Log(INFO) << "RTCCall CreateAnswer, peerId:" << peerId
                 << ", sdpType:" << RTCStringBySdpType(sdpType)
                 << ", offerMap:" << &offerMap;
@@ -219,6 +224,7 @@ void RTCCall::CreateAnswer(RTCSdpType sdpType,
 
 void RTCCall::AddAnswer(RTCStringMap& answerMap,
                         const RTCString& peerId) {
+    INVOKE([&]{ this->AddAnswer(answerMap, peerId); });
     Log(INFO) << "RTCCall AddAnswer, peerId:" << peerId
                 << ", answerMap:" << &answerMap;
     
@@ -248,6 +254,7 @@ void RTCCall::AddAnswer(RTCStringMap& answerMap,
  
 void RTCCall::AddIceCandidate(RTCStringMap& candidateMap,
                               const RTCString& peerId) {
+    INVOKE([&]{ this->AddIceCandidate(candidateMap, peerId); });
     Log(INFO) << "RTCCall AddIceCandidate, peerId:" << peerId
                 << ", candidateMap:" << &candidateMap;
     
@@ -281,6 +288,7 @@ void RTCCall::AddIceCandidate(RTCStringMap& candidateMap,
 
 void RTCCall::SetConfigForVideoEncoder(const RTCVideoConfig& config,
                                        const RTCString& peerId) {
+    INVOKE([&]{ this->SetConfigForVideoEncoder(config, peerId); });
     Log(INFO) << "RTCCall SetConfigForVideoEncoder, peerId:" << peerId
                 << ", config:" << &config;
     
@@ -335,6 +343,7 @@ void RTCCall::SetConfigForVideoEncoder(const RTCVideoConfig& config,
 void RTCCall::EnableVideoEncoderLyaer(bool enable,
                                       RTCStreamVideoLayer layer,
                                       const RTCString& peerId) {
+    INVOKE([&]{ this->EnableVideoEncoderLyaer(enable, layer, peerId); });
     Log(INFO) << "RTCCall EnableVideoEncoderLyaer, peerId:" << peerId
                 << ", enable:" << enable;
     
@@ -376,24 +385,28 @@ void RTCCall::EnableVideoEncoderLyaer(bool enable,
 
 void RTCCall::SetVideoEncodeDegradationPreference(const webrtc::DegradationPreference preference,
                                                   const RTCString& peerId) {
+    INVOKE([&]{ this->SetVideoEncodeDegradationPreference(preference, peerId); });
     Log(INFO) << "RTCCall SetVideoEncodeDegradationPreference, peerId:" << peerId
                 << ", preference:" << &preference;
 }
 
 void RTCCall::EnableAudioSender(bool isEnabled,
                                 const RTCString& peerId) {
+    INVOKE([&]{ this->EnableAudioSender(isEnabled, peerId); });
     Log(INFO) << "RTCCall EnableAudioSender, peerId:" << peerId
                 << ", isEnabled:" << isEnabled;
 }
 
 void RTCCall::EnableVideoSender(bool isEnabled,
                                 const RTCString& peerId) {
+    INVOKE([&]{ this->EnableVideoSender(isEnabled, peerId); });
     Log(INFO) << "RTCCall EnableVideoSender, peerId:" << peerId
                 << ", isEnabled:" << isEnabled;
 }
 
 void RTCCall::EnableSendAudioTrack(bool isEnabled,
                                    const RTCString& peerId) {
+    INVOKE([&]{ this->EnableSendAudioTrack(isEnabled, peerId); });
     Log(INFO) << "RTCCall EnableSendAudioTrack, peerId:" << peerId
                 << ", isEnabled:" << isEnabled;
     
@@ -416,6 +429,7 @@ void RTCCall::EnableSendAudioTrack(bool isEnabled,
 
 void RTCCall::EnableSendVideoTrack(bool isEnabled,
                                    const RTCString& peerId) {
+    INVOKE([&]{ this->EnableSendVideoTrack(isEnabled, peerId); });
     Log(INFO) << "RTCCall EnableSendVideoTrack, peerId:" << peerId
                 << ", isEnabled:" << isEnabled;
     
@@ -439,6 +453,7 @@ void RTCCall::EnableSendVideoTrack(bool isEnabled,
 void RTCCall::EnableReceiveAudioTrack(bool isEnabled,
                                       const RTCString& trackId,
                                       const RTCString& peerId) {
+    INVOKE([&]{ this->EnableReceiveAudioTrack(isEnabled, trackId, peerId); });
     Log(INFO) << "RTCCall EnableReceiveAudioTrack, peerId:" << peerId
                 << ", trackId:" << trackId
                 << ", isEnabled:" << isEnabled;
@@ -463,6 +478,7 @@ void RTCCall::EnableReceiveAudioTrack(bool isEnabled,
 void RTCCall::EnableReceiveVideoTrack(bool isEnabled,
                                       const RTCString& trackId,
                                       const RTCString& peerId) {
+    INVOKE([&]{ this->EnableReceiveVideoTrack(isEnabled, trackId, peerId); });
     Log(INFO) << "RTCCall EnableReceiveVideoTrack, peerId:" << peerId
                 << ", trackId:" << trackId
                 << ", isEnabled:" << isEnabled;
@@ -486,12 +502,14 @@ void RTCCall::EnableReceiveVideoTrack(bool isEnabled,
 
 void RTCCall::ResetCsrcByAudioTrackId(const RTCString& trackId,
                                       const RTCString& peerId) {
+    INVOKE([&]{ this->ResetCsrcByAudioTrackId(trackId, peerId); });
     Log(INFO) << "RTCCall ResetCsrcByAudioTrackId, peerId:" << peerId
                 << ", trackId:" << trackId;
 }
 
 void RTCCall::ResetCsrcByVideoTrackId(const RTCString& trackId,
                                       const RTCString& peerId) {
+    INVOKE([&]{ this->ResetCsrcByVideoTrackId(trackId, peerId); });
     Log(INFO) << "RTCCall ResetCsrcByVideoTrackId, peerId:" << peerId
                 << ", trackId:" << trackId;
 }
@@ -499,6 +517,7 @@ void RTCCall::ResetCsrcByVideoTrackId(const RTCString& trackId,
 void RTCCall::SetReceiveCsrc(uint32_t csrc,
                              const RTCString& trackId,
                              const RTCString& peerId) {
+    INVOKE([&]{ this->SetReceiveCsrc(csrc, trackId, peerId); });
     Log(INFO) << "RTCCall SetReceiveCsrc, peerId:" << peerId
                 << ", trackId:" << trackId
                 << ", csrc:" << csrc;
@@ -507,6 +526,7 @@ void RTCCall::SetReceiveCsrc(uint32_t csrc,
 void RTCCall::SetVideoContentType(uint32_t contentType,
                                   const RTCString& trackId,
                                   const RTCString& peerId) {
+    INVOKE([&]{ this->SetVideoContentType(contentType, trackId, peerId); });
     Log(INFO) << "RTCCall SetVideoContentType, peerId:" << peerId
                 << ", trackId:" << trackId
                 << ", contentType:" << contentType;
@@ -514,12 +534,14 @@ void RTCCall::SetVideoContentType(uint32_t contentType,
 
 void RTCCall::ResetSimulcastIdByVideoTrackId(const RTCString& trackId,
                                              const RTCString& peerId) {
+    INVOKE([&]{ this->ResetSimulcastIdByVideoTrackId(trackId, peerId); });
     Log(INFO) << "RTCCall ResetSimulcastIdByVideoTrackId, peerId:" << peerId
                 << ", trackId:" << trackId;
 }
 
 void RTCCall::SendSEI(unsigned char *seiData,
                       const RTCString& peerId) {
+    INVOKE([&]{ this->SendSEI(seiData, peerId); });
     Log(INFO) << "RTCCall SendSEI, peerId:" << peerId
                 << ", seiData:" << seiData;
 }
@@ -527,11 +549,15 @@ void RTCCall::SendSEI(unsigned char *seiData,
 void RTCCall::GetStats(std::function<void(const std::unordered_map<RTCString, RTCPeerStatsModel>& stats,
                                           const webrtc::RTCError &error)>
                        predicate) {
+    INVOKE([&]{ this->GetStats(predicate); });
     Log(INFO) << "RTCCall GetStats, predicate:" << &predicate;
 }
 
 std::vector<RTCPeerStatsModel>*
 RTCCall::GetAudioLevelStats() {
+    INVOKE_RETURN(std::vector<RTCPeerStatsModel>*, [&]{
+        return this->GetAudioLevelStats();
+    })
     Log(INFO) << "RTCCall GetAudioLevelStats.";
     return nullptr;
 }
@@ -539,11 +565,15 @@ RTCCall::GetAudioLevelStats() {
 void RTCCall::GetStatsFormEngine(std::function<
                                  void(std::vector<RTCPeerStatsModel> statsAry)>
                                  predicate) {
+    INVOKE([&]{ this->GetStatsFormEngine(predicate); });
     Log(INFO) << "RTCCall GetStatsFormEngine, predicate:" << &predicate;
 }
 
 std::vector<RTCPeerStatsModel>*
 RTCCall::GetPeerStats() {
+    INVOKE_RETURN(std::vector<RTCPeerStatsModel>*, [&]{
+        return this->GetPeerStats();
+    })
     Log(INFO) << "RTCCall GetPeerStats.";
     return nullptr;
 }
@@ -552,6 +582,9 @@ bool RTCCall::InsertDTMF(const RTCString& tones,
                          double duration,
                          double interToneGap,
                          const RTCString& peerId) {
+    INVOKE_RETURN(bool, [&]{
+        return this->InsertDTMF(tones, duration, interToneGap, peerId);
+    })
     Log(INFO) << "RTCCall SetReceiveCsrc, peerId:" << peerId
                 << ", tones:" << tones
                 << ", duration:" << duration
@@ -578,6 +611,7 @@ bool RTCCall::InsertDTMF(const RTCString& tones,
 }
  
 void RTCCall::ReleasePeer(const RTCString& peerId) {
+    INVOKE([&]{ this->ReleasePeer(peerId); });
     Log(INFO) << "RTCCall ReleasePeer, peerId:" << peerId;
     
     scoped_refptr<PeerConnectionInterface> peer = FindPeerById(peerId);
@@ -591,6 +625,7 @@ void RTCCall::ReleasePeer(const RTCString& peerId) {
 }
 
 void RTCCall::ReleaseRTCCall() {
+    INVOKE([&]{ this->ReleaseRTCCall(); });
     Log(INFO) << "try to release RTCCall(" << this << ").";
     // stop timer of peer state checking
     StopPeerStateCheckTimer();
@@ -608,6 +643,7 @@ void RTCCall::ReleaseRTCCall() {
 }
 
 void RTCCall::SetIsAllAudioSenderMute(bool isMute) {
+    INVOKE([&]{ this->SetIsAllAudioSenderMute(isMute); });
     if (isAllAudioSenderMute_ == isMute) {
         Log(INFO) << "SetIsAllAudioSenderMute is already "
                     << (isMute?"mute":"unmute") <<", ignore setting it.";
@@ -624,10 +660,12 @@ void RTCCall::SetIsAllAudioSenderMute(bool isMute) {
 }
 
 bool RTCCall::GetIsAllAudioSenderMute() const {
+    INVOKE_RETURN(bool, [&]{return this->isAllAudioSenderMute_;})
     return isAllAudioSenderMute_;
 }
 
 void RTCCall::SetIsAllAudioReceiverMute(bool isMute) {
+    INVOKE([&]{ this->SetIsAllAudioReceiverMute(isMute); });
     if (isAllAudioReceiverMute_ == isMute) {
         Log(INFO) << "SetIsAllAudioReceiverMute is already "
                     << (isMute?"mute":"unmute") <<", ignore setting it.";
@@ -644,6 +682,7 @@ void RTCCall::SetIsAllAudioReceiverMute(bool isMute) {
 }
 
 bool RTCCall::GetIsAllAudioReceiverMute() const {
+    INVOKE_RETURN(bool, [&]{return this->isAllAudioReceiverMute_;})
     return isAllAudioReceiverMute_;
 }
 

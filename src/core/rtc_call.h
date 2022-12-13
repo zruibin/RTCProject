@@ -17,6 +17,23 @@
 
 namespace core {
 
+#if 1
+#define INVOKE(Function) \
+            if (!signaling_thread_->Current()) { \
+                signaling_thread_->Invoke<void>(RTC_FROM_HERE, Function); \
+                return;\
+            }
+
+#define INVOKE_RETURN(ReturnT, Function) \
+            if (!signaling_thread_->Current()) { \
+                return signaling_thread_->Invoke<ReturnT>(RTC_FROM_HERE, Function); \
+            }
+#else
+#define INVOKE(Function)
+#define INVOKE_RETURN(ReturnT, Function)
+#endif
+
+
 using namespace::webrtc;
 using namespace::rtc;
 
