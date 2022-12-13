@@ -44,14 +44,26 @@ public:
     /// add a received video track
     /// @param videoTrack video track
     /// @param peerId peer identification
-    virtual void OnAddReceivedVideoTrack(rtc::scoped_refptr<webrtc::VideoTrackInterface> track,
-                                         const RTCString& peerId) {}
+    virtual void OnAddVideoTrack(rtc::scoped_refptr<webrtc::VideoTrackInterface> track,
+                                 const RTCString& peerId) {}
+    
+    /// remove a received video track
+    /// @param trackId video track id
+    /// @param peerId peer identification
+    virtual void OnRemoveVideoTrack(const RTCString& trackId,
+                                    const RTCString& peerId) {}
 
     /// add a received audio track
     /// @param audioTrack audio track
     /// @param peerId peer identification
-    virtual void OnAddReceivedAudioTrack(rtc::scoped_refptr<webrtc::AudioTrackInterface> track,
-                                         const RTCString& peerId) {}
+    virtual void OnAddAudioTrack(rtc::scoped_refptr<webrtc::AudioTrackInterface> track,
+                                 const RTCString& peerId) {}
+    
+    /// remove a received audio track
+    /// @param trackId audio track id
+    /// @param peerId peer identification
+    virtual void OnRemoveAudioTrack(const RTCString& trackId,
+                                    const RTCString& peerId) {}
 
     /// peer state
     /// @param peerState peer current state

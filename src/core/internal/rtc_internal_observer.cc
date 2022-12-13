@@ -138,8 +138,8 @@ void RTCObserverInternal::OnAddTrack(rtc::scoped_refptr<RtpReceiverInterface> re
                         << ", trackId:" << receiver->track()->id()
                         << "video track was nullptr.";
         }
-        // trigger OnAddReceivedVideoTrack callback
-        observer_->OnAddReceivedVideoTrack(videoTrack, peerId_);
+        // trigger OnAddVideoTrack callback
+        observer_->OnAddVideoTrack(videoTrack, peerId_);
     } else if (receiver->track()->kind() == MediaStreamTrackInterface::kAudioKind) {
         // audio track
         // set track's isEnabled flag according to isAllAudioReceiverMute_
@@ -157,8 +157,8 @@ void RTCObserverInternal::OnAddTrack(rtc::scoped_refptr<RtpReceiverInterface> re
                         << ", trackId:" << receiver->track()->id()
                         << "audio track was nullptr.";
         }
-        // trigger OnAddReceivedAudioTrack callback
-        observer_->OnAddReceivedAudioTrack(audioTrack, peerId_);
+        // trigger OnAddAudioTrack callback
+        observer_->OnAddAudioTrack(audioTrack, peerId_);
     }
 }
 
@@ -168,6 +168,23 @@ void RTCObserverInternal::OnTrack(rtc::scoped_refptr<RtpTransceiverInterface> tr
 
 void RTCObserverInternal::OnRemoveTrack(rtc::scoped_refptr<RtpReceiverInterface> receiver)  {
     Log(INFO) << "peer[" << peerId_ << "] OnRemoveTrack, receiver:" << receiver->id();
+    
+    RTCPeerStatusModelRef statusModel = call_->FindPeerStatusModelById(peerId_);
+    std::vector<RTCRtpReceiverRef> receivers = statusModel->receivers;
+    auto receiverIt = std::find_if(receivers.begin(), receivers.end(), [&receiver](const RTCRtpReceiverRef receiverRef) {
+        return receiverRef->id() == receiver->id();
+    });
+    if (receiverIt != receivers.end()) {
+        if (receiver->track()->kind() == MediaStreamTrackInterface::kVideoKind) {
+            // trigger OnRemoveVideoTrack callback
+            observer_->OnRemoveVideoTrack(receiver->track()->id(), peerId_);
+        } else if (receiver->track()->kind() == MediaStreamTrackInterface::kAudioKind) {
+            // trigger OnRemoveAudioTrack callback
+            observer_->OnRemoveAudioTrack(receiver->track()->id(), peerId_);
+        }
+        receivers.erase(receiverIt);
+        statusModel->receivers = receivers;
+    }
 }
 
 }
