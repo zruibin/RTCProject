@@ -58,6 +58,9 @@ void testRTC() {
     }
     call = ret.value();
     call->Init();
+    util::Timer::Sleep(1*TIME_NSEC_PER_SEC);
+    call->CreateOffer(RTCSdpType::SendOnly, 0, "123321");
+    util::Timer::Sleep(10*TIME_NSEC_PER_SEC);
     Log(INFO) << "App RTC End.";
 }
 

@@ -733,7 +733,7 @@ void RTCCall::DidSetSDP(const RTCString& peerId,
         return;
     }
     scoped_refptr<PeerConnectionInterface> peer = FindPeerById(peerId);
-    if (peer != nullptr && peer->local_description() != nullptr) {
+    if (peer != nullptr && peer->local_description() == nullptr) {
         CreateSDPObserverAdapter::SDPHandler handler = [this](const RTCString& peerId,
                                                           SessionDescriptionInterface* desc,
                                                           RTCError error) {
