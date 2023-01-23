@@ -2,7 +2,9 @@
     {
         "action": "git",
         "fileName": "ninja",
-        "url": "git clone -b v1.11.1 --depth=1 https://github.com/ninja-build/ninja.git"
+        "url": "git clone -b v1.11.1 --depth=1 https://github.com/ninja-build/ninja.git",
+        "build": "cmake",
+        "args": ""
     }
 
     // ,
@@ -10,13 +12,31 @@
     //     "action": "gz",
     //     "fileName": "libressl-3.6.1",
     //     "url": "https://ftp.openbsd.org/pub/OpenBSD/LibreSSL/libressl-3.6.1.tar.gz"
-    // },
+    // }
 
     // ,
     // {
     //     "action": "git",
     //     "fileName": "SQLiteCpp",
     //     "url": "git clone -b 3.1.1 --depth=1 https://github.com/SRombauts/SQLiteCpp"
+    // }
+
+    // ,
+    // {
+    //     "action": "gz",
+    //     "fileName": "yasm-1.3.0",
+    //     "url": "http://www.tortall.net/projects/yasm/releases/yasm-1.3.0.tar.gz",
+    //     "build": "config",
+    //     "args": ""
+    // }
+
+    // ,
+    // {
+    //     "action": "zip",
+    //     "fileName": "sqlite-3.40.1",
+    //     "url": "https://github.com/sqlite/sqlite/archive/refs/tags/version-3.40.1.zip",
+    //     "build": "config",
+    //     "args": ""
     // }
 
 ]

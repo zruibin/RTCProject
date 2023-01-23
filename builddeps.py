@@ -12,10 +12,10 @@
 """
 
 
-import os, re, json, sys, platform, fnmatch
+import os, re, json, sys, platform, fnmatch, stat
 import subprocess, shutil, json
 import datetime
-import tarfile, gzip
+import tarfile, gzip, zipfile, bz2
 import urllib.request
 from pathlib import Path
 
@@ -132,6 +132,21 @@ def json_minify(string, strip_space=True):
     return ''.join(new_str)
 
 
+def configBuild(fileName, configArgs, genBuilding=True, install=True):
+    os.chdir(fileName)
+    if genBuilding:
+        if os.path.exists(buildDir):
+            shutil.rmtree(buildDir)
+        os.makedirs(buildDir)
+        os.chdir(buildDir)
+    log("当前编译路径：" + os.getcwd())
+    log("configBuild: " + fileName)
+    os.chmod("../configure", stat.S_IEXEC|stat.S_IRWXU|stat.S_IRWXG|stat.S_IRWXO)
+    cmdStr = "../configure " + configArgs + " --prefix=" + outputDir
+    operator(cmdStr, False)
+    operator("make && make install", False)
+    pass
+
 
 def cmakeBuild(fileName, cmakeArgs, genBuilding=True, preCmdList=[], install=True):
     os.chdir(fileName)
@@ -194,6 +209,25 @@ def untar(fname, dirs):
         print(e)
         return False
 
+def zipExtract(path_zip, path_aim):
+    z = zipfile.ZipFile(path_zip, 'r')
+    for p in z.namelist():
+        z.extract(p, path_aim)
+    z.close()
+    depressName = os.path.split(z.namelist()[0])[0]
+    desName = os.path.splitext(path_zip)[0]
+    if depressName != desName:
+        os.rename(depressName, desName)
+
+
+def bz2Extract(path_bz2, path_aim):
+    print("bz2Extract: " + path_bz2)
+    archive = tarfile.open(path_bz2,'r:bz2')
+    # archive.debug = 1    # Display the files beeing decompressed.
+    for tarinfo in archive:
+        archive.extract(tarinfo, path_aim) 
+    archive.close()
+
 
 def callbackfunc(blocknum, blocksize, totalsize):
     '''回调函数
@@ -212,22 +246,39 @@ def downloadFile(url, dirPath):
 
 def downloadAndBuild(dict):
     fileName = dict["fileName"]
+    action = dict["action"]
     url = dict["url"]
-    cmakeArgs = None
-    if "cmakeArgs" in dict:
-        cmakeArgs = dict["cmakeArgs"]  
+
+    buildAction = None
+    if "build" in dict:
+        buildAction = dict["build"]
+
+    args = None
+    if "args" in dict:
+        args = dict["args"] 
+
+    if action == "gz": action = "tar.gz"
+    if action == "bz2": action = "tar.bz2" 
+
     if len(fileName) == 0:
         log("Download Was Error!")
         return  
     os.chdir(sourceDir) #进入到源代码存放的目录
-    filePath = fileName + ".tar.gz"
+    filePath = fileName + "." + action
     if not os.path.exists(filePath):
         log("Begin Download: " + fileName)
         downloadFile(url, filePath)
     if not os.path.exists(fileName):
-        log("untar: " + fileName)
-        untar(filePath, sourceDir)
-    cmakeBuild(fileName, cmakeArgs, genBuilding=True, preCmdList=[], install=True)
+        log("解压: " + filePath)
+        fileType = os.path.splitext(filePath)[-1]
+        if fileType == ".gz": untar(filePath, sourceDir)
+        if fileType == ".zip": zipExtract(filePath, sourceDir)
+        if fileType == ".bz2": bz2Extract(filePath, sourceDir)
+
+    if buildAction == "config":
+        configBuild(fileName, args)
+    else:
+        cmakeBuild(fileName, args, genBuilding=True, preCmdList=[], install=True)
     pass
 
 
@@ -280,6 +331,8 @@ def buildFromDepsFile():
         action = depsDict["action"]
         if action == "git": buildDeps(depsDict)
         if action == "gz": downloadAndBuild(depsDict)
+        if action == "zip": downloadAndBuild(depsDict)
+        if action == "bz2": downloadAndBuild(depsDict)
     pass
 
 
