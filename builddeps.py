@@ -323,6 +323,10 @@ def buildThirdParty():
 
 def buildFromDepsFile():
     os.chdir(homeDir)
+    if not os.path.exists(depsName):
+        log("Error: " + str(depsName) + " was not exist.")
+        return
+
     depsJson = None
     with open(depsName, 'r', encoding='utf-8') as fw:
         # json.dump(json_str, fw, indent=4, ensure_ascii=False)
