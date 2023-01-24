@@ -141,6 +141,10 @@ def configBuild(fileName, configArgs, genBuilding=True, install=True):
         os.chdir(buildDir)
     log("当前编译路径：" + os.getcwd())
     log("configBuild: " + fileName)
+
+    if "//" in configArgs:
+        configArgs = configArgs.replace("//", homeDir+os.path.sep)
+
     os.chmod("../configure", stat.S_IEXEC|stat.S_IRWXU|stat.S_IRWXG|stat.S_IRWXO)
     cmdStr = "../configure " + configArgs + " --prefix=" + outputDir
     operator(cmdStr, False)

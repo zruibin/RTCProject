@@ -27,7 +27,7 @@
     //     "fileName": "yasm-1.3.0",
     //     "url": "http://www.tortall.net/projects/yasm/releases/yasm-1.3.0.tar.gz",
     //     "build": "config",
-    //     "args": ""
+    //     "args": "--deps=//deps --thirdParty=//third_party"
     // }
 
     // ,
