@@ -18,6 +18,7 @@ import datetime
 import tarfile, gzip, zipfile, bz2
 import urllib.request
 from pathlib import Path
+import multiprocessing
 
 
 homeDir = ""
@@ -28,9 +29,11 @@ thirdPartyDirName = "third_party"
 sourceDirName = "depsSource"
 outputDirName = "deps"
 depsName = "deps.json"
+sourceLockName = sourceDirName + ".lock"
 buildDir = "buildGen" # cmake构建目录
 cmakeOther = ""
-libSufixs = [".a", ".lib", ".so", ".dylib", "dll"]
+libSufixs = [".a", ".lib", ".so", ".dylib", ".dll"]
+CPU_COUNT = multiprocessing.cpu_count()
 
 logList = []
 
@@ -132,13 +135,18 @@ def json_minify(string, strip_space=True):
     return ''.join(new_str)
 
 
-def configBuild(fileName, configArgs, genBuilding=True, install=True):
+def configBuild(fileName, configArgs, targetDir=None, genBuilding=True, install=True):
     os.chdir(fileName)
+
+    if targetDir != None:
+        os.chdir(targetDir)
+
     if genBuilding:
         if os.path.exists(buildDir):
             shutil.rmtree(buildDir)
         os.makedirs(buildDir)
         os.chdir(buildDir)
+
     log("当前编译路径：" + os.getcwd())
     log("configBuild: " + fileName)
 
@@ -147,18 +155,29 @@ def configBuild(fileName, configArgs, genBuilding=True, install=True):
 
     os.chmod("../configure", stat.S_IEXEC|stat.S_IRWXU|stat.S_IRWXG|stat.S_IRWXO)
     cmdStr = "../configure " + configArgs + " --prefix=" + outputDir
+    makeStr = "make -j" + str(CPU_COUNT) + " && make install"
+
+    if platform.machine() == "arm64" and platform.system() == "Darwin":
+        cmdStr = "arch -arm64e " + cmdStr
+        makeStr = "arch -arm64e " + makeStr
+
     operator(cmdStr, False)
-    operator("make && make install", False)
+    operator(makeStr, False)
     pass
 
 
-def cmakeBuild(fileName, cmakeArgs, genBuilding=True, preCmdList=[], install=True):
+def cmakeBuild(fileName, cmakeArgs, targetDir=None, genBuilding=True, preCmdList=[], install=True):
     os.chdir(fileName)
+
+    if targetDir != None:
+        os.chdir(targetDir)
+
     if genBuilding:
         if os.path.exists(buildDir):
             shutil.rmtree(buildDir)
         os.makedirs(buildDir)
         os.chdir(buildDir)
+
     log("当前编译路径：" + os.getcwd())
     if len(preCmdList) > 0:
         operatorCMD(preCmdList, False)
@@ -248,26 +267,58 @@ def downloadFile(url, dirPath):
     urllib.request.urlretrieve(url, dirPath, callbackfunc)
     pass
 
-def downloadAndBuild(dict):
-    fileName = dict["fileName"]
-    action = dict["action"]
-    url = dict["url"]
+
+def isDesps(fileName):
+    lockFile = os.path.join(sourceDir, sourceLockName)
+    if not os.path.exists(lockFile):
+        return False
+    with open(lockFile, "r") as f:
+        for line in f:
+            line = line.replace(os.linesep, "")
+            if line == fileName:
+                return True
+            else:
+                continue
+    return False
+
+def updateDesps(fileName):
+    lockFile = os.path.join(sourceDir, sourceLockName)
+    with open(lockFile, "a") as f:
+        f.writelines(fileName + os.linesep)
+
+
+def getDictValues(depsDict):
+    fileName = depsDict["fileName"]
+    action = depsDict["action"]
+    url = depsDict["url"]
 
     buildAction = None
-    if "build" in dict:
-        buildAction = dict["build"]
+    if "build" in depsDict:
+        buildAction = depsDict["build"]
 
     args = None
-    if "args" in dict:
-        args = dict["args"] 
+    if "args" in depsDict:
+        args = depsDict["args"]
+
+    targetDir = None
+    if "target_dir" in depsDict:
+        targetDir = depsDict["target_dir"]
+
+    return fileName, action, url, buildAction, args, targetDir
+
+
+def downloadAndBuild(depsDict):
+    fileName, action, url, buildAction, args, targetDir = getDictValues(depsDict)
 
     if action == "gz": action = "tar.gz"
     if action == "bz2": action = "tar.bz2" 
 
     if len(fileName) == 0:
         log("Download Was Error!")
-        return  
-    os.chdir(sourceDir) #进入到源代码存放的目录
+        return
+
+    os.chdir(sourceDir) # 进入到源代码存放的目录
+
     filePath = fileName + "." + action
     if not os.path.exists(filePath):
         log("Begin Download: " + fileName)
@@ -280,18 +331,14 @@ def downloadAndBuild(dict):
         if fileType == ".bz2": bz2Extract(filePath, sourceDir)
 
     if buildAction == "config":
-        configBuild(fileName, args)
+        configBuild(fileName, args, targetDir)
     else:
-        cmakeBuild(fileName, args, genBuilding=True, preCmdList=[], install=True)
+        cmakeBuild(fileName, args, targetDir, genBuilding=True, preCmdList=[], install=True)
     pass
 
 
-def buildDeps(dict):
-    fileName = dict["fileName"]
-    url = dict["url"]
-    cmakeArgs = None
-    if "cmakeArgs" in dict:
-        cmakeArgs = dict["cmakeArgs"]
+def buildDeps(depsDict):
+    fileName, action, url, buildAction, args, targetDir = getDictValues(depsDict)
     if len(fileName) == 0:
         log("Building Deps Was Error!")
         return
@@ -299,7 +346,11 @@ def buildDeps(dict):
     log("Start Building Deps: " + fileName)
     os.chdir(sourceDir) #进入到源代码存放的目录
     operator(url)
-    cmakeBuild(fileName, cmakeArgs, genBuilding=True, preCmdList=[], install=True)
+
+    if buildAction == "config":
+        configBuild(fileName, args, targetDir)
+    else:
+        cmakeBuild(fileName, args, targetDir, genBuilding=True, preCmdList=[], install=True)
     pass
 
 
@@ -316,7 +367,7 @@ def buildThirdParty():
         log("folder: " + str(folder))
         fileName = str(folder)
         cmakeArgs = "-DCMAKE_CXX_STANDARD=14"
-        cmakeBuild(fileName, cmakeArgs, genBuilding=True, preCmdList=[], install=True)
+        cmakeBuild(fileName, cmakeArgs, None, genBuilding=True, preCmdList=[], install=True)
         os.chdir(thirdPartyDir) #回到第三方代码存放的目录
     pass
 
@@ -337,10 +388,17 @@ def buildFromDepsFile():
     for depsDict in depsJson:
         # log("depDict: " + str(depsDict))
         action = depsDict["action"]
+        fileName = depsDict["fileName"]
+
+        if isDesps(fileName): # 已经下载安装好则跳过
+            continue
+
         if action == "git": buildDeps(depsDict)
         if action == "gz": downloadAndBuild(depsDict)
         if action == "zip": downloadAndBuild(depsDict)
         if action == "bz2": downloadAndBuild(depsDict)
+
+        updateDesps(fileName)
     pass
 
 
@@ -405,6 +463,14 @@ def genDirs():
     outputDir = os.path.join(homeDir, outputDirName)
     log("Install Directory: " + outputDir)
     # log("-"*80)
+
+    PATH = "/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Library/Apple/usr/bin"
+    PATH = PATH + ":" + outputDir
+    PATH = PATH + ":" + outputDir + os.path.sep + "bin"
+    PATH = PATH + ":" + outputDir + os.path.sep + "include"
+    PATH = PATH + ":" + outputDir + os.path.sep + "lib"
+    log("PATH:" + PATH)
+    os.putenv("PATH", os.getenv("PATH"))
     pass
 
 
@@ -419,10 +485,10 @@ if __name__ == '__main__':
     # 构建第三方库
     buildFromDepsFile()
 
-    # 构建本地第三方库
+    # # 构建本地第三方库
     buildThirdParty()
 
-    # 生成cmake文件
+    # # 生成cmake文件
     genDepsCmakeList()
 
     end = datetime.datetime.now()
