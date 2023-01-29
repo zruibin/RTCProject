@@ -33,7 +33,10 @@ sourceLockName = sourceDirName + ".lock"
 buildDir = "buildGen" # cmake构建目录
 cmakeOther = ""
 libSufixs = [".a", ".lib", ".so", ".dylib", ".dll"]
+
 CPU_COUNT = multiprocessing.cpu_count()
+DEPS_ARCH = "DEPS_ARCH"
+
 
 logList = []
 
@@ -134,6 +137,18 @@ def json_minify(string, strip_space=True):
     new_str.append(string[index:])
     return ''.join(new_str)
 
+def swapDepsArgs(args):
+    if args == None:
+        return ""
+
+    if "//" in args:
+        args = args.replace("//", homeDir+os.path.sep)
+
+    if DEPS_ARCH in args:
+        args = args.replace(DEPS_ARCH, platform.machine())
+    
+    return args
+
 
 def configBuild(fileName, configArgs, targetDir=None, genBuilding=True, install=True):
     os.chdir(fileName)
@@ -147,22 +162,25 @@ def configBuild(fileName, configArgs, targetDir=None, genBuilding=True, install=
         os.makedirs(buildDir)
         os.chdir(buildDir)
 
+    log("-"*80)
     log("当前编译路径：" + os.getcwd())
     log("configBuild: " + fileName)
 
-    if "//" in configArgs:
-        configArgs = configArgs.replace("//", homeDir+os.path.sep)
+    configArgs = swapDepsArgs(configArgs)
 
     os.chmod("../configure", stat.S_IEXEC|stat.S_IRWXU|stat.S_IRWXG|stat.S_IRWXO)
-    cmdStr = "../configure " + configArgs + " --prefix=" + outputDir
-    makeStr = "make -j" + str(CPU_COUNT) + " && make install"
+    cmdStr = "../configure " + "--prefix=" + outputDir + " " + configArgs
+    makeStr = "make -j" + str(CPU_COUNT)
+    makeInstall = "make install"
 
     if platform.machine() == "arm64" and platform.system() == "Darwin":
         cmdStr = "arch -arm64e " + cmdStr
         makeStr = "arch -arm64e " + makeStr
+        makeInstall = "arch -arm64e " + makeInstall
 
     operator(cmdStr, False)
     operator(makeStr, False)
+    operator(makeInstall, False)
     pass
 
 
@@ -178,11 +196,12 @@ def cmakeBuild(fileName, cmakeArgs, targetDir=None, genBuilding=True, preCmdList
         os.makedirs(buildDir)
         os.chdir(buildDir)
 
+    log("-"*80)
     log("当前编译路径：" + os.getcwd())
     if len(preCmdList) > 0:
         operatorCMD(preCmdList, False)
-    if not cmakeArgs:
-        cmakeArgs = ""
+
+    cmakeArgs = swapDepsArgs(cmakeArgs)
 
     otherCmakeArgs = ""
     outputBinDir = os.path.join(outputDir, "bin")
@@ -203,6 +222,8 @@ def cmakeBuild(fileName, cmakeArgs, targetDir=None, genBuilding=True, preCmdList
         if platform.machine() == "arm64":
             otherCmakeArgs = otherCmakeArgs + "-DCMAKE_OSX_ARCHITECTURES=arm64 "
             otherCmakeArgs = otherCmakeArgs + "-DCMAKE_HOST_SYSTEM_PROCESSOR=arm64 "
+            # otherCmakeArgs = otherCmakeArgs + "-DCMAKE_SYSTEM_PROCESSOR=arm64 "
+            # otherCmakeArgs = otherCmakeArgs + "-DCMAKE_HOST_SYSTEM_PROCESSOR=arm64 "
 
     cmdList = ["cmake",
                 cmakeArgs,
@@ -292,7 +313,7 @@ def getDictValues(depsDict):
     action = depsDict["action"]
     url = depsDict["url"]
 
-    buildAction = None
+    buildAction = "cmake"
     if "build" in depsDict:
         buildAction = depsDict["build"]
 
@@ -435,7 +456,7 @@ message("Deps Lib Directory: ${DEPS_LIB_DIR}")
 
 include_directories("${DEPS_INCLUDE_DIR}")
 link_directories("${DEPS_LIB_DIR}")
-file(GLOB_RECURSE Deps_include ${DEPS_INCLUDE_DIR}**/*)
+file(GLOB_RECURSE Deps_include ${DEPS_INCLUDE_DIR}**)
 
 """ + cmakeOther
     log("Deps CmakeList content: " + depsContent)
@@ -471,6 +492,12 @@ def genDirs():
     PATH = PATH + ":" + outputDir + os.path.sep + "lib"
     log("PATH:" + PATH)
     os.putenv("PATH", os.getenv("PATH"))
+    # os.environ["PATH"] = os.getenv("PATH") + ":" + outputDir
+    # os.environ["PATH"] = os.getenv("PATH") + ":" + outputDir + os.path.sep + "bin"
+    # os.environ["PATH"] = os.getenv("PATH") + ":" + outputDir + os.path.sep + "include"
+    # os.environ["PATH"] = os.getenv("PATH") + ":" + outputDir + os.path.sep + "lib"
+    # log("PATH:" + os.getenv("PATH"))
+    # os.putenv("PATH", os.getenv("PATH"))
     pass
 
 
