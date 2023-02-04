@@ -207,10 +207,11 @@ file (GLOB_RECURSE include_third_party ./webrtc/include_third_party/**/*.h)
 set(HEADERS
     ${WebRTC}
     ${include_third_party}
-    ${Deps_include}
+    ${Deps_Include}
 )
 
 set(SOURCES
+    ${Deps_Source}
 )
 
 set(EXECUTE_SOURCES
