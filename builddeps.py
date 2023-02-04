@@ -170,8 +170,9 @@ def configBuild(fileName, configArgs, debugArgs, targetDir=None, genBuilding=Tru
     log("当前编译路径：" + os.getcwd())
     log("configBuild: " + fileName)
 
-    if debugArgs != None:
+    if IS_DEBUG and debugArgs != None:
         configArgs = configArgs + " " + debugArgs
+
     configArgs = swapDepsArgs(configArgs)
 
     configureFile = os.path.join(inode, "configure")
@@ -211,10 +212,9 @@ def cmakeBuild(fileName, cmakeArgs, debugArgs, targetDir, genBuilding=True, preC
     if len(preCmdList) > 0:
         operatorCMD(preCmdList, False)
 
-    if debugArgs != None: # debug
-        cmakeArgs = cmakeArgs + debugArgs
-
     if IS_DEBUG:
+        if debugArgs != None: # debug
+            cmakeArgs = cmakeArgs + debugArgs
         cmakeArgs = cmakeArgs + " -DCMAKE_BUILD_TYPE=DEBUG "
     else:
         cmakeArgs = cmakeArgs + " -DCMAKE_BUILD_TYPE=RELEASE "
@@ -333,7 +333,7 @@ def getDictValues(depsDict):
     url = depsDict["url"]
 
     buildDir = True
-    if "build_dir" in depsDict:
+    if "build_dir" in depsDict and IS_DEBUG:
         buildDir = depsDict["build_dir"]
 
     buildAction = "cmake"
