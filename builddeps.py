@@ -30,11 +30,12 @@ thirdPartyDirName = "third_party"
 sourceDirName = "depsSource"
 outputDirName = "deps"
 depsName = "deps.json"
+depsCamke = "deps.cmake"
 sourceLockName = sourceDirName + ".lock"
 buildDir = "buildGen" # cmake构建目录
 cmakeOther = ""
 libSufixs = [".a", ".lib", ".so", ".dylib", ".dll"]
-depsSourceFlag = True if IS_DEBUG else False
+depsSourceFlag = False #True if IS_DEBUG else False
 
 CPU_COUNT = multiprocessing.cpu_count()
 DEPS_ARCH = "DEPS_ARCH"
@@ -182,9 +183,9 @@ def configBuild(fileName, configArgs, debugArgs, targetDir=None, genBuilding=Tru
     makeInstall = "make install"
 
     if platform.machine() == "arm64" and platform.system() == "Darwin":
-        cmdStr = "arch -arm64e " + cmdStr
-        makeStr = "arch -arm64e " + makeStr
-        makeInstall = "arch -arm64e " + makeInstall
+        cmdStr = "arch -arm64 " + cmdStr
+        makeStr = "arch -arm64 " + makeStr
+        makeInstall = "arch -arm64 " + makeInstall
 
     operator(cmdStr, False)
     operator(makeStr, False)
@@ -497,7 +498,6 @@ def genDepsCmakeList():
         # cmakeOther = cmakeOther + "\n" + "link_libraries(\"" + libPath + "\")"
         cmakeOther = cmakeOther + "\n" + "list(APPEND DEPS_LIBS \"" + libPath + "\")"
 
-    depsCamke = "deps.cmake"
 
     depsSource = """
 file(GLOB_RECURSE Deps_Source
@@ -511,7 +511,7 @@ file(GLOB_RECURSE Deps_Source
 sourceGroup("" ${Deps_Source})
 set_source_files_properties(${Deps_Source} PROPERTIES HEADER_FILE_ONLY TRUE)
 """
-    if not depsSourceFlag: 
+    if depsSourceFlag == False: 
         depsSource = ""
 
     depsContent = """
