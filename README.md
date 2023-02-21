@@ -41,7 +41,7 @@ list(APPEND ALL_SOURCES ${RTC_Source})
 gn gen out/mac_libs_xcode --args='target_os="mac" target_cpu="x64" proprietary_codecs=true rtc_include_tests=false is_debug=false enable_dsyms=true rtc_build_tools=false rtc_build_examples=false use_custom_libcxx=false use_rtti=true' --ide=xcode
 ```
 
-2. 将xcode工程拉入RTCProject工程中，并在webrtc工程的**All->Build Phases**中新建脚本以下执行，**必须在ninja构建之后**
+2.   将xcode工程拉入RTCProject工程中，并在webrtc工程的**All->Build Phases**中新建脚本以下执行，**必须在ninja构建之后**
 
 ```
 import shutil, os
@@ -55,6 +55,36 @@ if os.path.exists(dstDir):
 shutil.copy(webRTCLib, dstDir)
 
 print("Copy libwebrtc.a done.")
+```
+
+**或在ninja构建中使用管道重定向python处理**
+
+```
+ninja -C . | python3 -c '
+
+import shutil, os, sys
+
+tmpObj = sys.stdin.readline()
+print(str(tmpObj), end="")
+
+inObj = sys.stdin.readlines()
+
+needCopy = True
+if type(inObj) == list:
+    for line in inObj:
+        print(str(line), end="")
+        if "no work to do" in line:
+            needCopy = False
+
+if needCopy:
+    webRTCLib = "/path/WebRTC/webrtc/src/out/mac_libs_xcode/obj/libwebrtc.a"
+    dstDir = "/path/RTCProject/webrtc/lib/libwebrtc.a"
+    if os.path.exists(dstDir):
+        os.remove(dstDir)
+    shutil.copy(webRTCLib, dstDir)
+    print("Copy WebRTC.framework done.")
+
+'
 ```
 
 3. RTCProject工程的Target Dependencies中加上 **2** 中工程的target(即 **All** )，**顺序位于Core构建之前(保证libwebrtc.a为更改的最新)**
