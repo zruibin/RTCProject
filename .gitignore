@@ -24,6 +24,8 @@ release/
 depsSource/
 deps/
 deps.cmake
+depsSource.cmake
+depsSource.lock
 builddeps.log
 
 #svn文件夹忽略
