@@ -678,6 +678,8 @@ file(GLOB_RECURSE PROJECT_NAME_Source
     "/source_path/**/*.h"
     "/source_path/**/*.hpp"
     "/source_path/**/*.h++"
+    "/source_path/**/*.m"
+    "/source_path/**/*.mm"
     "/source_path/**/*.asm"
     "/source_path/**/*.S"
     "/source_path/*.c"
