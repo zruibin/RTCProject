@@ -23,7 +23,7 @@ import inspect
 from enum import Enum
 
 
-IS_DEBUG = True
+IS_DEBUG = False
 
 homeDir = ""
 thirdPartyDir = ""
@@ -434,7 +434,7 @@ def getDictValues(depsDict):
 
     # 默认跟随debug，debug需要在源目录生成才有库符号链接
     buildDir = False if IS_DEBUG else True
-    if "build_dir" in depsDict and IS_DEBUG:
+    if "build_dir" in depsDict:
         buildDir = depsDict["build_dir"]
 
     buildAction = "cmake"
