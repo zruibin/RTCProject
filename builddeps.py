@@ -35,7 +35,11 @@ outputDirName = "deps"
 depsName = "deps.json"
 depsCamke = "deps.cmake"
 sourceLock = sourceDirName + ".lock"
-buildDir = "buildGen" # cmake构建目录
+buildGen = "buildGen" # cmake构建目录
+buildDir = "build"
+buildGenDir = buildGen
+installDir = "install" # cmake工程最终install目录
+vscodeName = ".vscode"
 cmakeOther = ""
 libSufixs = [".a", ".lib", ".so", ".dylib", ".dll"]
 depsSourceFlag = False #True if IS_DEBUG else False
@@ -74,9 +78,11 @@ def log(string="", newline=True, color=None, write=True):
     if len(string) == 0:
         return
 
+    timeStr = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
     function = inspect.stack()[1][3]
     line = inspect.stack()[1][2]
-    string = "[" + str(function) + ":" + str(line) + "] " + string
+    string = "[" + timeStr + "][" + str(function) + ":" + str(line) + "] " + string
 
     if color != None:
         # 见: https://www.cnblogs.com/ping-y/p/5897018.html
@@ -132,7 +138,7 @@ def operatorCMD(parameterList, newline=True):
 def getAllFileInDirectory(DIR, beyoundDir=''):
     """返回指定目录下所有文件的集合，beyoundDir的目录不包含"""
     array = []
-    print(DIR+beyoundDir)
+    # print(DIR+beyoundDir)
     for root, dirs, files in os.walk(DIR):
         if len(beyoundDir) != 0 and os.path.exists(DIR+beyoundDir):
             if beyoundDir not in dirs:
@@ -300,10 +306,10 @@ def configBuild(fileName, configArgs, debugArgs, targetDir=None, genBuilding=Tru
         os.chdir(targetDir)
 
     if genBuilding:
-        if os.path.exists(buildDir):
-            shutil.rmtree(buildDir)
-        os.makedirs(buildDir)
-        os.chdir(buildDir)
+        if os.path.exists(buildGen):
+            shutil.rmtree(buildGen)
+        os.makedirs(buildGen)
+        os.chdir(buildGen)
         inode = ".."
 
     log("-"*80)
@@ -331,6 +337,18 @@ def configBuild(fileName, configArgs, debugArgs, targetDir=None, genBuilding=Tru
     operator(makeInstall, False)
     pass
 
+def generateCmakeNinjaArg():
+    ninjaArg = ""
+    outputBinDir = os.path.join(outputDir, "bin")
+    if os.path.exists(outputBinDir):
+        exeFiles = os.listdir(outputBinDir)
+        for exeFile in exeFiles:
+            if fnmatch.fnmatch(exeFile, "ninja*"):
+                ninjaArg = ninjaArg + "-GNinja -DCMAKE_MAKE_PROGRAM="
+                ninjaArg = ninjaArg + os.path.join(outputBinDir, exeFile) + " "
+                break
+    return ninjaArg
+
 def cmakeBuild(fileName, cmakeArgs, debugArgs, targetDir, genBuilding=True, preCmdList=[], install=True):
     os.chdir(fileName)
     inode = "."
@@ -340,10 +358,10 @@ def cmakeBuild(fileName, cmakeArgs, debugArgs, targetDir, genBuilding=True, preC
         os.chdir(targetDir)
 
     if genBuilding:
-        if os.path.exists(buildDir):
-            shutil.rmtree(buildDir)
-        os.makedirs(buildDir)
-        os.chdir(buildDir)
+        if os.path.exists(buildGen):
+            shutil.rmtree(buildGen)
+        os.makedirs(buildGen)
+        os.chdir(buildGen)
         inode = ".."
 
     log("-"*80)
@@ -362,16 +380,7 @@ def cmakeBuild(fileName, cmakeArgs, debugArgs, targetDir, genBuilding=True, preC
         cmakeArgs = cmakeArgs + " -DCMAKE_BUILD_TYPE=RELEASE "
 
     cmakeArgs = swapDepsArgs(cmakeArgs)
-
-    otherCmakeArgs = ""
-    outputBinDir = os.path.join(outputDir, "bin")
-    if os.path.exists(outputBinDir):
-        exeFiles = os.listdir(outputBinDir)
-        for exeFile in exeFiles:
-            if fnmatch.fnmatch(exeFile, "ninja*"):
-                otherCmakeArgs = otherCmakeArgs + "-GNinja -DCMAKE_MAKE_PROGRAM="
-                otherCmakeArgs = otherCmakeArgs + os.path.join(outputBinDir, exeFile) + " "
-                break
+    otherCmakeArgs = generateCmakeNinjaArg()
 
     operatePrefix = ""
     osName = platform.system()
@@ -409,7 +418,7 @@ def getDepsJson():
     return depsJson
 
 def isDesps(fileName):
-    lockFile = os.path.join(homeDir, sourceLock)
+    lockFile = sourceLock
     if not os.path.exists(lockFile):
         return False
     with open(lockFile, "r") as f:
@@ -422,7 +431,7 @@ def isDesps(fileName):
     return False
 
 def updateDesps(fileName):
-    lockFile = os.path.join(homeDir, sourceLock)
+    lockFile = sourceLock
     with open(lockFile, "a") as f:
         f.writelines(fileName + os.linesep)
     pass
@@ -433,9 +442,9 @@ def getDictValues(depsDict):
     url = depsDict["url"]
 
     # 默认跟随debug，debug需要在源目录生成才有库符号链接
-    buildDir = False if IS_DEBUG else True
+    build_dir = buildGen
     if "build_dir" in depsDict:
-        buildDir = depsDict["build_dir"]
+        build_dir = depsDict["build_dir"]
 
     buildAction = "cmake"
     if "build" in depsDict:
@@ -461,7 +470,7 @@ def getDictValues(depsDict):
         "args": args,
         "debugArgs": debugArgs,
         "targetDir": targetDir,
-        "buildDir": buildDir
+        "buildDir": build_dir
     }
 
 def downloadAndBuild(depsDict):
@@ -501,7 +510,7 @@ def downloadAndBuild(depsDict):
         cmakeBuild(fileName, args, debugArgs, targetDir, buildDir)
     pass
 
-def buildDeps(depsDict):
+def cloneDeps(depsDict):
     depsDict = getDictValues(depsDict)
     fileName = depsDict["fileName"]
     action = depsDict["action"]
@@ -520,7 +529,18 @@ def buildDeps(depsDict):
     log("-"*80)
     log("Start Building Deps: " + fileName)
     os.chdir(sourceDir) #进入到源代码存放的目录
-    operator(url)
+    
+    try:
+        runCMD = url
+        gitHttps = "https://github.com/"
+        ssh = "git@github.com:"
+        if gitHttps in url:
+            runCMD = url.replace(gitHttps, ssh)
+        operator(runCMD)
+    except Exception as e:
+        log(str(e), color=Color.Red)
+        logRecord()
+        operator(url)
 
     if buildAction == "config":
         configBuild(fileName, args, debugArgs, targetDir, buildDir)
@@ -563,7 +583,7 @@ def buildFromDepsFile():
         if isDesps(fileName): # 已经下载安装好则跳过
             continue
 
-        if action == "git": buildDeps(depsDict)
+        if action == "git": cloneDeps(depsDict)
         if action == "gz": downloadAndBuild(depsDict)
         if action == "zip": downloadAndBuild(depsDict)
         if action == "bz2": downloadAndBuild(depsDict)
@@ -573,28 +593,49 @@ def buildFromDepsFile():
 
 #------------------------------------------------------------------------------------
 
-def genDepsCmakeList():
-    log("-"*80)
-    log("Generate Deps CmakeList in Path: " + homeDir)
-    os.chdir(homeDir)
-
-    libDir = os.path.join(outputDir, "lib")
-    libs = getAllFileInDirectory(libDir)
-    for lib in libs:
+def getAllLibs(libDir):
+    libs = []
+    allFiles = os.listdir(libDir)
+    for lib in allFiles:
         if os.path.isdir(lib):
             continue
         sufix = os.path.splitext(lib)[-1]
         if sufix not in libSufixs:
             continue
-        # log("lib: "+ lib)
-        libPath = os.path.join(libDir, lib)
-        global cmakeOther
-        # cmakeOther = cmakeOther + "\n" + "link_libraries(\"" + libPath + "\")"
-        cmakeOther = cmakeOther + "\n" + "list(APPEND DEPS_LIBS \"" + libPath + "\")"
+        log("lib: "+ lib)
+        libs.append(lib)
+    return libs
 
-    depsInclude = """
-list(APPEND HEADERS ${Deps_Include})
-"""
+def getAllFrameworks(libDir):
+    frameworks = []
+    allFiles = os.listdir(libDir)
+    for file in allFiles:
+        if ".framework" not in file:
+            continue
+        frameworks.append(file.split(".")[0])
+    return frameworks
+
+def genDepsCmakeList():
+    log("-"*80)
+    log("Generate Deps CmakeList in Path: " + homeDir)
+    os.chdir(homeDir)
+    libDir = os.path.join(outputDir, "lib")
+    cmakeOthers = []
+
+    libs = getAllLibs(libDir)
+    for lib in libs:
+        cmakeOthers.append('list(APPEND DEPS_LIBS "${DEPS_LIB_DIR}/' + lib + '")')
+    
+    frameworks = getAllFrameworks(libDir)
+    for framework in frameworks:
+        frameworkPath = os.path.join(libDir, framework)
+        cmakeOthers.append('include_directories("${DEPS_LIB_DIR}/' + framework + '.framework/Headers")')
+        cmakeOthers.append('list(APPEND DEPS_LIBS "-framework ' + framework + '")')
+    
+    global cmakeOther
+    cmakeOther = "\n".join(cmakeOthers)
+
+    depsInclude = """list(APPEND HEADERS ${Deps_Include})\n\n"""
 
     depsSource = """
 file(GLOB_RECURSE Deps_Source
@@ -620,8 +661,8 @@ message("This is deps.cmake")
 
 set(deps_list pthread dl)
 
-set(DEPS_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/"""+outputDirName+"""/include/")
-set(DEPS_LIB_DIR "${CMAKE_CURRENT_SOURCE_DIR}/"""+outputDirName+"""/lib/")
+set(DEPS_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/"""+outputDirName+"""/include")
+set(DEPS_LIB_DIR "${CMAKE_CURRENT_SOURCE_DIR}/"""+outputDirName+"""/lib")
 
 message("Deps Include Directory: ${DEPS_INCLUDE_DIR}")
 message("Deps Lib Directory: ${DEPS_LIB_DIR}")
@@ -650,7 +691,7 @@ def addDebugDepsCmake(destDir, name):
     if os.path.exists(depCmakeList):
         cmakeBuild = True
         if not os.path.exists(depNinjaBuild):
-            if not os.path.exists(os.path.join(destDir, buildDir)):
+            if not os.path.exists(os.path.join(destDir, buildGen)):
                 log(os.path.basename(depCmakeList) + " was exist! remove it and try again!", color=Color.Red)
                 return
             else:
@@ -745,7 +786,7 @@ add_custom_target(${TARGET_BUILD}
     if platform.machine() == "arm64" and platform.system() == "Darwin":
         arch = "arch -arm64"
 
-    directory = buildDir if hasBuildDir else "."
+    directory = buildGen if hasBuildDir else "."
     hint = "no work to do" if cmakeBuild else "Nothing to be done"
     make = "cmake --build " + directory if cmakeBuild else "make"
     install = "cmake --install " + directory if cmakeBuild else "make install"
@@ -877,27 +918,164 @@ def debugDepsCmake():
         removeDebugDepsCmake(destDir, name)
     pass
 
+def clean():
+    rmList = [
+        buildDir,
+        buildGenDir,
+        outputDir,
+        sourceDir,
+        installDir,
+        sourceLock,
+        depsCamke,
+        depsSourceCamke,
+        vscodeName,
+    ]
+    for item in rmList:
+        if os.path.exists(item):
+            if os.path.isfile(item):
+                os.remove(item)
+            elif os.path.isdir(item):
+                shutil.rmtree(item)
+            log("删除:" + item)
+    pass
+
+def genRunConfig():
+    if not os.path.exists(vscodeName):
+        os.makedirs(vscodeName)
+
+    ninjaArg = generateCmakeNinjaArg()
+    if len(ninjaArg) > 0: ninjaArg = ninjaArg.replace(homeDir, "${workspaceFolder}")
+
+    cmakeCmd = "cmake -DCMAKE_BUILD_TYPE=Debug -B build . " + ninjaArg
+    buildCmd = "cmake --build build"
+    runCmd = "cmake --build build --target run"
+    cleanCmd = "cmake --build build --target clean"
+    
+    # See https://go.microsoft.com/fwlink/?LinkId=733558
+    tasksFile = """
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "cmake",
+            "type": "shell",
+            "command": "%s",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        }, 
+        {
+            "label": "build",
+            "type": "shell",
+            "command": "%s",
+        },
+        {
+            "label": "run",
+            "type": "shell",
+            "command": "%s",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "label": "clean",
+            "type": "shell",
+            "command": "%s",
+        }
+    ]
+}
+    """ % (cmakeCmd, buildCmd, runCmd, cleanCmd)
+    tasksFilePath = os.path.join(vscodeName, "tasks.json")
+    log(tasksFilePath)
+    log(tasksFile)
+    with open(tasksFilePath, "w") as fileHandle:
+        fileHandle.write(str(tasksFile))
+
+    program = "build/Debug/Bin/"
+    with open(cmakeList, "r", encoding='utf-8') as fileHandle:
+        content = fileHandle.read()
+        result = re.findall("project\((.*?)\)", content)
+        if len(result) > 0: program = program + result[0]
+    log("program: "+program)
+
+    # https://go.microsoft.com/fwlink/?linkid=830387
+    # https://rivergold.github.io/2022/03eca434c1.html#%E5%88%9B%E5%BB%BAlaunch-json
+    # https://www.jianshu.com/p/ad29eee7b736
+    # https://zhuanlan.zhihu.com/p/584485195
+    launchFile = """
+{
+    "version": "2.0.0",
+    "configurations": [
+        {
+            "name": "(lldb) Launch", // 配置名称
+            "type": "cppdbg", // 配置类型
+            "request": "launch", // 请求配置类型,launch或者attach
+            "program": "${workspaceFolder}/%s", // 进行调试程序的路径，程序生成文件.out
+            "args": [], // 传递给程序的命令行参数，一般为空
+            "stopAtEntry": false, // 调试器是否在目标的入口点停止
+            "cwd": "${workspaceFolder}", // 运行debug的路径
+            "environment": [],
+            "externalConsole": false, // 调试时是否显示控制台窗口，一般为true显示控制台
+            "MIMode": "lldb", // 指定连接的调试器
+            "preLaunchTask": "build", // 依赖之前的build, 每次debug时会
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for lldb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ]
+        }
+    ]
+}
+    """ % program
+    launchFilePath = os.path.join(vscodeName, "launch.json")
+    log(launchFilePath)
+    log(launchFile)
+    with open(launchFilePath, "w") as fileHandle:
+        fileHandle.write(str(launchFile))
+    pass
+
+
 def help():
     helpStr = """
 Command:
     deps           根据deps.json安装依赖
+    clean          清除所有依赖
+    gen            生成运行配置文件
     add dep_dir    根据库dep_dir添加依赖调试
     remove dep_dir 根据库dep_dir删除依赖调试
     help           说明
 Default:
     deps"""
-    log(helpStr)
+    log(helpStr, write=False)
     pass
 
 def init():
-    global homeDir, sourceDir, thirdPartyDir, outputDir
-    homeDir = sys.path[0]
+    global homeDir, sourceDir, thirdPartyDir, outputDir, installDir
+    global depsName, buildDir, buildGenDir
+
+    absPath = str(Path.cwd())
+    depsFile = str(Path.cwd() / depsName)
+    # log("depsFile:" + str(depsFile))
+    if not os.path.exists(depsFile):
+        raise Exception("desp.json not exist!")
+
+    homeDir = absPath
+
     sourceDir = os.path.join(homeDir, sourceDirName)
     thirdPartyDir = os.path.join(homeDir, thirdPartyDirName)
     outputDir = os.path.join(homeDir, outputDirName)
+    installDir = os.path.join(homeDir, installDir)
+    buildDir = os.path.join(homeDir, buildDir)
+    buildGenDir = os.path.join(homeDir, buildGenDir)
 
-    global depsSourceCamke
+    global depsCamke, depsSourceCamke, sourceLock
+    depsCamke = os.path.join(homeDir, depsCamke)
     depsSourceCamke = os.path.join(homeDir, depsSourceCamke)
+    sourceLock = os.path.join(homeDir, sourceLock)
     pass
 
 
@@ -905,25 +1083,37 @@ def init():
 
 
 if __name__ == '__main__':
-    log("-"*80)
-    begin = datetime.datetime.now()
-    log("开始时间：" + str(begin))
+    isHelp = False
+    if len(sys.argv) == 2 and (sys.argv[1] == "help" or sys.argv[1] == "-h"):
+        isHelp = True
 
-    init()
+
+    log("-"*80, write=not isHelp)
+    begin = datetime.datetime.now()
+    log("开始时间：" + str(begin), write=not isHelp)
 
     if len(sys.argv) == 1:
+        init()
         deps()
     if len(sys.argv) == 2:
-        if sys.argv[1] == "help" or sys.argv[1] == "-h":
+        if isHelp:
             help()
         elif sys.argv[1] == "deps":
+            init()
             deps()
+        elif sys.argv[1] == "clean":
+            init()
+            clean()
+        elif sys.argv[1] == "gen":
+            init()
+            genRunConfig()
     elif len(sys.argv) > 2:
+        init()
         debugDepsCmake()
 
     end = datetime.datetime.now()
-    log(('花费时间: %.3f 秒' % (end - begin).seconds))
-    log("-"*80)
+    log(('花费时间: %.3f 秒' % (end - begin).seconds), write=not isHelp)
+    log("-"*80, write=not isHelp)
     logRecord()
     pass
 
